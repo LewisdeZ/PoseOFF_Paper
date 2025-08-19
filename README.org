@@ -1,0 +1,12 @@
+#+title: Readme
+
+Testing out using orgmode for README's...
+
+To ensure that tex is working in emacs, there's a lot of things that I tried and not all of them seemed to work.
+I'm using `citar` and `reftex`` to get the citations from bibtex, and AuCTeX which is a lot better than the default emacs latex mode.
+
+To insert a citation (from normal mode):
+`SPC m c`
+
+To open the table of contents for a latex file:
+`SPC m ;`
