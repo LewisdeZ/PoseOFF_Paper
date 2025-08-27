@@ -11,8 +11,7 @@
 \usepackage{xcolor}
 \usepackage[
 backend=biber,
-style=alphabetic,
-sorting=ynt
+style=numeric,
 ]{biblatex}
 \addbibresource{../refs.bib}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -64,17 +63,37 @@ email address or ORCID}
 
 \begin{abstract}
   This paper builds on the early action recognition framework, InfoGCN++. This skeleton-based action recognition framework utilises a future motion prediction module to model future skeleton states in order to anticipate actions earlier.
+  % What modifications are we making to the original model?
   In this paper, we propose InflowGCN++, a modification to the original model that integrates windows of optical flow surrounding skeleton keypoints in image space to enhance early action recognition.
+  % What benefits does optical flow potentially provide?
   Optical flow windows embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
-  Experimental evaluations were performed to explore different methods of embedding optical flow into the network.
+  % Testing the dataset on NTU, NTU120, N-UCLA and UCF-101
+  Through rigorous evaluations on three skeleton-based action recognition datasets, InflowGCN++ demonstrates greater action recognition and predictive ability than it's predecessor.
+  % Testing the dataset on a non-skeleton specific dataset
+  Evaluation on a fourth, RGB only dataset demonstrates the versatility of the InflowGCN++ model.
+  % Multiple embedding methods tested
+  Tests of embedding methods show greatest improvements in action classification accuracy using a CNN based architecture for learning optical flow windows.
 \end{abstract}
 
 \begin{IEEEkeywords}
-  Human Action Recognition, Online Action Recognition, Human Motion Prediction
+  Human Action Recognition, Online Action Recognition, Human Motion Prediction, Multi-modal Media Computing
 \end{IEEEkeywords}
 
+
 \section{Introduction}
-Human early action recognition has a numerous applications in the fields of robotics, aged care, autonomous vehicles etc. \cite{rasouli2017AreTheyGoingCrossBenchmarkDatasetBaselinePedestrianCrosswalkBehavior}.
+Human early action recognition has applications in fields such as human-robot teaming \cite{yuHumanRobotCollaborative2024}, pedestrian avoidance \cite{rasouliPedestrianActionAnticipation2020}, abnormal activity detection in surveillance \cite{ryooHumanActivityPrediction2011} and fall detection in aged care settings \cite{DeepLearningVision}.
+The task of early action recognition focuses on both the accuracy and speed of action classification \cite{laiHumanActionAnticipation2024}.
+This is particularly useful in real-time applications, such as robotics, where robot response is time-critical.
+
+
+
+% Human skeleton keypoint action recognition
+Human skeleton keypoints provide meaningful and succinct information about human actions.
+Skeleton-based action recognition has grown as an area of interest in the last two decades.
+The growing interest is partially due to the increase in availability of RGB-D sensors, giving rise to more skeleton-based action recognition datasets.
+It is also partially due to the simplicity of the input data; human skeleton keypoints only contain information about the position and movement of humans and lack noisy background elements.
+
+
 
 The topics of interest in the IEEE ICME conference that this paper might fit within:
 \begin{itemize}
@@ -83,8 +102,6 @@ The topics of interest in the IEEE ICME conference that this paper might fit wit
   \item Multimedia analysis and generation.
   \item Multi-modal media computing, interaction and human-machine interaction.
 \end{itemize}
-
-Please observe the conference page limits. For more information about how to become an IEEE Conference author or how to write your paper, please visit   IEEE Conference Author Center website: https://conferences.ieeeauthorcenter.ieee.org/.
 
 
 
@@ -288,6 +305,7 @@ acknowledgments in the unnumbered footnote on the first page.
 % citation first, followed by the original foreign-language citation \cite{b6}.
 
 \printbibliography
+
 
 \vspace{12pt}
 \color{red}
