@@ -16,48 +16,49 @@ style=numeric,
 \addbibresource{../refs.bib}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\usepackage{hyperref}
 \begin{document}
 
 \title{InflowGCN++: A Mutli-Modal Approach To Human Action Anticipation\\
 \thanks{Funding provided by the Australian Government and Swinburne University of Technology.}
 }
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-}
+% \author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% }
 
 \maketitle
 
@@ -81,39 +82,57 @@ email address or ORCID}
 
 
 \section{Introduction}
-Human early action recognition has applications in fields such as human-robot teaming \cite{yuHumanRobotCollaborative2024}, pedestrian avoidance \cite{rasouliPedestrianActionAnticipation2020}, abnormal activity detection in surveillance \cite{ryooHumanActivityPrediction2011} and fall detection in aged care settings \cite{DeepLearningVision}.
-The task of early action recognition focuses on both the accuracy and speed of action classification \cite{laiHumanActionAnticipation2024}.
+Human early action recognition has applications in fields such as human-robot teaming~\cite{yuHumanRobotCollaborative2024}, pedestrian avoidance~\cite{rasouliPedestrianActionAnticipation2020}, abnormal activity detection in surveillance~\cite{ryooHumanActivityPrediction2011} and fall detection in aged care settings~\cite{DeepLearningVision}.
+The task of early action recognition focuses on both the accuracy and speed of action classification~\cite{laiHumanActionAnticipation2024}.
 This is particularly useful in real-time applications, such as robotics, where robot response is time-critical.
 
-
-
-% Human skeleton keypoint action recognition
+% Skeleton-approaches BENEFITS
 Human skeleton keypoints provide meaningful and succinct information about human actions.
 Skeleton-based action recognition has grown as an area of interest in the last two decades.
 The growing interest is partially due to the increase in availability of RGB-D sensors, giving rise to more skeleton-based action recognition datasets.
-It is also partially due to the simplicity of the input data; human skeleton keypoints only contain information about the position and movement of humans and lack noisy background elements.
+It is also partially due to the simplicity of the input data; human skeleton keypoints contain  \textit{only} information about the position and movement of humans and lack noisy background elements.
 
+% Skeleton-approaches CHALLENGES
+However, skeleton-only approaches only capture relations between limbs, and do not cope well with limb occlusion.
+Skeleton action recognition datasets, such as NTU RGB+D~\cite{shahroudyNTURGB+DLarge2016}, NTU RGB+D 120~\cite{liuNTURGB+D1202020} and NW-UCLA~\cite{wangCrossviewActionModeling2014} use multiple RGB-D sensors to capture accurate human pose data from different viewpoints.
+These skeleton datasets fail to capture fine joint features that may distinguish similar actions.
 
+% RGB approaches CHALLENGES
+RGB-only approaches to human action recognition must contend with large amounts of calculations needed to process video data.
+Complex environments, such as outdoor settings or shifting camera perspectives, present challenges for RGB-only models in capturing robust human action features~\cite{wangComprehensiveSurveyRGBBased2023}.
+RGB-only models designed to perform human early action recognition suffer when distinguishing intra-class differences and inter-class similarities.
 
-The topics of interest in the IEEE ICME conference that this paper might fit within:
+% Why optical flow and why flowpose?
+To address these challenges, we build on the state-of-the art method InfoGCN++~\cite{chiInfoGCNLearningRepresentation2023} by extracting windows of optical flow surrounding human-pose keypoints as additional learnable features.
+These additional features allow the model to predict future motion states with greater accuracy.
+By learning from these windows of optical flow,
+% Put in a placeholder model name?
+Our model, FlowGCN, shows superior performance on skeleton-based action recognition datasets.
+Moreover, we demonstrate that this approach is more appropriate for RGB-based action recognition datasets by estimating both human poses and optical flow using exterior neural network models.
+
+% Contributions
+The main contributions of the proposed method are as follows:
 \begin{itemize}
-  \item Artificial intelligence/machine learning based multimedia.
-  \item Image and video processing.
-  \item Multimedia analysis and generation.
-  \item Multi-modal media computing, interaction and human-machine interaction.
+  \item A feature extraction method for strategically sampling the optical flow field surrounding human pose keypoints.
+  \item An evaluation of the model on an RGB-only dataset, UCF-101, with optical flow and human pose keypoints extracted manually.
+  \item Experimental results demonstrate outstanding performance on both skeleton-based and RGB-based human action recognition datasets for the purpose of human early action recognition.
 \end{itemize}
 
 
 
-\subsection{Maintaining the Integrity of the Specifications}
+% The topics of interest in the IEEE ICME conference that this paper might fit within:
+% \begin{itemize}
+%   \item Artificial intelligence/machine learning based multimedia.
+%   \item Image and video processing.
+%   \item Multimedia analysis and generation.
+%   \item Multi-modal media computing, interaction and human-machine interaction.
+% \end{itemize}
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+
+\section{Related work}%
+\label{sec:related_work}
+
+
 
 \section{Prepare Your Paper Before Styling}
 Before you begin to format your paper, first write and save the content as a 
