@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{array}
 \usepackage[
 backend=biber,
 style=numeric,
@@ -142,22 +143,49 @@ The main contributions of the proposed method are as follows:
 
 \section{Methods}%
 \label{sec:methods}
+% How have we modified the original model?
+Our implementation of InfoGCN++ is similar to the original model proposed by~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}. We modify the model with an additional embedding layer to learn the windows of optical flow surrounding each pose keypoint.
+
+% What algorithms did we use to calculate optical flow?
+Optical flow was extracted using the Pytorch implementation of the RAFT algorithm of optical flow estimation~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
+The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-POSE model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
+
+We tested three different methods of embedding the optical flow:
+\begin{center}
+  \begin{tabular}{ |m{2cm}|m{3cm}|m{3cm}| }
+    \hline
+    Absolute value & Taking the absolute value of the window of optical flow, producing a simple magnitude representing the \textit{amount} of estimated motion surrounding the pose keypoint & IMG \\
+    \hline
+    Average value & Taking the average $x$ and $y$ values of the estimated optical flow, producing a vector representing the \textit{direction} of estimated motion surrounding the pose keypoint & IMG \\
+    \hline
+    CNN learning & Learning the window of optical flow with two layers of convolutions & IMG \\
+    \hline
+\end{tabular}
+\end{center}
 
 \section{Results}%
 \label{sec:results}
-Initial results indicate that our model performs better in most tasks.
+Initial results indicate that our model performs better in most tasks. Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
 
 % Observation accuracy graph for ntu
 % OBS_RATIO-NTU | OBS_RATIO-NTU120 | OBS_RATIO-NW-UCLA | OBS_RATIO-UCF101
+\begin{figure}[ht]
+  \centering
+  \caption{\label{fig:observation_accuracy} Classification accuracy (AUC) across observation ratios.}
+\end{figure}
+
+
+Attention graphs show which limbs our model is attending to.
+\begin{figure}[ht]
+  \centering
+  \caption{\label{fig:graph_attention} }
+\end{figure}
 
 
 \section{Discussion}%
 \label{sec:discussion}
-FigureX demonstrates that our model produces more accurate results with fewer frames. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
-
-Our model also
-
-
+\ref{fig:observation_accuracy} demonstrates that our model produces more accurate results with fewer frames. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
+\ref{fig:graph_attention}
 
 \printbibliography
 
