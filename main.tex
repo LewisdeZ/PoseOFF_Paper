@@ -66,17 +66,29 @@ style=numeric,
 \maketitle
 
 \begin{abstract}
-  This paper builds on the early action recognition framework, InfoGCN++. This skeleton-based action recognition framework utilises a future motion prediction module to model future skeleton states in order to anticipate actions earlier.
-  % What modifications are we making to the original model?
-  In this paper, we propose InflowGCN++, a modification to the original model that integrates windows of optical flow surrounding skeleton keypoints in image space to enhance early action recognition.
-  % What benefits does optical flow potentially provide?
+  This paper proposes a simple modification that can be made to existing human skeleton action recognition models that can improve action classification accuracy and early action recognition capability.
+  % What?
+  We propose a method of extracting human early visual motion cues by sampling windows of optical flow surrounding skeleton keypoints in image space.
+  % So what?
   Optical flow windows embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
-  % Testing the dataset on NTU, NTU120, N-UCLA and UCF-101
-  Through rigorous evaluations on three skeleton-based action recognition datasets, InflowGCN++ demonstrates greater action recognition and predictive ability than it's predecessor.
+  % Now what?
+  With the addition of a lightweight embedding layer to learn windows of optical flow, three state of the art skeleton-based action recognition models (InfoGCN++, MS-G3D, ST-GCN++) show significant improvements in action classification accuracy and predictive ability.
   % Testing the dataset on a non-skeleton specific dataset
   Evaluation on a fourth, RGB only dataset demonstrates the versatility of the InflowGCN++ model.
   % Multiple embedding methods tested
   Tests of embedding methods show greatest improvements in action classification accuracy using a CNN based architecture for learning optical flow windows.
+
+  % This paper builds on the early action recognition framework, InfoGCN++. This skeleton-based action recognition framework utilises a future motion prediction module to model future skeleton states in order to anticipate actions earlier.
+  % % What modifications are we making to the original model?
+  % In this paper, we propose InflowGCN++, a modification to the original model that integrates windows of optical flow surrounding skeleton keypoints in image space to enhance early action recognition.
+  % % What benefits does optical flow potentially provide?
+  % Optical flow windows embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
+  % % Testing the dataset on NTU, NTU120, N-UCLA and UCF-101
+  % Through rigorous evaluations on three skeleton-based action recognition datasets, InflowGCN++ demonstrates greater action recognition and predictive ability than it's predecessor.
+  % Testing the dataset on a non-skeleton specific dataset
+  % Evaluation on a fourth, RGB only dataset demonstrates the versatility of the InflowGCN++ model.
+  % % Multiple embedding methods tested
+  % Tests of embedding methods show greatest improvements in action classification accuracy using a CNN based architecture for learning optical flow windows.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -120,8 +132,10 @@ The main contributions of the proposed method are as follows:
 \begin{itemize}
         % Sampling flow around pose keypoints is a way to extract early visual motion cues
   \item A feature extraction method for strategically sampling the optical flow field surrounding human pose keypoints.
-        % Demonstration of increased responsiveness of our model
-  \item An evaluation of the model on an RGB-only dataset, UCF-101, with optical flow and human pose keypoints extracted manually.
+        % Simple embedding layer
+  \item A simple embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
+        % Demonstration of increased accuracy and predictive ability
+  \item An evaluation of three state-of-the-art skeleton-based action recognition models modified to learn additional optical flow features.
         % Inclusion of early visual motion cues
   \item Experimental results demonstrate outstanding performance on both skeleton-based and RGB-based human action recognition datasets for the purpose of human early action recognition.
 \end{itemize}
@@ -150,21 +164,23 @@ Our implementation of InfoGCN++ is similar to the original model proposed by~\ci
 Optical flow was extracted using the Pytorch implementation of the RAFT algorithm of optical flow estimation~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
 The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-POSE model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
-We tested three different methods of embedding the optical flow:
-\begin{center}
-  \begin{tabular}{ |m{2cm}|m{3cm}|m{3cm}| }
-    \hline
-    Absolute value & Taking the absolute value of the window of optical flow, producing a simple magnitude representing the \textit{amount} of estimated motion surrounding the pose keypoint & IMG \\
-    \hline
-    Average value & Taking the average $x$ and $y$ values of the estimated optical flow, producing a vector representing the \textit{direction} of estimated motion surrounding the pose keypoint & IMG \\
-    \hline
-    CNN learning & Learning the window of optical flow with two layers of convolutions & IMG \\
-    \hline
-\end{tabular}
-\end{center}
+% Which models were tested?
+The models tested using this methodology were InfoGCN++ \cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, ST-GCN++ \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}.
+
+The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows. These learned features were then concatenated with the original skeleton keypoints coordinates.
+
+\subsection{flow-pose}%
+\label{subsec:flowpose}
+% What is flowpose
+We have called our method of extracting early visual motion cues from videos ``flowpose''. This is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints. Based on our testing, a window size of $5\times5$ pixels demonstrated a good balance data efficiency and learnable features.
+
+% Why use flow and not just joint motion?
+Optical flow provides richer information than joint displacement vectors. Where displacement indicate where a joint has come from, windows of optical flow can contain a more nuanced motion information about the moving pixels %ref.
+% TEST THIS
 
 \section{Results}%
 \label{sec:results}
+The inclusion of learnable optical flow windows yeilds higher classification accuracy with the three models tested.
 Initial results indicate that our model performs better in most tasks. Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
 
 % Observation accuracy graph for ntu
@@ -188,5 +204,19 @@ Attention graphs show which limbs our model is attending to.
 \ref{fig:graph_attention}
 
 \printbibliography
+
+\appendix
+We tested three different methods of embedding the optical flow:
+\begin{center}
+  \begin{tabular}{ |m{2cm}|m{3cm}|m{3cm}| }
+    \hline
+    Absolute value & Taking the absolute value of the window of optical flow, producing a simple magnitude representing the \textit{amount} of estimated motion surrounding the pose keypoint & IMG \\
+    \hline
+    Average value & Taking the average $x$ and $y$ values of the estimated optical flow, producing a vector representing the \textit{direction} of estimated motion surrounding the pose keypoint & IMG \\
+    \hline
+    CNN learning & Learning the window of optical flow with two layers of convolutions & IMG \\
+    \hline
+\end{tabular}
+\end{center}
 
 \end{document}

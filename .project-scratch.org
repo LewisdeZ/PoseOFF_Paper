@@ -1,0 +1,21 @@
+#+TITLE: Project Scratch
+
+Paper focus:
+- Flow pose is:
+  - Easy to implement
+  - Lightweight
+  - Improves action classification accuracy
+  - Improves early action recognition accuracy
+
+Results to report:
+- Classification accuracy (base models versus flow window models)
+- Observation accuracy
+
+optiCal flow windows for hUman early visual Motion cues.
+OFWEM
+Optical
+Flow
+Windows for
+Human
+Early
+Motion
