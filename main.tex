@@ -119,12 +119,10 @@ Complex environments, such as outdoor settings or shifting camera perspectives, 
 RGB-only models designed to perform human early action recognition suffer when distinguishing intra-class differences and inter-class similarities.
 
 % Why optical flow and why flowpose?
-To address these challenges, we build on the state-of-the art method InfoGCN++~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} by extracting windows of optical flow surrounding human-pose keypoints as additional learnable features.
-These additional features allow the model to predict future motion states with greater accuracy.
-By learning from these windows of optical flow,
-% Put in a placeholder model name?
-Our model, FlowGCN, shows superior performance on skeleton-based action recognition datasets.
-Moreover, we demonstrate that this approach is more appropriate for RGB-based action recognition datasets by estimating both human poses and optical flow using exterior neural network models.
+To address these challenged, we propose a method of RGB pixel motion information into existing skeleton-based action recognition models.
+Our method, we have dubbed ``FlowPose'', involves the strategic sampling of windows of optical flow surrounding human skeleton keypoints.
+Optical flow can provide more nuanced information that the simple displacement vectors of skeleton keypoints.
+A simple embedding layer added to state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action anticipation.
 
 
 % Contributions
@@ -154,6 +152,20 @@ The main contributions of the proposed method are as follows:
 
 \section{Related work}%
 \label{sec:related_work}
+% GCN
+Many of the state-of-the-art methods of learning human actions in sequences of skeleton keypoints is through graph convolution.
+In machine learning algorithm contexts, human skeleton keypoints depicted as graphs, with graph nodes and edges representing human joints and bones respectively.
+This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolution.
+
+% InfoGCN++
+\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}
+
+% MS-G3D
+\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}
+
+% ST-GCN++
+\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}
+
 
 \section{Methods}%
 \label{sec:methods}
