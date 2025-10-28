@@ -22,7 +22,7 @@ style=numeric,
 \usepackage{hyperref}
 \begin{document}
 
-\title{InflowGCN++: A Mutli-Modal Approach To Human Action Anticipation\\
+\title{A Mutli-Modal Approach To Human Action Anticipation\\
 \thanks{Funding provided by the Australian Government and Swinburne University of Technology.}
 }
 
@@ -155,47 +155,54 @@ The main contributions of the proposed method are as follows:
 % GCN
 Many of the state-of-the-art methods of learning human actions in sequences of skeleton keypoints is through graph convolution.
 In machine learning algorithm contexts, human skeleton keypoints depicted as graphs, with graph nodes and edges representing human joints and bones respectively.
-This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolution.
-
-% InfoGCN++
-\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}
-
-% MS-G3D
-\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}
+This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolutional networks (GCNs).
 
 % ST-GCN++
-\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}
+A GCN proposed by Duan et al. \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, ST-GCN++, achieved strong performance on skeleton-based action recognition datasets without the need for complicated attention mechanisms to model temporal dynamics. ST-GCN++ was designed to provide a strong baseline for future skeleton-based action recognition models.
+% MS-G3D
+Liu et al.
+\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules to pass information across different graph scales.
+
+% InfoGCN+
+Existing human-action recognition models must capture the entire action sequence in order to make predictions, which may present latency issues for real-time applications such as human-robot interaction. Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states. The complete model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
+
+Multi-modal approaches to human action recognition area common. Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses. The inclusion of an optical flow stream increased hockey action classification by 10\%.
+
 
 
 \section{Methods}%
 \label{sec:methods}
-% How have we modified the original model?
-Our implementation of InfoGCN++ is similar to the original model proposed by~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}. We modify the model with an additional embedding layer to learn the windows of optical flow surrounding each pose keypoint.
-
-% What algorithms did we use to calculate optical flow?
-Optical flow was extracted using the Pytorch implementation of the RAFT algorithm of optical flow estimation~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
-The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-POSE model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
+% How have we modified the original models
+% Our implementation of InfoGCN++ is similar to the original model proposed by~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}. We modify the model with an additional embedding layer to learn the windows of optical flow surrounding each pose keypoint.
 
 % Which models were tested?
+We make a simple modification to three state-of-the-art skeleton-keypoint action recognition models to incorporate learnable early visual motion cues.
+The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows. These learned features were then concatenated with the original skeleton keypoints coordinates.
 The models tested using this methodology were InfoGCN++ \cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, ST-GCN++ \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}.
 
-The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows. These learned features were then concatenated with the original skeleton keypoints coordinates.
+The models were trained using hyperparametes defined by the authors. To test the model's performance on early action recognition, we utilised the last frame duplication strategy defined in \cite{mao2020LearningTrajectoryDependenciesHumanMotionPrediction}.
+Each model was trained on full observations of input sequences and tested using masking of test sequences at $20\%$ observation ratios.
 
 \subsection{flow-pose}%
 \label{subsec:flowpose}
 % What is flowpose
-We have called our method of extracting early visual motion cues from videos ``flowpose''. This is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints. Based on our testing, a window size of $5\times5$ pixels demonstrated a good balance data efficiency and learnable features.
+We have called our method of extracting early visual motion cues from videos ``FlowPose''. This is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints. Based on our testing, a window size of $5\times5$ flow vectors demonstrated a good balance data efficiency and learnable features.
 
 % Why use flow and not just joint motion?
 Optical flow provides richer information than joint displacement vectors. Where displacement indicate where a joint has come from, windows of optical flow can contain a more nuanced motion information about the moving pixels %ref.
 % TEST THIS
 
+% What algorithms did we use to calculate optical flow?
+Optical flow was extracted using the Pytorch implementation of the RAFT algorithm of optical flow estimation~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
+The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-POSE model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
+
 \section{Results}%
 \label{sec:results}
-The inclusion of learnable optical flow windows yeilds higher classification accuracy with the three models tested.
+The inclusion of learnable optical flow windows yields higher classification accuracy with the three models tested.
 Initial results indicate that our model performs better in most tasks. Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
 
 % Observation accuracy graph for ntu
+% See table 2, page 7 of InfoGCN++ paper.
 % OBS_RATIO-NTU | OBS_RATIO-NTU120 | OBS_RATIO-NW-UCLA | OBS_RATIO-UCF101
 \begin{figure}[ht]
   \centering
