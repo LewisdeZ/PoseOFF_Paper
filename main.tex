@@ -180,7 +180,9 @@ We make a simple modification to three state-of-the-art skeleton-keypoint action
 The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows. These learned features were then concatenated with the original skeleton keypoints coordinates.
 The models tested using this methodology were InfoGCN++ \cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, ST-GCN++ \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}.
 
-The models were trained using hyperparametes defined by the authors. To test the model's performance on early action recognition, we utilised the last frame duplication strategy defined in \cite{mao2020LearningTrajectoryDependenciesHumanMotionPrediction}.
+The models were trained using hyperparametes defined by the authors, with settings as close to those present in the respective papers.
+We asses these models using the \textit{joint stream only}.
+To test the model's performance on early action recognition, we utilised the last frame duplication strategy defined in \cite{mao2020LearningTrajectoryDependenciesHumanMotionPrediction}.
 Each model was trained on full observations of input sequences and tested using masking of test sequences at $20\%$ observation ratios.
 
 \subsection{flow-pose}%
