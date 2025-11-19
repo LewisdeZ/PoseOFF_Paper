@@ -181,10 +181,10 @@ We make a simple modification to three state-of-the-art skeleton-keypoint action
 The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows. These learned features were then concatenated with the original skeleton keypoints coordinates.
 The models tested using this methodology were InfoGCN++ \cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, ST-GCN++ \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}.
 
-The models were trained using hyperparametes defined by the authors, with settings as close to those present in the respective papers.
+The models were trained using the hyperparametes defined by the authors, with settings as close to those present in the respective papers.
 We asses these models using the \textit{joint stream only}.
 To test the model's performance on early action recognition, we utilised the last frame duplication strategy defined in \cite{mao2020LearningTrajectoryDependenciesHumanMotionPrediction}.
-Each model was trained on full observations of input sequences and tested using masking of test sequences at $20\%$ observation ratios.
+% Each model was trained on full observations of input sequences and tested using masking of test sequences at $20\%$ observation ratios.
 
 \subsection{flow-pose}%
 \label{subsec:flowpose}
@@ -208,28 +208,23 @@ The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-
 
 \section{Results}%
 \label{sec:results}
+Classification accuracy base model and FlowPose embedded model are reported in
 The inclusion of learnable optical flow windows yields higher classification accuracy with the three models tested.
-Initial results indicate that our model performs better in most tasks. Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
-
-% Observation accuracy graph for ntu
-% See table 2, page 7 of InfoGCN++ paper.
-% OBS_RATIO-NTU | OBS_RATIO-NTU120 | OBS_RATIO-NW-UCLA | OBS_RATIO-UCF101
-\begin{figure}[ht]
-  \centering
-  \caption{\label{fig:observation_accuracy} Classification accuracy (AUC) across observation ratios.}
-\end{figure}
+% Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
 
 % Classification accuracy table
 \begin{table*}[ht]\centering
+  \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.
+  *Accuracy for the InfoGCN++ model is reported as Area Under the Curve (AUC), not Top-1 Accuracy.}
   \resizebox{.8\textwidth}{!}{
   \begin{tabular}{ll|ll|ll|lll|}
     \cline{3-9}
     &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
     &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSec & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
-    \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
+    \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
     \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
-    \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 85.49\% & timeout & 79.74\% & broken data & 60.82\% & 60.59\% & 59.38\% \\ \cline{2-2}
-    \multicolumn{1}{|l|}{} & CNN & 90.54\% & timeout & 84.95\% & 86.6\% & timeout & 67.36\% & 66.03\% \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 85.5 & timeout & 79.7 & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & 85.0 & 86.6 & timeout & 67.4 & 66.0 \\ \hline
     \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
     \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
   \end{tabular}
