@@ -208,55 +208,36 @@ The UCF-101 dataset is RGB only. We extract human pose keypoints using the YOLO-
 
 \section{Results}%
 \label{sec:results}
-Classification accuracy base model and FlowPose embedded model are reported in
-The inclusion of learnable optical flow windows yields higher classification accuracy with the three models tested.
-% Observation accuracy is reported as area under the curve (AUC). For a given input sequence of length $T$, the model produces a class prediction for each frame $T$.
+Human action classification accuracy for the base model and model trained with the additional FlowPose embeddings are presented in \ref{table:classification_accuay}.
 
 % Classification accuracy table
-\begin{table*}[ht]\centering
-  \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.
-  *Accuracy for the InfoGCN++ model is reported as Area Under the Curve (AUC), not Top-1 Accuracy.}
-  \resizebox{.8\textwidth}{!}{
-  \begin{tabular}{ll|ll|ll|lll|}
-    \cline{3-9}
-    &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
-    &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSec & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
-    \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
-    \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
-    \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 85.5 & timeout & 79.7 & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
-    \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & 85.0 & 86.6 & timeout & 67.4 & 66.0 \\ \hline
-    \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
-    \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
-  \end{tabular}
-  }
-\end{table*}
-
-Attention graphs show which limbs our model is attending to.
-\begin{figure}[ht]
-  \centering
-  \caption{\label{fig:graph_attention} }
-\end{figure}
+\begin{center}
+  \begin{table*}[ht]\centering
+    \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.
+    *Accuracy for the InfoGCN++ model is reported as Area Under the Curve (AUC), not Top-1 Accuracy.}
+    \resizebox{.8\textwidth}{!}{
+    \begin{tabular}{ll|ll|ll|lll|}
+      \cline{3-9}
+      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
+      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSec & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 85.5 & timeout & 79.7 & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & 85.0 & 86.6 & timeout & 67.4 & 66.0 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
+    \end{tabular}
+    }
+  \end{table*}
+\end{center}
 
 
 \section{Discussion}%
 \label{sec:discussion}
-\ref{fig:observation_accuracy} demonstrates that our model produces more accurate results with fewer frames. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
-\ref{fig:graph_attention}
+The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings allows the model to perform better.
+% \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
+% \ref{fig:graph_attention}
 
 \printbibliography
-
-\appendix
-We tested three different methods of embedding the optical flow:
-\begin{center}
-  \begin{tabular}{ |m{2cm}|m{3cm}|m{3cm}| }
-    \hline
-    Absolute value & Taking the absolute value of the window of optical flow, producing a simple magnitude representing the \textit{amount} of estimated motion surrounding the pose keypoint & IMG \\
-    \hline
-    Average value & Taking the average $x$ and $y$ values of the estimated optical flow, producing a vector representing the \textit{direction} of estimated motion surrounding the pose keypoint & IMG \\
-    \hline
-    CNN learning & Learning the window of optical flow with two layers of convolutions & IMG \\
-    \hline
-\end{tabular}
-\end{center}
 
 \end{document}
