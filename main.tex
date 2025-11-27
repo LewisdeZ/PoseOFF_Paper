@@ -193,8 +193,8 @@ We have called our method of extracting early visual motion cues from videos ``F
 
 \begin{figure*}[ht]
   \centering
-  \includegraphics[width=0.8\linewidth]{figures/Flowpose_diagram.png}
-  \caption{\label{fig:flowpose_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos (left), both optical flow (top centre) and human skeleton keypoints (bottom centre) are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate flowpose right, and are used as learnable embeddings. Az}
+  \includegraphics[width=0.8\linewidth]{figures/Flowpose_diagram_HUG.png}
+  \caption{\label{fig:flowpose_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos (left), both optical flow (top centre) and human skeleton keypoints (bottom centre) are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate flowpose right, and are used as learnable embeddings.}
 \end{figure*}
 
 
@@ -219,13 +219,13 @@ Human action classification accuracy for the base model and model trained with t
     \begin{tabular}{ll|ll|ll|lll|}
       \cline{3-9}
       &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
-      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSec & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
+      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
       \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% &  &  &  \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} &  &  &  &  \\ \hline
+      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} &  & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & timeout? & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & 85.0 & 86.6 & timeout & 67.4 & 66.0 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & OOM & OOM & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & timeout & timeout & timeout & 67.4 & 66.0 \\ \hline
 
       \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 98.31\% & 98.11\% & 94.33\% & 93.68\% &  &  &  \\ \cline{2-2}
       \multicolumn{1}{|l|}{} & CNN & 99.66\% & 99.42\% & 97.93\% & 98\% &  &  &  \\ \hline
@@ -243,7 +243,8 @@ The results table \ref{table:classification_accuay} demonstrates that the implem
 
 \section{Conclusion}
 \label{sec:conclusion}
-We have demonstrated that
+We have demonstrated that the embedding of human early visual motion cues into established skeleton based human action recognition can improve the classification accuracy of a model. We have also shown that .....
+
 Established skeleton-based action recognition models yield greater classification accuracy results with the addition of human early visual motion cue information.
 
 
