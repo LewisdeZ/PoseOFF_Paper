@@ -220,12 +220,15 @@ Human action classification accuracy for the base model and model trained with t
       \cline{3-9}
       &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
       &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSec & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 85.5 & timeout & 79.7 & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% &  &  &  \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} &  &  &  &  \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & timeout? & broken data & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
       \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & 85.0 & 86.6 & timeout & 67.4 & 66.0 \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base &  &  &  &  &  &  &  \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN &  &  &  &  &  &  &  \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 98.31\% & 98.11\% & 94.33\% & 93.68\% &  &  &  \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & 99.66\% & 99.42\% & 97.93\% & 98\% &  &  &  \\ \hline
     \end{tabular}
     }
   \end{table*}
@@ -237,6 +240,14 @@ Human action classification accuracy for the base model and model trained with t
 The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings allows the model to perform better.
 % \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
 % \ref{fig:graph_attention}
+
+\section{Conclusion}
+\label{sec:conclusion}
+We have demonstrated that
+Established skeleton-based action recognition models yield greater classification accuracy results with the addition of human early visual motion cue information.
+
+
+
 
 \printbibliography
 
