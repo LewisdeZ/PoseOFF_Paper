@@ -183,13 +183,12 @@ The models tested using this methodology were InfoGCN++ \cite{chi2023InfoGCNLear
 
 The models were trained using the hyperparametes defined by the authors, with settings as close to those present in the respective papers.
 We asses these models using the \textit{joint stream only}.
-To test the model's performance on early action recognition, we utilised the last frame duplication strategy defined in \cite{mao2020LearningTrajectoryDependenciesHumanMotionPrediction}.
 % Each model was trained on full observations of input sequences and tested using masking of test sequences at $20\%$ observation ratios.
 
-\subsection{flow-pose}%
-\label{subsec:flowpose}
+\subsection{PoseOFF}%
+\label{subsec:PoseOFF}
 % What is flowpose
-We have called our method of extracting early visual motion cues from videos ``FlowPose''. This is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints. Based on our testing, a window size of $5\times5$ flow vectors demonstrated a good balance data efficiency and learnable features.
+We have called our method of extracting early visual motion cues from videos, or Pose Optical Flow Features; ``PoseOFF''. This is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints. Based on our testing, a window size of $5\times5$ flow vectors demonstrated a good balance data efficiency and learnable features.
 
 \begin{figure*}[ht]
   \centering
@@ -221,23 +220,24 @@ Human action classification accuracy for the base model and model trained with t
       &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
       &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% &  &  &  \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} &  & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & OOM & OOM & 60.8 & 60.6 & 59.4 \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & 90.5 & timeout & timeout & timeout & timeout & 67.4 & 66.0 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & OOM & OOM & 89.92 & 89.93\% & 90.37\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & timeout & timeout & \textbf{97.75\%} & \textbf{97.13\%} & timeout & timeout & timeout \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 98.31\% & 98.11\% & 94.33\% & 93.68\% &  &  &  \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & 99.66\% & 99.42\% & 97.93\% & 98\% &  &  &  \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 98.31\% & 98.11\% & 94.33\% & 93.68\% & 94.34\% & timeout & 94.57\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & CNN & \textbf{99.66\%} & \textbf{99.42\%} & \textbf{97.93\%} & \textbf{98.0\%} & \textbf{94.91\%} & 94.72\% & timeout \\ \hline
     \end{tabular}
     }
   \end{table*}
 \end{center}
+% MSG3D NTU120 - CNN models were trained with augmentations...
 
 
 \section{Discussion}%
 \label{sec:discussion}
-The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings allows the model to perform better.
+The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings improves model performance on the datasets tested.
 % \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
 % \ref{fig:graph_attention}
 
