@@ -199,7 +199,6 @@ We have called our method of extracting early visual motion cues from videos, or
 
 % Why use flow and not just joint motion?
 Optical flow provides richer information than joint displacement vectors. Where displacement indicate where a joint has come from, windows of optical flow can contain a more nuanced motion information about the moving pixels %ref.
-% TEST THIS
 
 % What algorithms did we use to calculate optical flow?
 Optical flow was extracted using the Pytorch implementation of the RAFT algorithm of optical flow estimation~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
@@ -212,32 +211,30 @@ Human action classification accuracy for the base model and model trained with t
 % Classification accuracy table
 \begin{center}
   \begin{table*}[ht]\centering
-    \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.
-    *Accuracy for the InfoGCN++ model is reported as Area Under the Curve (AUC), not Top-1 Accuracy.}
+    \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.}
     \resizebox{.8\textwidth}{!}{
     \begin{tabular}{ll|ll|ll|lll|}
       \cline{3-9}
       &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
       &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{*InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{CNN} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 98.40\% & 97.40\% & OOM & OOM & 89.92 & 89.93\% & 90.37\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & timeout & timeout & \textbf{97.75\%} & \textbf{97.13\%} & timeout & timeout & timeout \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 59.48\% & 60.13\% & 60.64\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{CNN} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{64.40\%} & \textbf{66.02\%} & \textbf{66.14\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 98.31\% & 98.11\% & 94.33\% & 93.68\% & 94.34\% & timeout & 94.57\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & CNN & \textbf{99.66\%} & \textbf{99.42\%} & \textbf{97.93\%} & \textbf{98.0\%} & \textbf{94.91\%} & 94.72\% & timeout \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.54\% & 45.60\% & 47.63\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{CNN} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} &  &  &  \\ \hline
     \end{tabular}
     }
   \end{table*}
 \end{center}
 % MSG3D NTU120 - CNN models were trained with augmentations...
 
-
 \section{Discussion}%
 \label{sec:discussion}
-The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings improves model performance on the datasets tested.
+The results table \ref{table:classification_accuay} demonstrates that the implementation of FlowPose as additional learnable embeddings improves model performance on the datasets tested. FlowPose demonstrates greatest benefits for the NTU120 and UCF-101 datasets.
 % \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
 % \ref{fig:graph_attention}
 
