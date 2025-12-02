@@ -3,9 +3,8 @@
 To ensure that tex is working in emacs, there's a lot of things that I tried and not all of them seemed to work.
 I'm using `citar` and `reftex`` to get the citations from bibtex, and AuCTeX which is a lot better than the default emacs latex mode.
 
-
-To insert a citation (from normal mode):
-`C-c [`
-
-To open the table of contents for a latex file:
-`SPC s i`
+| Keybind | Action                 |
+|---------+------------------------|
+| C-c [   | Insert citation        |
+| C-c )   | Insert reference       |
+| SPC m ; | Open table of consents |

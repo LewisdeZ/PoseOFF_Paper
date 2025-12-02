@@ -138,17 +138,6 @@ The main contributions of the proposed method are as follows:
 \end{itemize}
 
 
-
-
-% The topics of interest in the IEEE ICME conference that this paper might fit within:
-% \begin{itemize}
-%   \item Artificial intelligence/machine learning based multimedia.
-%   \item Image and video processing.
-%   \item Multimedia analysis and generation.
-%   \item Multi-modal media computing, interaction and human-machine interaction.
-% \end{itemize}
-
-
 \begin{figure*}[ht]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/Flowpose_diagram_HORIZONTAL_HUG.png}
@@ -172,12 +161,14 @@ Liu et al.
 % InfoGCN+
 Existing human-action recognition models must capture the entire action sequence in order to make predictions, which may present latency issues for real-time applications such as human-robot interaction. Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states. The complete model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
+% Mutli-modal approach to HAR
 Multi-modal approaches to human action recognition area common. Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses. The inclusion of an optical flow stream increased hockey action classification by 10\%.
 
 
 
-\section{Methods}%
-\label{sec:methods}
+\section{Method}%
+\label{sec:method}
+We propose a novel feature extraction method designed to be easily integrated in existing state of the art skeleton-based action recognition models. This model is based on
 
 \subsection{PoseOFF}%
 \label{subsec:PoseOFF}
@@ -211,7 +202,7 @@ The UCF-101 dataset is RGB only and does not include pre-computed human-pose key
 We extract human pose keypoints using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
 
-\subsection{Models}
+\subsection{Skeleton-based Action Recognition Models}
 \label{subsec:models}
 % How we modified the neural networks
 We make a simple modification to three state-of-the-art skeleton-keypoint action recognition models to incorporate learnable early visual motion cues.
@@ -229,10 +220,10 @@ We used the temporal padding methods outlined in the respective papers to pad th
 
 
 
-\section{Results}%
-\label{sec:results}
+\section{Experiments}%
+\label{sec:experiments}
 \subsection{Action Classification}%
-\label{subsec:res_action_classification}
+\label{subsec:exp_action_classification}
 Human action classification accuracy for the base model and model trained with data extracted using PoseOFF are presented in \ref{table:classification_accuay}.
 The PoseOFF data was learned using a simple CNN layer added to each model's embedding layer.
 The flow windows for the NTU-RGB+D and NTU-RGB+D120 models were extracted using dilation 3.
@@ -262,7 +253,7 @@ The flow windows for the UCF-101 dataset were extracted using dilation 1.
 \end{center}
 
 \subsection{Action Anticipation}%
-\label{subsec:res_action_anticipation}
+\label{subsec:exp_action_anticipation}
 To test the effectiveness of the PoseOFF data extraction, we evaluated each model at different observation ratios of the input sequence.
 The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
 The InfoGCN++ model produces a action class prediction every frame of the input sequence, so the observation ratio interval evaluations were not necessary for this model.
@@ -288,7 +279,7 @@ The classification accuracy results of the UCF-101 dataset shows the most varied
 This dataset is RGB only dataset of human actions from videos ``in the wild''.
 Human-pose keypoints were extracted manually using YOLO-POSE Large\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 These manually extracted poses are less accuracy and less precise than poses included in the NTU RGB+D datasets.
-Even with data extracted from videos . The models trained with data obtained using PoseOFF showed considerable improvement across the board.
+The models trained with data obtained using PoseOFF showed considerable improvement across the board.
 This is an encouraging sign for real-world applications.
 
 % \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.

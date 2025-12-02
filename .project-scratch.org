@@ -6,14 +6,6 @@
   - Lightweight
   - Improves action classification accuracy
   - Improves early action recognition accuracy
+- Importantly, a way to embed human early visual motion cues to allow the model to predict actions with fewer frames!
 
-* Methods
-- Flow-pose diagram
-  - Top row: RGB
-  - Second row: skeleton
-  - Third row: flow vectors?
-  - bottom row: flow windows surrounding skeleton?
-
-* Results
-- Classification accuracy (base models versus flow window models)
-- Observation accuracy
+* Fold discussion into experiments!
