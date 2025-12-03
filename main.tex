@@ -24,15 +24,10 @@ style=numeric,
 \begin{document}
 
 \title{A Multi-Modal Approach To Human Action Anticipation\\
-\thanks{Funding provided by the Australian Government and Swinburne University of Technology.}
+% \thanks{Funding provided by the Australian Government and Swinburne University of Technology.}
 }
 
-% \author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-% \textit{name of organization (of Aff.)}\\
-% City, Country \\
-% email address or ORCID}
-% \and
+\author{\IEEEauthorblockN{Anonymous ICME Submission}}
 % \IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
 % \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
 % \textit{name of organization (of Aff.)}\\
@@ -98,9 +93,16 @@ style=numeric,
 
 
 \section{Introduction}
+% Why is human early action recognition important?
 Human early action recognition has applications in fields such as human-robot teaming~\cite{yu2021MultisensorGestureInteractionSystemHumanrobotCooperation}, pedestrian avoidance~\cite{rasouli2020PedestrianActionAnticipationusingContextualFeatureFusionStackedRNNs}, abnormal activity detection in surveillance~\cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos} and fall detection in aged care settings~\cite{DeeplearningvisionbasedfalldetectionsystemEnhancedopticaldynamicflow}.
 The task of early action recognition focuses on both the accuracy and speed of action classification~\cite{lai2024HumanActionAnticipationSurvey}.
 This is particularly useful in real-time applications, such as robotics, where robot response is time-critical.
+
+% Human early visual motion cues
+Early human visual motion cues are exhibited by human's during movement or action [CITE].
+In human brains, these motion cues are perceived at early stages of visual processing to prime other centres of the brain (for example, the pre-motor cortex)~\cite{meichow2023Eyemovementsopticflowperception}.
+This sensitivity to motion comes from the use of human vision system's use of optical flow - the perceived movement of light patterns projecting onto the eye.
+In the analysis of human actions, these early motion cues are generally exhibited as image motion located around specific points of interest on the human body [CITE].
 
 
 % Skeleton-approaches BENEFITS
@@ -130,11 +132,13 @@ A simple embedding layer added to state-of-the-art skeleton-based action recogni
 The main contributions of the proposed method are as follows:
 \begin{itemize}
         % Sampling flow around pose keypoints is a way to extract early visual motion cues
-  \item A feature extraction method for strategically sampling the optical flow field surrounding human pose keypoints.
+  \item ``PoseOFF'', a feature extraction method for strategically sampling the optical flow field surrounding human pose keypoints as a way to highlight human early visual motion cues.
         % Simple embedding layer
   \item A simple embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
-        % Demonstration of increased accuracy and predictive ability
-  \item An evaluation of three state-of-the-art skeleton-based action recognition models modified to learn additional optical flow features.
+        % Demonstration of increased accuracy
+  \item An evaluation of the performance of three state-of-the-art skeleton-based action recognition models with and without the PoseOFF embeddings.
+        % Demonstration of increased action anticipation
+  \item Demonstration of an enhanced action anticipation ability of skeleton-based action recognition models with the use of ``PoseOFF'' features.
 \end{itemize}
 
 
@@ -159,16 +163,20 @@ Liu et al.
 \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules to pass information across different graph scales.
 
 % InfoGCN+
-Existing human-action recognition models must capture the entire action sequence in order to make predictions, which may present latency issues for real-time applications such as human-robot interaction. Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states. The complete model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
+Existing human-action recognition models must capture the entire action sequence in order to make predictions, which may present latency issues for real-time applications such as human-robot interaction. Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
+Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
 % Mutli-modal approach to HAR
 Multi-modal approaches to human action recognition area common. Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses. The inclusion of an optical flow stream increased hockey action classification by 10\%.
+[ONE MORE EXAMPLE?]
 
 
 
 \section{Method}%
 \label{sec:method}
-We propose a novel feature extraction method designed to be easily integrated in existing state of the art skeleton-based action recognition models. This model is based on
+We propose a novel feature extraction method designed to be easily integrated in existing state of the art skeleton-based action recognition models.
+The feature extraction methodology, ``PoseOFF'', is designed to extract information about human early visual motion cues.
+By embedding these early motion cues as learnable features in skeleton-based action recognition models, we aim to show that the features obtained through the ``PoseOFF'' extraction method can provide these state-of-the-art models greater action anticipation ability without sacrificing action classification accuracy.
 
 \subsection{PoseOFF}%
 \label{subsec:PoseOFF}
@@ -178,6 +186,37 @@ This is a general term for the method of sampling windows of optical flow surrou
 We have chosen to sample optical flow surrounding human-pose keypoints as these are areas in videos of humans where motion relating to human actions take place (the human body).
 Specifically, optical flow surrounding human pose keypoints was chosen as a way to embed human early visual motion cue information into existing skeleton action recognition models.
 
+% Dilation examples
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/Dilation/Dilations.png}
+  \caption{\label{fig:dilations}Example of flow field sampling with dilation 1 (left) and dilation 3 (right). The grid represents the vector field of optical flow, with orange cells representing vectors sampled to embed as additional learnable features. The blue cell in the centre is the optical flow vector aligning with the pixel coordinates of the human pose keypoint around which the optical flow window is being sampled.}
+\end{figure}
+
+% Classification accuracy table
+\begin{center}
+  \begin{table*}[ht!]\centering
+    \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets - joint stream only.}
+    \resizebox{.8\textwidth}{!}{
+    \begin{tabular}{ll|ll|ll|lll|}
+      \cline{3-9}
+      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
+      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 61.39\% & 62.02\% & 63.45\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{68.84\%} & \textbf{69.88\%} & \textbf{66.36\%} \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.37\% & 47.96\% & 46.86\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{58.27\%} & \textbf{60.13\%} & \textbf{58.61\%} \\ \hline
+    \end{tabular}
+    }
+  \end{table*}
+\end{center}
+
+
 % Sampling optical flow windows with dilation
 Based on our testing, a window size of $5\times5$ flow vectors demonstrated a good balance data efficiency and learnable features.
 For videos with higher resolutions, we sample optical flow vectors with a dilated window.
@@ -186,27 +225,20 @@ This provides a greater receptive field of optical flow vectors to be sampled wi
 The UCF-101 dataset has a resolution of $320\times240$ pixels, and we do not use dilated window optical flow sampling (dilation = 1).
 
 % PoseOFF fig
-% \begin{figure*}[ht]
-%   \centering
-%   \includegraphics[width=0.9\linewidth]{figures/Flowpose_diagram_HORIZONTAL_HUG.png}
-%   \caption{\label{fig:flowpose_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos (left), both optical flow (top centre) and human skeleton keypoints (bottom centre) are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate flowpose right, and are used as learnable embeddings.}
-% \end{figure*}
 
 % Why use flow and not just joint motion?
-Optical flow provides richer information than joint displacement vectors. Where displacement indicate where a joint has come from, windows of optical flow can contain a more nuanced motion information about the moving pixels %ref.
+Optical flow provides richer information than joint displacement vectors.
+Where displacement indicates where a joint has come from, windows of optical flow can contain a more nuanced motion information about the moving pixels~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows}.
+PoseOFF presents a considerably more data efficient method of embedding this nuanced motion information into existing models.
 
-
-% What algorithms did we use to calculate optical flow?
-Optical flow was extracted using the Pytorch implementation of the RAFT algorithm~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
-The UCF-101 dataset is RGB only and does not include pre-computed human-pose keypoints.
-We extract human pose keypoints using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
 
 \subsection{Skeleton-based Action Recognition Models}
 \label{subsec:models}
 % How we modified the neural networks
 We make a simple modification to three state-of-the-art skeleton-keypoint action recognition models to incorporate learnable early visual motion cues.
-The embedding layer of each model was modified to include two convolutional layers for learning optical flow windows.
+The embedding layer of each model was modified to include a simple CNN designed to learn the features present in the windows of optical.
+The CNN consisted of two convolutional layers separated by activation layers, pooling and a linear layer.
 These learned features were then concatenated with the original skeleton keypoints coordinates as additional channels in the skeleton graph.
 
 % Which models were tested?
@@ -222,57 +254,47 @@ We used the temporal padding methods outlined in the respective papers to pad th
 
 \section{Experiments}%
 \label{sec:experiments}
+\subsection{Experimental Settings}%
+\label{subsec:experimental settings}
+% What algorithms did we use to calculate optical flow?
+All models were implemented in Python using PyTorch learning framework~\cite{paszkePyTorchImperativeStyleHighPerformanceDeepLearningLibrary}.
+Optical flow was extracted using the Pytorch implementation of the RAFT algorithm~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
+We extract human pose keypoints using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
+
+\textbf{Datasets.}
+The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis},NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF-101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
+
+% About the NTU dataset
+The NTU RGB+D 60 and NTU RGB+D 120 datasets were collected with three separate Microsoft Kinect v2 sensors and contains accurate 3D human skeleton data for every sample.
+Samples in these datasets are assigned one class label from a possible 60 or 120 classes respectively.
+
+% About the UCF-101 dataset
+The UCF-101 dataset is composed of human actions within videos collected from ``in the wild''.
+This is an RGB only dataset, and both the human skeleton keypoints and optical flow were calculated manually using the methods outlined above.
+
+\textbf{Evaluation Metrics.}
+For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able predict the correct class label of after observing the full action sequence.
+For the task of action anticipation, both the classification accuracy at each given observation ratio and the Area Under the Curve (AUC) are reported.
+The AUC is a measure of the model's performance across all evaluated observation ratios, and is calculated as:
+
+\[ \text{AUC}=\frac{\sum{\text{Acc}}_{\text{obs}}}{\text{N}_{\text{obs}}}\]
+Where $\text{Acc}_{\text{obs}}$ is the accuracy at a given observation ratio, $\text{obs}$, and $\text{N}_{\text{obs}}$ is the number of evaluated observation ratios.
+
+
 \subsection{Action Classification}%
 \label{subsec:exp_action_classification}
-Human action classification accuracy for the base model and model trained with data extracted using PoseOFF are presented in \ref{table:classification_accuay}.
+% How the results were obtained
+All models were trained and evaluated using full observations of the action sequences.
 The PoseOFF data was learned using a simple CNN layer added to each model's embedding layer.
 The flow windows for the NTU-RGB+D and NTU-RGB+D120 models were extracted using dilation 3.
 The flow windows for the UCF-101 dataset were extracted using dilation 1.
 
-% Classification accuracy table
-\begin{center}
-  \begin{table*}[ht!]\centering
-    \caption{\label{table:classification_accuay}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets.}
-    \resizebox{.8\textwidth}{!}{
-    \begin{tabular}{ll|ll|ll|lll|}
-      \cline{3-9}
-      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
-      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
-
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 59.48\% & 60.13\% & 60.64\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{64.40\%} & \textbf{66.02\%} & \textbf{66.14\%} \\ \hline
-
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.54\% & 45.60\% & 47.63\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{57.52\%} & \textbf{58.18\%} & \textbf{57.81\%} \\ \hline
-    \end{tabular}
-    }
-  \end{table*}
-\end{center}
-
-\subsection{Action Anticipation}%
-\label{subsec:exp_action_anticipation}
-To test the effectiveness of the PoseOFF data extraction, we evaluated each model at different observation ratios of the input sequence.
-The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
-The InfoGCN++ model produces a action class prediction every frame of the input sequence, so the observation ratio interval evaluations were not necessary for this model.
-These results are presented in \ref{fig:obs_ratio_trained}.
-
-% Observation accuracy table
-\begin{figure*}[ht]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/NTU_RGBD_60-CS_obs_ratios.png}
-  \caption{\label{fig:obs_ratio_trained}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals.}
-\end{figure*}
-
-
-\section{Discussion}%
-\label{sec:discussion}
 % Discussion of results table...
-The results table \ref{table:classification_accuay} demonstrates that the implementation of PoseOFF as additional learnable embeddings improves model performance on the datasets tested.
-The optical flow features provide additional and useful learnable information.
-This result is not particularly surprising given the fact that the flow vectors simply provide additional information to the model.
+The results presented in table \ref{table:classification_accuay} demonstrates that the implementation of PoseOFF as additional learnable embeddings improves model performance on the datasets tested.
+The optical flow features provide additional learnable information.
+It is particularly encouraging that we see improvements in action classification accuracy across all models and all datasets.
+We believe that this demonstrates the generalisability of the PoseOFF data extraction methodology.
 
 % The UCF101 dataset's results
 The classification accuracy results of the UCF-101 dataset shows the most varied results between the models.
@@ -282,12 +304,50 @@ These manually extracted poses are less accuracy and less precise than poses inc
 The models trained with data obtained using PoseOFF showed considerable improvement across the board.
 This is an encouraging sign for real-world applications.
 
-% \ref{fig:observation_accuracy} demonstrates that our model produces more accurate results. What this figure tells us is that our model, that utilises early visual motion cues, would only need to observe roughly 50\% of the input sequence to produce a classification accuracy comparable to that of the base model. This is more dramatic in the NTU RGB+D 120 dataset, which might indicate that our model is able to learn more complex features from a more complex dataset.
-% \ref{fig:graph_attention}
+\subsection{Action Anticipation}%
+\label{subsec:exp_action_anticipation}
+To test the effectiveness of the PoseOFF data extraction, we evaluated each model at different observation ratios of the input sequence.
+The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
+The InfoGCN++ model produces a action class prediction every frame of the input sequence, so the observation ratio interval evaluations were not necessary for this model.
+These results are presented in~\ref{fig:res_obs_ratio_ntu} and~\ref{fig:res_obs_ratio_ucf}.
 
-% Discussion of action anticipation graph
-The action anticipation results presented in~\ref{fig:obs_ratio_trained} are an indication that the PoseOFF can provide models without explicit future motion prediction features the ability to anticipate human actions.
+In these graphs, we also report the Area Under the Curve (AUC) for each model and embedding strategy.
+The AUC is a measure of the model's performance across all observation ratios.
+A higher AUC indicates that, on average, the model has performed better at the task of action anticipation.
 
+% What are we testing in these experiments?
+These experiments were designed to test whether PoseOFF effectively extracts human early visual motion cue information.
+Additionally, we were seeking to understand the role of human early visual motion cues in providing standard human skeleton action recognition models the ability to anticipate human actions.
+
+% Observation accuracy graphs
+\begin{figure*}[]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/NTU_RGBD_60-CS_obs_ratios.png}
+  \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+\end{figure*}
+
+\begin{figure*}[]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/UCF-101-2_obs_ratios.png}
+  \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF-101 evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+\end{figure*}
+
+
+% What do the graphs show us?
+The action anticipation results are an indication that the PoseOFF can provide models without explicit future motion prediction features the ability to anticipate human actions.
+We can see that the embedding of the features extracted with the PoseOFF method are able to anticipate the action happening in the videos more accurately, and with fewer frames.
+The gray dotted lines in these graphs is used to indicate the highest performance of the base model, in order to compare it's performance with the PoseOFF embedded versions of the models.
+
+% NTU dataset results
+The action anticipation results on the NTU RGB+D 60 dataset, shown in~\ref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
+For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80\% of the entire action sequence to achieve the same performance as the base model at 100\% observation ratio.
+At lower observation ratios, the ST-GCN++ base model is able to predict the action more accurately than the PoseOFF embedded model.
+For InfoGCN++, which was specifically designed for the task of action anticipation, the PoseOFF embedded version of the model needs to only see approximately half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
+
+% UCF action anticipation results
+The action anticipation results on the UCF-101 dataset, shown in~\ref{fig:res_obs_ratio_ucf}, highlights the fact that PoseOFF embedded models are much stronger at the task of human action anticipation.
+
+These results demonstrate that out method is able to increase the overall performance of models on noisy, and more realistic datasets.
 
 % Why is this important?
 The modifications made to the skeleton action recognition models were only in the first layers of the model, and did not significantly alter inner workings of the models.
@@ -297,13 +357,16 @@ We believe that the data produced from the PoseOFF extraction method can be easi
 
 \section{Conclusion}
 \label{sec:conclusion}
-We have demonstrated that the embedding of human early visual motion cues into established skeleton based human action recognition can improve the classification accuracy of a model. We have also shown that .....
+We have demonstrated that the embedding of human early visual motion cues into established skeleton based human action recognition can improve the action classification and action anticipation accuracy.
+We have also shown that .....
 
-Established skeleton-based action recognition models yield greater classification accuracy results with the addition of human early visual motion cue information.
+The implementation of PoseOFF into existing skeleton-based action recognition models requires only a minor modification to the model's embedding layer.
+PoseOFF presents a considerably more data efficient method of embedding this nuanced motion information into existing models.
 
 % Future work
 In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF-101 dataset, there was no dilation ($d=1$).
-Future work could explore the effects of having a dynamic sampling dilation. Dilation could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
+In future work, we will explore the effects of a dynamic sampling dilation.
+This dilation factor could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
 
 \printbibliography
 
