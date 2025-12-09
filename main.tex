@@ -101,7 +101,8 @@ This sensitivity to motion comes from the human vision system's use of optical f
 Human vision research indicates that the human motor system plays a crucial role when observing and predicting other's actions \cite{gredeback2015EyeMovementsActionObservation}.
 In primate brains, kinematic information of human skeletal interest points, typically joints, supports human action prediction, as well as emotional intent understanding.
 % This sentence doesn't really flow on...
-This motivates the consideration of how such kinematic information, as well as human early visual motion cues, can be used to support similar capabilities of visual interpretation of human movements in human-machine teaming scenarios.
+This motivates the consideration of how such kinematic information, as well as human early visual motion cues, can be used to support similar capabilities of visual interpretation of human movements in computer vision scenarios.
+% I took out ''human-machine teaming scenarios`` and replaced them with computer vision scenarios. I haven't really talked about human-machine teaming as an example in this work.
 
 
 % Skeleton-approaches BENEFITS
@@ -111,12 +112,14 @@ These skeleton keypoints provide meaningful and succinct information about human
 % The growing interest is partially due to the increase in availability of RGB-D sensors, giving rise to more skeleton-based action recognition datasets.
 % Skeleton keypoints contain  \textit{only} information about the position and movement of humans and ignore noisy background elements.
 Skeleton keypoints contain \textit{only} information about position and movement of humans.
-This allows action recognition algorithms to learn from data that is free from environmental noise, such as dynamic lighting conditions and background clutter.
 
 % Skeleton-approaches CHALLENGES
-Skeleton-only approaches fail to capture relations between limbs, and do not cope well with limb occlusion.
+While this allows action recognition algorithms to learn from data that is free from environmental noise, such as dynamic lighting conditions and background clutter, skeleton-only approaches fail to capture dynamic relationships between keypoints during action performance, and do not cope well with limb occlusion.
 Dedicated skeleton action recognition datasets often require human actions to be captured from multiple angles using multiple RGB-D sensors to produce reliable skeleton information~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding}.
 For actions with similar body motions, skeleton-only learning approaches fail to capture contextual features that may differentiate the actions, such as actions like ``put on backpack'' and ``put on jacket''.
+
+% Action anticipation
+There is a lack of research using human skeleton keypoints, and skeleton based methods for the purpose of rapid, low latency action prediction [CITE].
 
 % RGB approaches CHALLENGES
 RGB-only approaches to human action recognition must contend with large amounts of calculations needed to process video data.
@@ -124,7 +127,7 @@ Complex environments, such as outdoor settings or shifting camera perspectives, 
 RGB-only models designed to perform human early action recognition suffer when distinguishing intra-class differences and inter-class similarities.
 
 % Why optical flow and why PoseOFF?
-To address these challenges, we propose a method of embedding option flow information in existing skeleton-based action recognition models.
+To address these challenges, we propose a method of embedding localised spatio-temporal features extracted from keypoint-anchored windows of optical flow in existing skeleton-based action recognition models.
 Our Pose-guided Optical Flow Feature extraction method (PoseOFF) involves the strategic sampling of windows of optical flow surrounding human skeleton keypoints.
 Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
 A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action prediction.
@@ -134,13 +137,13 @@ A simple embedding layer integrated in three state-of-the-art skeleton-based act
 The main contributions of this work are:
 \begin{itemize}
         % Sampling flow around pose keypoints is a way to extract early visual motion cues
-  \item PoseOFF, a feature extraction method for strategically sampling the optical flow field surrounding human pose keypoints as a way to highlight human early visual motion cues.
+  \item PoseOFF, a novel feature embedding derived from optical flow in order to anticipate human action from early visual motion cues.
         % Simple embedding layer
   \item A simple embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
         % Demonstration of increased accuracy
   \item An evaluation of the performance of three state-of-the-art skeleton-based action recognition models with and without the PoseOFF embeddings.
         % Demonstration of increased action prediction
-  \item Demonstration of an enhanced action prediction ability of skeleton-based action recognition models with the use of PoseOFF features.
+  \item Showing for the first time an enhanced action prediction ability of skeleton-based action recognition models with the use of PoseOFF features.
 \end{itemize}
 
 
@@ -152,6 +155,15 @@ The main contributions of this work are:
 
 \section{Related work}%
 \label{sec:related_work}
+% Biological vision examples of fast action prediction
+Action anticipation is crucial for successful performance in elite sport.
+In many ball-sports, it is nearly impossible for the human eye to accurately track the trajectory of the ball.
+% A study of elite athletes visually scan for their opponents posture and body kinematics to rapidly prime their response.
+A meta-analysis~\cite{mann2007PerceptualCognitiveExpertiseSportMetaAnalysis} of eye-tracking research in sporting contexts indicates that elite athletes direct their gaze to information-dense areas.
+Football goalkeepers that received perception training on areas of a penalty taker's body to focus on showed an increase performance when anticipating the direction of the penalty taker's shot~\cite{savelsbergh2010Anticipationpenaltykickingdirectioncanbeimproveddirectingattentionperceptuallearning}.
+In social situations, humans fixate primarily on the torso, and self report that their attention focuses on hands, elbows and feet~\cite{ennisEyetracktiveMeasuringattentionbodypartswhenjudginghumanmotions}.
+
+
 % GCN
 Skeleton keypoints that are designed to represent human pose keypoints can be depicted as graphs, with graph nodes and edges representing human joints and bones respectively.
 This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolutional networks (GCNs) \cite{gori2005newmodellearninggraphdomains}.
@@ -159,17 +171,20 @@ This compact representation lends itself well to machine learning techniques bas
 % Many of the state-of-the-art methods of learning human actions in sequences of skeleton keypoints is through graph convolution.
 
 % ST-GCN++
-A GCN proposed by Duan et al. \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, ST-GCN++, achieved competitive performance on skeleton-based action recognition datasets without the need for complicated attention mechanisms to model temporal dynamics. ST-GCN++ was designed to provide a baseline for future skeleton-based action recognition models.
+A GCN proposed by Duan et al. \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, ST-GCN++, achieved competitive performance on skeleton-based action recognition datasets without the need for complicated attention mechanisms to model temporal dynamics. ST-GCN++ provides a baseline for future skeleton-based action recognition models.
 % MS-G3D
 Liu et al.
-\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules, to pass information across different graph scales.
+\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules, to pass information across different graph scales. Both ST-GCN++ and MS-G3D perform action recognition using full video sequences, and do not have explicit human action anticipation capabilities.
 
 % InfoGCN+
-Existing human-action recognition models must capture the entire action sequence in order to make predictions, which may present latency issues for real-time applications such as human-robot interaction. Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
+Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
 Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
 % Mutli-modal approach to HAR
-Multi-modal approaches to human action recognition area common. Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses. The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%.
+Multi-modal approaches to human action recognition area are also commonly applied.
+Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses.
+The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%, and that human pose and optical flow are complementary to each other.
+This approach was used only for the niche task of hockey action classification.
 
 % Human action prediction using optical flow
 Using this motion information [CITE] demonstrated that human actions could be anticipated with fewer frames that using standard RGB videos.
