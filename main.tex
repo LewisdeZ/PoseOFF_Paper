@@ -132,6 +132,12 @@ Our Pose-guided Optical Flow Feature extraction method (PoseOFF) involves the st
 Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
 A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action prediction.
 
+% PoseOFF extraction method diagram
+\begin{figure*}[ht]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/Flowpose_diagram_HORIZONTAL_HUG.png}
+  \caption{\label{fig:poseoff_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Feautres (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
+\end{figure*}
 
 % Contributions
 The main contributions of this work are:
@@ -147,11 +153,6 @@ The main contributions of this work are:
 \end{itemize}
 
 
-\begin{figure*}[ht]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figures/Flowpose_diagram_HORIZONTAL_HUG.png}
-  \caption{\label{fig:flowpose_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Feautres (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
-\end{figure*}
 
 \section{Related work}%
 \label{sec:related_work}
@@ -167,8 +168,6 @@ In social situations, humans fixate primarily on the torso, and self report that
 % GCN
 Skeleton keypoints that are designed to represent human pose keypoints can be depicted as graphs, with graph nodes and edges representing human joints and bones respectively.
 This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolutional networks (GCNs) \cite{gori2005newmodellearninggraphdomains}.
-% Graph convolution is a commonly used process in state-of-the-art skeleton human action recognition neural networks.
-% Many of the state-of-the-art methods of learning human actions in sequences of skeleton keypoints is through graph convolution.
 
 % ST-GCN++
 A GCN proposed by Duan et al. \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, ST-GCN++, achieved competitive performance on skeleton-based action recognition datasets without the need for complicated attention mechanisms to model temporal dynamics. ST-GCN++ provides a baseline for future skeleton-based action recognition models.
@@ -177,14 +176,13 @@ Liu et al.
 \cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules, to pass information across different graph scales. Both ST-GCN++ and MS-G3D perform action recognition using full video sequences, and do not have explicit human action anticipation capabilities.
 
 % InfoGCN+
-Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
+To approach the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
 Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
 % Mutli-modal approach to HAR
 Multi-modal approaches to human action recognition area are also commonly applied.
 Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses.
-The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%, and that human pose and optical flow are complementary to each other.
-This approach was used only for the niche task of hockey action classification.
+The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%, demonstrated the complementary features presented in optical flow and human pose.
 
 % Human action prediction using optical flow
 Using this motion information [CITE] demonstrated that human actions could be anticipated with fewer frames that using standard RGB videos.
@@ -196,15 +194,34 @@ Using this motion information [CITE] demonstrated that human actions could be an
 \label{sec:method}
 We propose a novel feature extraction method designed to be easily integrated within existing state of the art skeleton-based action recognition models.
 The feature extraction methodology, PoseOFF, is designed to sample information about human early visual motion cues.
-By embedding these early motion cues as learnable features in skeleton-based action recognition models, we aim to show that the features obtained through the PoseOFF extraction method can provide these state-of-the-art models greater action prediction ability without sacrificing action classification accuracy.
+
+By embedding these early motion cues as learnable features in skeleton-based action recognition models, we aim to show that the features obtained through the PoseOFF extraction method can provide these state-of-the-art models comparable accuracy with fewer observed frames. Moreover, we seek to achieve higher action anticipation ability with minimal additional computational overheads, thus retaining the feasibility of the methods applied in real-time settings on standard computing hardware.
 
 \subsection{PoseOFF}%
 \label{subsec:PoseOFF}
 % What is PoseOFF
-Pose-guided Optical Flow Features, PoseOFF, is a general term for the method of sampling windows of optical flow surrounding human-pose keypoints.
-We have chosen to sample optical flow surrounding human-pose keypoints as these are areas in videos of humans where motion relating to human actions take place (the human body).
-Specifically, optical flow surrounding human pose keypoints was chosen as a way to embed human early visual motion cue information into existing skeleton action recognition models.
-An overview of the data extraction approach is depicted in~\ref{fig:flowpose_extraction}.
+Pose-guided Optical Flow Features, PoseOFF, is a feature embedding for the task of human action prediction.
+PoseOFF aims to capture localised spatio-temporal cues at the onset of human actions, which may be observable from the local deformation of optical flow fields.
+We have chosen to sample these spatio-temporal cues surrounding human-pose keypoints.
+The choice of sampling these areas in videos is well aligned with vision science literature, which has shown that human perception of other human movement is primed by human motion cues in these key areas in order to react and respond in a timely manner.
+Given our application area seeks to support similar capabilities, it makes sense to explore how this may be utilised in an artificial vision system.
+% We have chosen to sample optical flow surrounding human-pose keypoints as these are areas in videos of humans where motion relating to human actions take place (the human body).
+% Specifically, optical flow surrounding human pose keypoints was chosen as a way to embed human early visual motion cue information into existing skeleton action recognition models.
+
+% Two types of data extracted with PoseOFF
+To obtain PoseOFF features for a video containing a human action, two types of data are extracted from videos; human skeleton keypoints (poses) and optical flow.
+From each frame of video, human poses are estimated, producing a set of points within image space where key joints are located (for example, elbows, shoulders, hips, knees).
+For each pair of temporally adjacent frames, optical flow is estimated, producing a vector field indicating the motion of the pixels between the adjacent frames.
+
+% Sample windows of optical flow
+Based on the estimated locations of skeleton keypoints, square windows are samples from the optical flow vector field.
+Human skeleton action recognition models represent the skeleton keypoints as a graph, with nodes of the graph containing information about the relative 2D or 3D positions of keypoints.
+PoseOFF appends the windows of optical flow surrounding these keypoints as additional graph node information.
+An overview of the data extraction approach is depicted in~\ref{fig:poseoff_extraction}.
+
+% The final output of PoseOFF
+The output of the PoseOFF embedding is a vector of shape:
+$(T, M, V, C)$
 
 % Dilation examples
 \begin{figure}[ht]

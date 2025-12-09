@@ -8,4 +8,7 @@
   - Improves early action recognition accuracy
 - Importantly, a way to embed human early visual motion cues to allow the model to predict actions with fewer frames!
 
-* Fold discussion into experiments!
+* Core ideas
+- Application area: HRI
+- PoseOFF as an extraction method can provide comparable accuracy with fewer observed frames
+- Higher action anticipation ability with minimal additional computational overheads
