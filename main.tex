@@ -322,7 +322,7 @@ The models tested using this methodology were InfoGCN++~\cite{chi2023InfoGCNLear
 % Trained on joint only stream
 The PoseOFF extraction method utilises human skeleton \textit{joints} as locations in image space from which to extract windows of optical flow.
 For this reason, the results presented in this paper are models trained and evaluated using the \textit{skeleton joint stream only}.
-Each model was trained on full observations of input sequences and tested using masking of test sequences at $10\%$ observation ratios. [Maybe an explainer of what observation ratio means?..]
+To test each model's performance at the task of early action recognition, the final frames of the input sequence were masked at specific ratios (10\% increments of the full sequence) to simulate partial observation of the action.
 We used the temporal padding methods outlined in~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition},~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} to pad the partially observed sequences to the frame length for each model's input.
 
 \subsection{Implementation}
