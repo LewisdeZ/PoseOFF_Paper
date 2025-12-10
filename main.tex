@@ -217,7 +217,7 @@ For each pair of temporally adjacent frames, optical flow is estimated, producin
 Based on the estimated locations of skeleton keypoints, square windows are samples from the optical flow vector field.
 Human skeleton action recognition models represent the skeleton keypoints as a graph, with nodes of the graph containing information about the relative 2D or 3D positions of keypoints.
 PoseOFF appends the windows of optical flow surrounding these keypoints as additional graph node information.
-An overview of the data extraction approach is depicted in~\ref{fig:poseoff_extraction}.
+An overview of the data extraction approach is depicted in~\autoref{fig:poseoff_extraction}.
 
 % The final output of PoseOFF
 % Pose shapes
@@ -230,17 +230,17 @@ Depending on the human pose extraction method, these skeleton keypoint channels 
 For each pair of temporally adjacent frames in the RGB video, optical flow is estimated to produce a total of $T-1$ optical flow vector fields, with $(u,v)$ vectors at each pixel location representing the motion that pixel took to reach it's current position in the latter frame.
 Centred at every skeleton keypoint, we sample $N\times N$ windows of optical flow vectors, producing a window of shape $(N,N,2)$.
 Optical flow vectors may be sampled with dilation, where may be introduced between the sampled vectors in order to increase the receptive field of sampling.
-Examples of dilated window sampling is presented in~\ref{fig:dilations}.
+Examples of dilated window sampling is presented in~\autoref{fig:dilations}.
 
 Each optical flow feature window is flattened to produce $C_{\text{flow}}=2N^2$ channels.
 These channels are appended to skeleton keypoint channels to produce a total of $C=C_{\text{pose}}+C_{\text{flow}}=2N^2+3$ channels for each skeleton keypoint.
 The output of the PoseOFF embedding is a vector of shape:
 \[ (T, M, V, C) \]
 
-% Sampling optical flow windows with dilation
-Based on our testing (not reported here), a window size of $5\times5$ flow vectors demonstrated a good balance between data efficiency and learnable features.
-For videos with higher resolutions, we sample optical flow vectors with a dilated window to increase the receptive field of the flow windows.
-A demonstration of two dilated windows is presented in~\ref{fig:dilations}.
+% % Sampling optical flow windows with dilation
+% Based on our testing (not reported here), a window size of $5\times5$ flow vectors demonstrated a good balance between data efficiency and learnable features.
+% For videos with higher resolutions, we sample optical flow vectors with a dilated window to increase the receptive field of the flow windows.
+% A demonstration of two dilated windows is presented in~\ref{fig:dilations}.
 
 % Dilation examples
 \begin{figure}[ht]
@@ -282,7 +282,21 @@ A demonstration of two dilated windows is presented in~\ref{fig:dilations}.
 
 % Data efficiency of PoseOFF
 PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information that training a neural network to learn from the entire flow field.
-[Comparison of data size comparisons -> skeletons alone -> PoseOFF -> skeletons + full flow field]
+\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
+\begin{center}
+  \begin{table}\centering
+    \caption{\label{table:datasize_comparison}Approximate data size of different forms of data for video $1920\times1080$ pixel resolution video containing two bodies and 100 frames. We assign 25 pose keypoints per body. For simplicity, we assume all values are stored as float32 (4 bytes) per value.}
+    \begin{tabular}{|c|c|c|}
+      \hline
+      Data type & Number of Samples & Data size \\
+      \hline
+      Pose only & 60,000 & 60kB \\
+      PoseOFF & 1,060,000 & 1060kB \\
+      Pose with full flow & 1,658,880,000 & 1.66GB \\
+      \hline
+    \end{tabular}
+  \end{table}
+\end{center}
 
 % Why use flow and not just joint motion?
 Optical flow provides richer information than joint displacement vectors alone.
@@ -292,13 +306,15 @@ Windows of optical flow can contain nuanced information about the rotation or de
 
 
 
+
 \subsection{Skeleton-based Action Recognition Models}
 \label{subsec:models}
 % How we modified the neural networks
-We make a simple modification to three state-of-the-art skeleton-keypoint action recognition models to incorporate learnable early visual motion cues.
+To demonstrate the applicability and effectiveness of PoseOFF, we modify three state-of-the-art skeleton-keypoint action recognition models to incorporate learnable early visual motion cues.
 The embedding layer of each model was modified to include a simple CNN designed to learn the features present in the windows of optical.
 The CNN consisted of two convolutional layers separated by activation layers, pooling and a linear layer.
 The output of these layers was concatenated with the original skeleton keypoints coordinates as additional channels in the skeleton graph.
+A diagram of the PoseOFF embedding layer added to each model is presented in \autoref{fig:embedding_network_diagram}.
 
 % Which models were tested?
 The models tested using this methodology were InfoGCN++~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}. The models were trained using the hyperparametes defined by the models' authors, with settings as close to those provided in the respective papers.
@@ -309,28 +325,34 @@ For this reason, the results presented in this paper are models trained and eval
 Each model was trained on full observations of input sequences and tested using masking of test sequences at $10\%$ observation ratios. [Maybe an explainer of what observation ratio means?..]
 We used the temporal padding methods outlined in~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition},~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} to pad the partially observed sequences to the frame length for each model's input.
 
-
-
-\section{Experiments}%
-\label{sec:experiments}
-\subsection{Experimental Settings}%
-\label{subsec:experimental settings}
+\subsection{Implementation}
+\label{subsec:implementation}
 % What algorithms did we use to calculate optical flow?
 All models were implemented in Python using the PyTorch learning framework~\cite{paszkePyTorchImperativeStyleHighPerformanceDeepLearningLibrary}.
 Optical flow was extracted using the PyTorch implementation of the RAFT algorithm~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
 When skeleton keypoints are not available, we extract human pose keypoints using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
-\textbf{Datasets.}
+
+
+\subsection{Datasets}
+\label{subsec:datasets}
 The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis},NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF-101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
 
 % About the NTU dataset
-The NTU RGB+D 60 and NTU RGB+D 120 datasets were collected with three separate Microsoft Kinect v2 sensors and contains accurate 3D human skeleton data for every sample.
+The NTU RGB+D 60 and NTU RGB+D 120 datasets consist of images obtained from three separate Microsoft Kinect v2 sensors, with ground truth and contains 3D human skeleton data for every sample.
 These datasets contain RGB videos, depth sequences, skeleton data (3D locations of 25 major body joints), and infrated frames.
 Samples in these datasets are assigned one class label from a possible 60 or 120 classes respectively.
+Given the ubiquity of these datasets in the skeleton action recognition literature~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, they were chosen to provide a baseline for comparing base model performance to a model trained with PoseOFF embeddings.
 
 % About the UCF-101 dataset
-The UCF-101 dataset is composed of human actions within videos collected ``in the wild''.
-This is an RGB only video dataset, and both the human skeleton keypoints and optical flow were estimated using the methods outlined above.
+The UCF-101 dataset is composed of human actions within unconstrained videos collected ``in the wild''.
+This is an RGB only video dataset, and both the human skeleton keypoints and optical flow were estimated using the methods outlined in Sec.~\ref{subsec:implementation}.
+This dataset was chosen as it provides a challenging skeleton action recognition task, using videos that were collected outside of laboratory conditions like those present in the NTU RGB+D datasets.
+
+
+
+\section{Experiments}%
+\label{sec:experiments}
 
 \textbf{Evaluation Metrics.}
 For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able predict the correct class label of after observing the full action sequence.
@@ -351,7 +373,7 @@ The flow windows for the UCF-101 dataset were extracted using dilation 1.
 
 
 % Discussion of results table...
-The results presented in Table~\ref{table:classification_accuay} demonstrate that the implementation of PoseOFF as additional learnable embeddings improves model performance on the datasets tested.
+The results presented in Table~\autoref{table:classification_accuay} demonstrate that the implementation of PoseOFF as additional learnable embeddings improves model performance on the datasets tested.
 The optical flow features provide additional learnable information.
 % It is particularly encouraging that we see improvements in action classification accuracy across all models and all datasets.
 We believe that this demonstrates the generalisability of the PoseOFF data extraction methodology.
@@ -375,7 +397,7 @@ CONT
 To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
 The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
 The InfoGCN++ model produces a action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model.
-These results are presented in~\ref{fig:res_obs_ratio_ntu} and~\ref{fig:res_obs_ratio_ucf}.
+These results are presented in~\autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
 
 % In these graphs, we also report the Area Under the Curve (AUC) for each model and embedding strategy.
 % The AUC is a measure of the model's performance across all observation ratios.
@@ -404,13 +426,13 @@ The action prediction results are an indication that the embedding of the featur
 The gray dotted lines in these graphs is used to indicate the highest performance of the base model, in order to compare it's performance with the PoseOFF embedded versions of the models.
 
 % NTU dataset results
-The action prediction results on the NTU RGB+D 60 dataset, shown in Figure~\ref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
+The action prediction results on the NTU RGB+D 60 dataset, shown in Figure~\autoref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
 For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80\% of the entire action sequence to achieve the same performance as the base model at 100\% observation ratio.
 At lower observation ratios, the ST-GCN++ base model is able to predict the action more accurately than the PoseOFF embedded model.
 For InfoGCN++, which was specifically designed for the task of action prediction, the PoseOFF embedded version of the model needs to only see approximately half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
 
 % UCF action prediction results
-The action prediction results on the UCF-101 dataset, shown in Figure~\ref{fig:res_obs_ratio_ucf}, highlights the fact that PoseOFF embedded models are much stronger at the task of human action prediction.
+The action prediction results on the UCF-101 dataset, shown in Figure~\autoref{fig:res_obs_ratio_ucf}, highlights the fact that PoseOFF embedded models are much stronger at the task of human action prediction.
 
 These results demonstrate that out method is able to increase the overall performance of models on noisy, and more realistic datasets.
 
