@@ -220,15 +220,41 @@ PoseOFF appends the windows of optical flow surrounding these keypoints as addit
 An overview of the data extraction approach is depicted in~\ref{fig:poseoff_extraction}.
 
 % The final output of PoseOFF
+% Pose shapes
+The input to the PoseOFF embedding extraction method is an RGB video of $T$ frames.
+For each frame $t$, we extract up to two human skeletons $M$, consisting of $V$ keypoints.
+Each skeleton keypoint contains $C_{\text{pose}}=3$ channels.
+Depending on the human pose extraction method, these skeleton keypoint channels either represent $(x,y,z)$ coordinates, where the z coordinate is an estimation of the distance that keypoint is from the camera, or $(x,y,\text{conf.})$, where $\text{conf.}$ is a value representing the pose estimation model's detection confidence level.
+
+% Flow shapes
+For each pair of temporally adjacent frames in the RGB video, optical flow is estimated to produce a total of $T-1$ optical flow vector fields, with $(u,v)$ vectors at each pixel location representing the motion that pixel took to reach it's current position in the latter frame.
+Centred at every skeleton keypoint, we sample $N\times N$ windows of optical flow vectors, producing a window of shape $(N,N,2)$.
+Optical flow vectors may be sampled with dilation, where may be introduced between the sampled vectors in order to increase the receptive field of sampling.
+Examples of dilated window sampling is presented in~\ref{fig:dilations}.
+
+Each optical flow feature window is flattened to produce $C_{\text{flow}}=2N^2$ channels.
+These channels are appended to skeleton keypoint channels to produce a total of $C=C_{\text{pose}}+C_{\text{flow}}=2N^2+3$ channels for each skeleton keypoint.
 The output of the PoseOFF embedding is a vector of shape:
-$(T, M, V, C)$
+\[ (T, M, V, C) \]
+
+% Sampling optical flow windows with dilation
+Based on our testing (not reported here), a window size of $5\times5$ flow vectors demonstrated a good balance between data efficiency and learnable features.
+For videos with higher resolutions, we sample optical flow vectors with a dilated window to increase the receptive field of the flow windows.
+A demonstration of two dilated windows is presented in~\ref{fig:dilations}.
 
 % Dilation examples
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/Dilation/Dilations.png}
-  \caption{\label{fig:dilations}Example of a $5\times5$ window of flow field sampling with dilation 1 (left) and dilation 3 (right). The grid represents the vector field of optical flow, with orange cells representing vectors sampled to embed as additional learnable features. The blue cell in the centre is the optical flow vector aligning with the pixel coordinates of the human pose keypoint around which the optical flow window is being sampled.}
+  \caption{\label{fig:dilations}Example of a $5\times5$ window of flow field sampling with dilation 1 (left) and dilation 3 (right). The grid represents the vector field of optical flow. The blue cell in the centre is the optical flow vector aligning with the pixel coordinates of the human pose keypoint around which the flow window is being sampled.}
 \end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/poseOFF_network_diagram/PoseOFF_network_diagram.png}
+  \caption{\label{fig:embedding_network_diagram}The embedding layer that learns the windows of optical flow, and concatenates these learned features with the original pose features (x,y,z positions).}
+\end{figure}
+
 
 % Classification accuracy table
 \begin{center}
@@ -253,14 +279,6 @@ $(T, M, V, C)$
   \end{table*}
 \end{center}
 
-
-% Sampling optical flow windows with dilation
-Based on our testing (not reported here), a window size of $5\times5$ flow vectors demonstrated a good balance between data efficiency and learnable features.
-For videos with higher resolutions, we sample optical flow vectors with a dilated window to increase the receptive field of the flow windows.
-A demonstration of two dilated windows is presented in~\ref{fig:dilations}.
-% For the NTU RGB+D and NTU RGB+D 120 datasets, with a frame resolution of $1920\times1080$ pixels, we sample the optical flow vectors with a dilation of 3.
-% This provides a receptive field of $13\times13$ sampled optical flow vectors representing pixel motion to without an increase in learnable data size.
-% The UCF-101 dataset has a resolution of $320\times240$ pixels, and we do not use dilated window optical flow sampling (dilation = 1).
 
 % Data efficiency of PoseOFF
 PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information that training a neural network to learn from the entire flow field.
