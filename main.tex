@@ -390,21 +390,18 @@ This test simulates an offline action recognition scenario.
 
 
 % Discussion of results table...
-The action classification results are presented in Table~\autoref{table:classification_accuracy}.
+The action classification results are presented in \autoref{table:classification_accuracy}.
 In this table, we have highlighted the best performing model for each dataset and evaluation.
 The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
-% The UCF101 dataset's results
-The classification accuracy results for the UCF-101 dataset shows the most varied results between the models.
-This dataset is RGB only, containing human actions from videos ``in the wild''.
-No depth data or skeleton poses accompany the dataset.
-The poses extracted using YOLO-POSE Large\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss} are generally less accurate or precise than those included in the NTU RGB+D datasets.
-% These manually extracted poses are less accuracy and less precise than poses included in the NTU RGB+D datasets.
-The models trained on data obtained using PoseOFF showed considerable improvements in classification accuracy across all datasets tested.
+Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF-101 datasets respectively.
 
-% Why RGB datasets are more close to real-world applications
-% This is an encouraging sign for real-world applications.
-The RGB only dataset is a good test for the application of PoseOFF features in real world applications.
-CONT
+
+% The UCF101 dataset's results
+Based on the results presented in the \autoref{table:classification_accuracy}, the UCF-101 dataset shows the highest average increase in classification accuracy across all models and all evaluations.
+This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
+The poses extracted using YOLO-POSE Large are generally less accurate or precise than those included in the NTU RGB+D datasets~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}.
+The significant increase in classification accuracy provided by PoseOFF embeddings for this dataset highlights the versatility of this feature embedding for real-world contexts.
+
 
 \subsection{Action Prediction}%
 \label{subsec:exp_action_prediction}
