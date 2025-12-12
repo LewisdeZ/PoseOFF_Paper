@@ -406,14 +406,12 @@ The significant increase in classification accuracy provided by PoseOFF embeddin
 \subsection{Action Prediction}%
 \label{subsec:exp_action_prediction}
 % How we tested action prediction
-To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
-The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
-The InfoGCN++ model produces a action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model.
-These results are presented in~\autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
+All models were basically trained using 100\% observation ratio and tested by viewing each video sequence at incriments of 10\% observation ratios.
+% To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
+% The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
+The InfoGCN++ model produces an action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model.
 
-% In these graphs, we also report the Area Under the Curve (AUC) for each model and embedding strategy.
-% The AUC is a measure of the model's performance across all observation ratios.
-% A higher AUC indicates that, on average, the model has performed better at the task of action prediction.
+The action prediction results are presented in \autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
 
 % What are we testing in these experiments?
 These experiments were designed to test whether PoseOFF effectively extracts human early visual motion cue information.
