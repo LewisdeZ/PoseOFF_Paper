@@ -72,7 +72,7 @@ style=numeric,
   % Three state-of-the-art skeleton-based action recognition models, (InfoGCN++, MS-G3D and ST-GCN++) are modified with a CNN embedding layer and show improvements in action classification and action prediction accuracy.
   With the addition of a lightweight embedding layer to learn windows of optical flow extracted with PoseOFF, three state of the art skeleton-based action recognition models (InfoGCN++, MS-G3D, ST-GCN++) show improvements in action classification accuracy and action prediction ability on three human action recognition datasets.
   % Testing the dataset on a non-skeleton specific dataset
-  The three models were trained and evaluated on the NTU RGB+D 60, NTU RGB+D 120 skeleton datasets and the UCF-101 RGB dataset.
+  The three models were trained and evaluated on the NTU RGB+D 60, NTU RGB+D 120 skeleton datasets and the UCF101 RGB dataset.
   Evaluation of the models on an RGB only dataset demonstrate the broad applications of data extraction and embedding method.
   % Optical flow windows embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
 \end{abstract}
@@ -313,7 +313,7 @@ When skeleton keypoints are not available, we extract human pose keypoints using
 
 % Hyperparameter management?
 The hyperparameters were chosen to match those defined by the model's authors for the NTU RGB+D 60 and NTU RGB+D 120 datasets.
-For the UCF-101 dataset, which did not have hyperparameters defined by the authors, we chose to mirror the settings used for the NTU RGB+D 60 dataset where possible.
+For the UCF101 dataset, which did not have hyperparameters defined by the authors, we chose to mirror the settings used for the NTU RGB+D 60 dataset where possible.
 Both the base model and PoseOFF embedded model were trained with identical hyperparameter settings.
 
 
@@ -321,7 +321,7 @@ Both the base model and PoseOFF embedded model were trained with identical hyper
 
 \subsection{Datasets}
 \label{subsec:datasets}
-The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis},NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF-101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
+The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis},NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
 
 % About the NTU dataset
 The NTU RGB+D 60 and NTU RGB+D 120 datasets consist of images obtained from three separate Microsoft Kinect v2 sensors, with ground truth and contains 3D human skeleton data for every sample.
@@ -330,15 +330,15 @@ Distinct train/test splits (evaluations) are provided by the authors in the resp
 Samples in these datasets are assigned one class label from a possible 60 or 120 classes respectively.
 Given the ubiquity of these datasets in the skeleton action recognition literature~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, they were chosen to provide a baseline for comparing base model performance to a model trained with PoseOFF embeddings.
 
-% About the UCF-101 dataset
-The UCF-101 dataset is composed of human actions within unconstrained videos collected ``in the wild''.
+% About the UCF101 dataset
+The UCF101 dataset is composed of human actions within unconstrained videos collected ``in the wild''.
 This is an RGB only video dataset, and both the human skeleton keypoints and optical flow were estimated using the methods outlined in Sec.~\ref{subsec:implementation}.
 The authors provide three distinct train/test splits.
 This dataset was chosen as it provides a challenging skeleton action recognition task, using videos that were collected outside of laboratory conditions like those present in the NTU RGB+D datasets.
 
 % Dilation factors between datasets
-The RGB video data of the NTU RGB+D datasets has a resolution of $1920\times1080$ pixels, whereas the UCF-101 dataset has a resolution of $320\times240$ pixels.
-Windows of optical flow for the PoseOFF embedding were sampled with a dilation factor of 3 for the NTU RGB+D datasets and a dilation factor of 1 for the UCF-101 datasets.
+The RGB video data of the NTU RGB+D datasets has a resolution of $1920\times1080$ pixels, whereas the UCF101 dataset has a resolution of $320\times240$ pixels.
+Windows of optical flow for the PoseOFF embedding were sampled with a dilation factor of 3 for the NTU RGB+D datasets and a dilation factor of 1 for the UCF101 datasets.
 A higher dilation factor was chosen for the NTU RGB+D datasets given their higher video resolution.
 See~\autoref{fig:dilations} an example of dilated window sampling.
 
@@ -346,11 +346,11 @@ See~\autoref{fig:dilations} an example of dilated window sampling.
 % Classification accuracy table
 \begin{center}
   \begin{table*}[ht!]\centering
-    \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF-101 datasets - joint stream only. The train/test splits (evaluations) for each dataset are presented in separate columns under each datasets heading.}
+    \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF101 datasets - joint stream only. The train/test splits (evaluations) for each dataset are presented in separate columns under each datasets heading.}
     \resizebox{.8\textwidth}{!}{
     \begin{tabular}{ll|ll|ll|lll|}
       \cline{3-9}
-      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF-101} \\ \cline{3-9}
+      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF101} \\ \cline{3-9}
       &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
       \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
@@ -386,18 +386,18 @@ In the full sequence evaluation, no temporal masking was applied to the input se
 This test simulates an offline action recognition scenario.
 % The PoseOFF data was learned using a simple CNN layer added to each model's embedding layer.
 % The flow windows for the NTU-RGB+D and NTU-RGB+D120 models were extracted using dilation 3.
-% The flow windows for the UCF-101 dataset were extracted using dilation 1.
+% The flow windows for the UCF101 dataset were extracted using dilation 1.
 
 
 % Discussion of results table...
 The action classification results are presented in \autoref{table:classification_accuracy}.
 In this table, we have highlighted the best performing model for each dataset and evaluation.
 The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
-Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF-101 datasets respectively.
+Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
 
 
 % The UCF101 dataset's results
-Based on the results presented in the \autoref{table:classification_accuracy}, the UCF-101 dataset shows the highest average increase in classification accuracy across all models and all evaluations.
+Based on the results presented in the \autoref{table:classification_accuracy}, the UCF101 dataset shows the highest average increase in classification accuracy across all models and all evaluations.
 This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
 The poses extracted using YOLO-POSE Large are generally less accurate or precise than those included in the NTU RGB+D datasets~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}.
 The significant increase in classification accuracy provided by PoseOFF embeddings for this dataset highlights the versatility of this feature embedding for real-world contexts.
@@ -410,11 +410,12 @@ All models were basically trained using 100\% observation ratio and tested by vi
 % To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
 % The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
 The InfoGCN++ model produces an action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model.
-
+These experiments were conducted using the Cross Subject (CS) evaluation of the NTU RGB+D 60 dataset, and the second evaluation defined by the authors of the UCF101 dataset.
 The action prediction results are presented in \autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
 
 % What are we testing in these experiments?
-These experiments were designed to test whether PoseOFF effectively extracts human early visual motion cue information.
+These experiments were designed to test whether the early visual motion cues extracted though PoseOFF facilitate earlier prediction of actions at a similar accuracy level to baseline models.
+
 Additionally, we were seeking to understand the role of human early visual motion cues in providing standard human skeleton action recognition models the ability to anticipate human actions.
 
 % Observation accuracy graphs
@@ -426,8 +427,8 @@ Additionally, we were seeking to understand the role of human early visual motio
 
 \begin{figure*}[]
   \centering
-  \includegraphics[width=1\linewidth]{figures/UCF-101-2_obs_ratios.png}
-  \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF-101 evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+  \includegraphics[width=1\linewidth]{figures/UCF101-2_obs_ratios.png}
+  \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
 
@@ -442,7 +443,7 @@ At lower observation ratios, the ST-GCN++ base model is able to predict the acti
 For InfoGCN++, which was specifically designed for the task of action prediction, the PoseOFF embedded version of the model needs to only see approximately half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
 
 % UCF action prediction results
-The action prediction results on the UCF-101 dataset, shown in Figure~\autoref{fig:res_obs_ratio_ucf}, highlights the fact that PoseOFF embedded models are much stronger at the task of human action prediction.
+The action prediction results on the UCF101 dataset, shown in Figure~\autoref{fig:res_obs_ratio_ucf}, highlights the fact that PoseOFF embedded models are much stronger at the task of human action prediction.
 
 These results demonstrate that out method is able to increase the overall performance of models on noisy, and more realistic datasets.
 
@@ -463,7 +464,7 @@ The implementation of PoseOFF into existing skeleton-based action recognition mo
 PoseOFF presents a considerably more data efficient method of embedding this nuanced human early visual motion cue information into existing models.
 
 % Future work
-In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF-101 dataset, there was no dilation ($d=1$).
+In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF101 dataset, there was no dilation ($d=1$).
 In future work, we will explore the effects of a dynamic sampling dilation.
 This dilation factor could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
 
