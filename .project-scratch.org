@@ -1,14 +1,26 @@
 #+TITLE: Project Scratch
 
 * Paper focus
-- Flow pose is:
+- PoseOFF is:
   - Easy to implement
   - Lightweight
   - Improves action classification accuracy
   - Improves early action recognition accuracy
 - Importantly, a way to embed human early visual motion cues to allow the model to predict actions with fewer frames!
+- Defining local regions of flow so as to allow prediction models to both the movement of keypoints, as well as the relationship with other point-anchored patches.
 
 * Core ideas
 - Application area: HRI
 - PoseOFF as an extraction method can provide comparable accuracy with fewer observed frames
 - Higher action anticipation ability with minimal additional computational overheads
+
+* Find citations:
+- VR/AR applications for human action anticipation
+- In particular, the role of early visual motion cues are well understood to offer predictive cues during human movement or action [CITE].
+- We are not the first to consider optical flow for the purpose of action recognition [CITE].
+
+
+* TODO code/graphs:
+- Test the inference speed between PoseOFF embedded models and base
+- OBS ratio graph
+- flowpose diagram refinement
