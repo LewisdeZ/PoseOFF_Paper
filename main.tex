@@ -126,8 +126,12 @@ In contrast, keypoint-anchored visual motion cues (e.g., wrist acceleration, tor
 % For actions with similar body motions, skeleton-only learning approaches fail to capture contextual features that may differentiate the actions, such as actions like ``put on backpack'' and ``put on jacket''.
 
 % Action anticipation
+Action classification and action anticipation are two separate but related tasks.
+In action classification, sometimes called offline action recognition, is retrospective recognition, where the full action has been completed and observed, and a label (or labels) are assigned.
+Action anticipation is the prediction of an a label (or labels) before the action has fully unfolded, using a partial observation of the full action.
+
 We are not the first to consider optical flow for the purpose of action recognition [REFS].
-While others have considered the role of optical flow, no one, to the best of our knowledge has considreed it's use specifically for capturing localised visual motion petterns anchored at skeletal key points.
+While others have considered the role of optical flow, no one, to the best of our knowledge has considered it's use specifically for capturing localised visual motion petterns anchored at skeletal key points.
 Most unique about this work is that we are defining local regions of flow so as to allow prediction models to not just exploit the tracked spatial patterns in each point-anchored flow field, but to learn the relationship with other point anchored patches.
 Not simply predicting trajectories
 Exploit spatial motion patterns present at the onset of actions, which may provide anticipatory benefit.
@@ -155,52 +159,64 @@ A simple embedding layer integrated in three state-of-the-art skeleton-based act
 % Contributions
 The main contributions of this work are:
 \begin{itemize}
-        % Sampling flow around pose keypoints is a way to extract early visual motion cues
-  \item PoseOFF, a novel feature embedding derived from optical flow in order to anticipate human action from early visual motion cues.
-        % Simple embedding layer
-  \item A simple embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
-        % Demonstration of increased accuracy
-  \item An evaluation of the performance of three state-of-the-art skeleton-based action recognition models with and without the PoseOFF embeddings.
-        % Demonstration of increased action prediction
-  \item Showing for the first time an enhanced action prediction ability of skeleton-based action recognition models with the use of PoseOFF features.
+  % Sampling flow around pose keypoints is a way to extract early visual motion cues
+  \item PoseOFF, a novel feature embedding derived from optical to encode local spatial visual motion cues for early human action prediction from early visual motion cues.
+  % Simple embedding layer
+  \item A novel embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
+  % Demonstration of increased accuracy
+  \item The first demonstration that embedding early visual motion cues at pose-anchored locations can support reduced latency action predictions at comparable accuracy. We show this for three state-of-the-art skeleton-based action recognition models, using three established action prediction datasets.
+  % Demonstration of increased action prediction
+  \item Novel insights guiding the practical implementation of our proposed approach within real-time vision processing pipelines to support responsive and robust action anticipation.
 \end{itemize}
+
+% How is this paper structure?
+This paper is structured as follows. \autoref{sec:related_work} presents a short literature review on action prediction and state-of-the-art skeleton action recognition models, \autoref{sec:method} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \autoref{sec:experiments} compares the baseline human action classification and action prediction results against those obtained using PoseOFF embedded models, and \autoref{sec:conclusion} concludes the paper and presents opportunities for future research.
 
 
 
 \section{Related work}%
 \label{sec:related_work}
-% Biological vision examples of fast action prediction
-Action anticipation is crucial for successful performance in elite sport.
-In many ball-sports, it is nearly impossible for the human eye to accurately track the trajectory of the ball.
-% A study of elite athletes visually scan for their opponents posture and body kinematics to rapidly prime their response.
-A meta-analysis~\cite{mann2007PerceptualCognitiveExpertiseSportMetaAnalysis} of eye-tracking research in sporting contexts indicates that elite athletes direct their gaze to information-dense areas.
-Football goalkeepers that received perception training on areas of a penalty taker's body to focus on showed an increase performance when anticipating the direction of the penalty taker's shot~\cite{savelsbergh2010Anticipationpenaltykickingdirectioncanbeimproveddirectingattentionperceptuallearning}.
-In social situations, humans fixate primarily on the torso, and self report that their attention focuses on hands, elbows and feet~\cite{ennisEyetracktiveMeasuringattentionbodypartswhenjudginghumanmotions}.
+  % Important recent methods
+  % ``In this work, we focus specifically on methdos that employ skeleton keypoints''
+  % Visual motion in action prediction
+  % Biological/human vision systems
+  % A couple of recent examples of flow being used for action prediction in artificial systems
+  % Summary remarks: ``While action prediction methods have progressed significantly, and methods involving flow have been previously explored, there is little work exploring more targeted uses of spatial patterns of flow at keypoints to capture anticipatory cues.''
+
+% Important recent methods
+Action classification and anticipation are long standing problems in computer vision, with increasing interest in approaches that can support real-time and online action prediction.
+In this work, we focus specifically on methods that employ skeleton keypoints for these tasks.
+The nature of the 2D or 3D points that represent human skeleton keypoints lends itself well to graph-based learning approaches.
+% Skeleton-action recognition...
+State-of-the-art skeleton-based human action recognition algorithms, such as ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} utilise Graph Convolutional Network (GCN) architecture to learn to classify human actions in spatio-temporal skeleton sequences.
+These models are designed to perform human action classification; making a prediction after viewing the complete action sequence.
 
 
-% GCN
-Skeleton keypoints that are designed to represent human pose keypoints can be depicted as graphs, with graph nodes and edges representing human joints and bones respectively.
-This compact representation lends itself well to machine learning techniques based in graph theory, such as graph convolutional networks (GCNs) \cite{gori2005newmodellearninggraphdomains}.
-
-% ST-GCN++
-A GCN proposed by Duan et al. \cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, ST-GCN++, achieved competitive performance on skeleton-based action recognition datasets without the need for complicated attention mechanisms to model temporal dynamics. ST-GCN++ provides a baseline for future skeleton-based action recognition models.
-% MS-G3D
-Liu et al.
-\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} designed MS-G3D, a skeleton-based action recognition model utilising spatial-temporal graph convolution modules, to pass information across different graph scales. Both ST-GCN++ and MS-G3D perform action recognition using full video sequences, and do not have explicit human action anticipation capabilities.
-
-% InfoGCN+
-To approach the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to model future skeleton states.
+% Action anticipation
+To approach the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a Neural Ordinary Differential Equations module into a skeleton-based action recognition model to predict future skeleton states.
 Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
-% Mutli-modal approach to HAR
-Multi-modal approaches to human action recognition area are also commonly applied.
-Cai et al. \cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses.
+% Visual motion in action prediction
+Skeleton-based approaches to human action classification and anticipation neglect local dynamics present in RGB videos that may provide discriminative signals about the nature of a human action before it's conclusion.
+The efficacy of visual motion cues for early action prediction is supported by biological vision research.
+% Biological vision examples of fast action prediction
+In many ball-sports, it is nearly impossible for the human eye to accurately track the trajectory of the ball.
+A meta-analysis~\cite{mann2007PerceptualCognitiveExpertiseSportMetaAnalysis} of eye-tracking research in sporting contexts indicates that elite athletes direct their gaze to information-dense areas.
+Football goalkeepers that received perception training on areas of a penalty taker's body to focus on showed an increase performance when anticipating the direction of the penalty taker's shot~\cite{savelsbergh2010Anticipationpenaltykickingdirectioncanbeimproveddirectingattentionperceptuallearning}.
+% In social situations, humans fixate primarily on the torso, and self report that their attention focuses on hands, elbows and feet~\cite{ennisEyetracktiveMeasuringattentionbodypartswhenjudginghumanmotions}.
+
+% Flow for human action recognition and action anticipation
+Using this motion information [CITE] demonstrated that human actions could be anticipated with fewer frames that using standard RGB videos.
+Cai et al.~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses.
 The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%, demonstrated the complementary features presented in optical flow and human pose.
 
-% Human action prediction using optical flow
-Using this motion information [CITE] demonstrated that human actions could be anticipated with fewer frames that using standard RGB videos.
-[CONT]
+% Papers containing flow as learnable features, possibly showing how it can enhance action prediction ability...
+https://openaccess.thecvf.com/content_ICCV_2019/papers/Gammulle_Predicting_the_Future_A_Jointly_Learnt_Model_for_Action_Anticipation_ICCV_2019_paper.pdf
+https://arxiv.org/pdf/1912.07148
+https://openaccess.thecvf.com/content_ICCV_2019/papers/Furnari_What_Would_You_Expect_Anticipating_Egocentric_Actions_With_Rolling-Unrolling_LSTMs_ICCV_2019_paper.pdf
 
+% No work using targeted uses of spatial patterns of flow @ keypoints
+While action prediction methods have progressed significantly, and methods involving flow have been previously explored, there is little work exploring more targeted uses of spatial patterns of flow at keypoints to capture anticipatory cues~\cite{lai2024HumanActionAnticipationSurvey}.
 
 
 \section{Method}%

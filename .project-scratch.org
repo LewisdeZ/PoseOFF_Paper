@@ -10,9 +10,13 @@
 - Defining local regions of flow so as to allow prediction models to both the movement of keypoints, as well as the relationship with other point-anchored patches.
 
 * Core ideas
-- Application area: HRI
 - PoseOFF as an extraction method can provide comparable accuracy with fewer observed frames
 - Higher action anticipation ability with minimal additional computational overheads
+** Action classification
+This is retrospective recognition, where the full action is observed, and the action has already occured or is complete.
+** Action anticipation
+Prediction of an action classification label before the action has fully unfolded, using only partial observations.
+
 
 * Find citations:
 - VR/AR applications for human action anticipation
@@ -24,3 +28,6 @@
 - Test the inference speed between PoseOFF embedded models and base
 - OBS ratio graph
 - flowpose diagram refinement
+
+* TODO Consistency
+Ensure action anticipation is primary term used.
