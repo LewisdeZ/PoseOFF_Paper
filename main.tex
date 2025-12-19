@@ -151,7 +151,7 @@ A simple embedding layer integrated in three state-of-the-art skeleton-based act
 % PoseOFF extraction method diagram
 \begin{figure*}[ht]
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/Flowpose_diagram_HORIZONTAL_HUG.png}
+  \includegraphics[width=0.9\linewidth]{figures/PoseOFF_embedding/PoseOFF_extraction.png}
   \caption{\label{fig:poseoff_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Feautres (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
 \end{figure*}
 
@@ -431,13 +431,13 @@ The action prediction results are presented in \autoref{fig:res_obs_ratio_ntu} a
 % Observation accuracy graphs
 \begin{figure*}[]
   \centering
-  \includegraphics[width=1\linewidth]{figures/NTU_RGBD_60-CS_obs_ratios.png}
+  \includegraphics[width=1\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
   \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
 \begin{figure*}[]
   \centering
-  \includegraphics[width=1\linewidth]{figures/UCF101-2_obs_ratios.png}
+  \includegraphics[width=1\linewidth]{figures/Results/UCF101-2_obs_ratios.png}
   \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 

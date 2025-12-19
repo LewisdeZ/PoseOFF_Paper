@@ -25,9 +25,6 @@ Prediction of an action classification label before the action has fully unfolde
 
 * TODO code/graphs:
 - Test the inference speed between PoseOFF embedded models and base
-- [[file:main.tex::subsubsec:obs_ratio][OBS ratio graph]]
-  - May want to test out action 113 (cheers and drink) or 118???
-- flowpose diagram refinement
 
 * TODO Consistency
 Ensure action anticipation is primary term used.
