@@ -21,12 +21,12 @@ Prediction of an action classification label before the action has fully unfolde
 * Find citations:
 - VR/AR applications for human action anticipation
 - In particular, the role of early visual motion cues are well understood to offer predictive cues during human movement or action [CITE].
-- We are not the first to consider optical flow for the purpose of action recognition [CITE].
 
 
 * TODO code/graphs:
 - Test the inference speed between PoseOFF embedded models and base
-- OBS ratio graph
+- [[file:main.tex::subsubsec:obs_ratio][OBS ratio graph]]
+  - May want to test out action 113 (cheers and drink) or 118???
 - flowpose diagram refinement
 
 * TODO Consistency
