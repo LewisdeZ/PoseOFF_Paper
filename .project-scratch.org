@@ -26,5 +26,6 @@ Prediction of an action classification label before the action has fully unfolde
 * TODO code/graphs:
 - Test the inference speed between PoseOFF embedded models and base
 
-* TODO Consistency
-Ensure action anticipation is primary term used.
+* TODO Text:
+- Tidy up references
+- Re-align graphs

@@ -62,22 +62,24 @@ style=numeric,
 \maketitle
 
 \begin{abstract}
-  This paper proposes a simple modification that can be made to existing human skeleton action recognition models to improve action classification accuracy and human action prediction capability.
-  % What?
-  We propose a method of extracting human early visual motion cues by sampling windows of optical flow surrounding skeleton keypoints in image space. We have titled this Pose-guided Optical Flow Feature methodology, PoseOFF.
-  % So what?
-  Windows of optical flow sampled surrounding human pose keypoints embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
+  % This paper proposes a simple modification that can be made to existing human skeleton action recognition models to improve action classification accuracy and human action prediction capability.
+  This paper proposes a novel method of embedding human early visual motion cues into established human skeleton action recognition models to reduce the number of frames required to classify human actions in videos.
+  % We propose a method of extracting human early visual motion cues by sampling windows of optical flow surrounding skeleton keypoints in image space.
+  % We have titled this Pose-guided Optical Flow Feature methodology, PoseOFF.
+  We achieve this using our Pose-guided Optical Flow Feature sampling method, PoseOFF, which uses spatial windows of optical flow to extract these human early visual motion cues.
+  We explore the different ways in which this information can be utilised by existing keypoint based human action recognition models.
+  PoseOFF samples optical flow from windows anchored at human pose keypoints, thereby embedding visual motion information in the learning process, enabling human action in fewer observed frames.
+  % Windows of optical flow sampled surrounding human pose keypoints embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
   % Now what?
   % Three state-of-the-art skeleton-based action recognition models, (InfoGCN++, MS-G3D and ST-GCN++) are modified with a CNN embedding layer and show improvements in action classification and action prediction accuracy.
-  With the addition of a lightweight embedding layer to learn windows of optical flow extracted with PoseOFF, three state of the art skeleton-based action recognition models (InfoGCN++, MS-G3D, ST-GCN++) show improvements in action classification accuracy and action prediction ability on three human action recognition datasets.
-  % Testing the dataset on a non-skeleton specific dataset
-  The three models were trained and evaluated on the NTU RGB+D 60, NTU RGB+D 120 skeleton datasets and the UCF101 RGB dataset.
-  Evaluation of the models on an RGB only dataset demonstrate the broad applications of data extraction and embedding method.
+  With the addition of a lightweight embedding layer to learn windows of optical flow extracted with PoseOFF, we demonstrate its effectiveness with three state of the art skeleton-based action recognition models (InfoGCN++, MS-G3D, ST-GCN++).
+  Specifically, our results show improved outcomes with respect to action classification accuracy, and latency (i.e., fewer observed frames required for prediction) on three action recognition datasets (NTU RGB+D 60, NTU RGB+D 120 skeleton datasets and the UCF101 RGB).
+  Evaluation of the models on an RGB only dataset demonstrates the broad applications of data extraction and embedding method.
   % Optical flow windows embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
 \end{abstract}
 
 \begin{IEEEkeywords}
-  Human Action Recognition, Online Action Recognition, Human Motion Prediction, Multi-modal Media Computing
+  Human Action Recognition, Human Action Anticipation, Human Motion Prediction, Multi-modal Media Computing
 \end{IEEEkeywords}
 
 
@@ -146,7 +148,7 @@ Exploit spatial motion patterns present at the onset of actions, which may provi
 To address these challenges, we propose a method of embedding localised spatio-temporal features extracted from keypoint-anchored windows of optical flow in existing skeleton-based action recognition models.
 Our Pose-guided Optical Flow Feature extraction method (PoseOFF) involves the strategic sampling of windows of optical flow surrounding human skeleton keypoints.
 Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
-A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action prediction.
+A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action anticipation.
 
 % PoseOFF extraction method diagram
 \begin{figure*}[ht]
@@ -163,13 +165,13 @@ The main contributions of this work are:
   % Simple embedding layer
   \item A novel embedding layer that can be easily implemented in existing skeleton-based action recognition models to learn windows of optical flow.
   % Demonstration of increased accuracy
-  \item The first demonstration that embedding early visual motion cues at pose-anchored locations can support reduced latency action predictions at comparable accuracy. We show this for three state-of-the-art skeleton-based action recognition models, using three established action prediction datasets.
-  % Demonstration of increased action prediction
+  \item The first demonstration that embedding early visual motion cues at pose-anchored locations can support reduced latency action predictions at comparable accuracy. We show this for three state-of-the-art skeleton-based action recognition models, using three established action classification datasets.
+  % Demonstration of increased action anticipation
   \item Novel insights guiding the practical implementation of our proposed approach within real-time vision processing pipelines to support responsive and robust action anticipation.
 \end{itemize}
 
 % How is this paper structure?
-This paper is structured as follows. \autoref{sec:related_work} presents a short literature review on action prediction and state-of-the-art skeleton action recognition models, \autoref{sec:method} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \autoref{sec:experiments} compares the baseline human action classification and action prediction results against those obtained using PoseOFF embedded models, and \autoref{sec:conclusion} concludes the paper and presents opportunities for future research.
+This paper is structured as follows. \autoref{sec:related_work} presents a short literature review on action classification, anticipation and state-of-the-art skeleton action recognition models, \autoref{sec:method} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \autoref{sec:experiments} compares the baseline human action classification and action anticipation results against those obtained using PoseOFF embedded models, and \autoref{sec:conclusion} concludes the paper and presents opportunities for future research.
 
 
 
@@ -310,8 +312,8 @@ For this reason, the results presented in this paper are models trained and eval
 To test each model's performance for the task of early action recognition, we employ temporal masking to simulate partial observation of the action.
 Temporal masking hides the final frames so the model must perform action classification on only the early part of an input sequence, allowing one to measure how soon it can recognise what action is taking place.
 Input sequences were temporally masked at specific ratios - \textit{observation ratios} - corresponding to proportions of the each model's temporal dimension.
-That is, if the model expects an input sequence containing 100 frames, an sequence with an observation ratio of 10\% would only contain the first 10 frames of the original action sequence.
-See [FIG-X] for an example of masked input sequence.
+\autoref{fig:poseoff_extraction} demonstrates a simplified example of a sequence with an observation ratio of 60\%; the model is shown the first 3 frames, and the last 2 frames are masked.
+% That is, if the model expects an input sequence containing 100 frames, an sequence with an observation ratio of 10\% would only contain the first 10 frames of the original action sequence.
 We used the temporal padding methods outlined in the skeleton-based action recognition papers; last frame duplication~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, replaying action sequence~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and zero padding~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} to pad the partially observed sequences to the frame length for each model's input.
 
 
@@ -384,7 +386,7 @@ See~\autoref{fig:dilations} an example of dilated window sampling.
 
 \textbf{Evaluation Metrics.}
 For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able predict the correct class label of after observing the full action sequence.
-For the task of action prediction, both the classification accuracy at each given observation ratio and the Area Under the Curve (AUC) are reported.
+For the task of action anticipation, both the classification accuracy at each given observation ratio and the Area Under the Curve (AUC) are reported.
 The AUC is a measure of the model's performance across all evaluated observation ratios, and is calculated as:
 
 \[ \text{AUC}=\frac{\sum{\text{Acc}}_{\text{obs}}}{\text{N}_{\text{obs}}}\]
@@ -408,24 +410,31 @@ In this table, we have highlighted the best performing model for each dataset an
 The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
 Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
 
-
-% The UCF101 dataset's results
-Based on the results presented in the \autoref{table:classification_accuracy}, the UCF101 dataset shows the highest average increase in classification accuracy across all models and all evaluations.
+% These results show a baseline increase in model performance
+The increase in action classification accuracy across all models and datasets is not unsurprising; the PoseOFF embeddings provide more information about the nature of the human motion taking place in the scene.
+The results for the UCF101 dataset, with an average increase in action classification accuracy of 11.22\% across all models, are particularly encouraging.
 This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
-The poses extracted using YOLO-POSE Large are generally less accurate or precise than those included in the NTU RGB+D datasets~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}.
-The significant increase in classification accuracy provided by PoseOFF embeddings for this dataset highlights the versatility of this feature embedding for real-world contexts.
+A higher action classification accuracy on this particular dataset reinforces notion that PoseOFF embeddings can provide increased salient information for real-world applications.
 
 
-\subsection{Action Prediction}%
-\label{subsec:exp_action_prediction}
-% How we tested action prediction
-These experiments were designed to test whether the early visual motion cues extracted though PoseOFF facilitate earlier prediction of actions at a similar accuracy level to baseline models.
-All models were trained using 100\% observation ratio and tested by viewing each video sequence at increments of 10\% observation ratios.
+
+% % The UCF101 dataset's results
+% he UCF101 dataset show the highest average increase in classification accuracy across all models and all evaluations.
+% This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
+% The poses extracted using YOLO-POSE Large are generally less accurate or precise than those included in the NTU RGB+D datasets~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}.
+% The significant increase in classification accuracy provided by PoseOFF embeddings for this dataset highlights the versatility of this feature embedding for real-world contexts.
+
+
+\subsection{Action Anticipation}%
+\label{subsec:exp_action_anticipation}
+% How we tested action anticipation
+To test whether the early visual motion cues extracted though PoseOFF facilitate earlier prediction of actions at a similar accuracy level to baseline models, temporal masking was used to simulate partial observation of the action (i.e. viewing an action currently taking place).
+The MS-G3D and ST-GCN++ models were trained using 100\% observation ratio and tested by viewing each video sequence at increments of 10\% observation ratios.
 % To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
 % The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
-The InfoGCN++ model produces an action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model.
+The InfoGCN++ model has temporal masking built in to the model and produces an action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
 These experiments were conducted using the Cross Subject (CS) evaluation of the NTU RGB+D 60 dataset, and the second evaluation defined by the authors of the UCF101 dataset.
-The action prediction results are presented in \autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
+The action anticipation results are presented in \autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
 
 
 % Observation accuracy graphs
@@ -446,22 +455,24 @@ The action prediction results are presented in \autoref{fig:res_obs_ratio_ntu} a
 The results are the average performance of the model's as they ``see'' more of each action sequence.
 In \autoref{fig:res_obs_ratio_ntu} and \autoref{fig:res_obs_ratio_ucf}, each point along the blue and orange curves corresponds to the action classification accuracy (y-axis) of the baseline and PoseOFF-embedded models, respectively, for a given observation ratio (x-axis).
 The gray dotted lines in these graphs indicates the highest performance of the base model, in order to compare it's performance with the PoseOFF embedded versions of the models.
+The x-value at which the gray and blue lines intersect denotes the observation ratio at which the FlowPose embedded model achieves the same accuracy as the base model with full observation.
+The observation ratio (x-value) of the point which the gray and blue lines intersect corresponds with the amount of the sequence that the PoseOFF embedded model needs in order to achieve the same action classification accuracy at the base model at 100\% observation ratio.
 
 
 % NTU dataset results
-The action prediction results on the NTU RGB+D 60 dataset, shown in~\autoref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
+The action anticipation results on the NTU RGB+D 60 dataset, shown in~\autoref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
 For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80\% of the entire action sequence to achieve the same performance as the base model at 100\% observation ratio.
 At lower observation ratios, the ST-GCN++ base model is able to predict the action more accurately than the PoseOFF embedded model.
-For InfoGCN++, which was specifically designed for the task of action prediction, the PoseOFF embedded version of the model needs to only see approximately half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
+For InfoGCN++, which was specifically designed for the task of action anticipation, the model utilising PoseOFF embeddeds needs to only see half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
 
-% UCF action prediction results
-The action prediction results on the UCF101 dataset, shown in~\autoref{fig:res_obs_ratio_ucf}, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence.
+% UCF action anticipation results
+The action anticipation results on the UCF101 dataset, shown in~\autoref{fig:res_obs_ratio_ucf}, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence.
 For all models, PoseOFF features enable the model to predict the action with the same accuracy as the base model after only seeing half of the full sequence.
 
 
 % Why is this important?
 The changes to the skeleton action recognition models were confined to the first layers of the network and did not substantially affect the models’ internal operations.
-We believe that the data produced from the PoseOFF extraction method can be easily implemented in any skeleton-based action recognition model to improve the model's action recognition and prediction ability.
+We believe that the data produced from the PoseOFF extraction method can be easily implemented in any skeleton-based action recognition model to improve the model's action recognition and anticipatory prediction ability.
 
 % Existing skeleton-based action recognition models can be easily modified in order to learn features extracted with PoseOFF.
 % This can improve the model performance for both human action classification and action prediction.
@@ -481,9 +492,6 @@ In future work, we look to explore how the accuracy of the optical flow method c
 If a faster, and perhaps less accurate method may be applied with little impact on demonstrated benefits, this would alleviate concerns that optical flow is too computationally expensive for real-time applications.
 Additionally, future work may probe whether certain actions are more easily classified using these PoseOFF, which may offer further insights as to when it is most likely to offer benefits.
 
-
-Showing that a fast and perhaps less accurate method can be applied with little impact on the demonstrated benefits would alleviate concerns that optical flow is too computationally expensive for real-time.
-Future work could investigate whether PoseOFF preferentially improves classification of specific action types, providing insight into when it is most beneficial.
 % In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF101 dataset, there was no dilation ($d=1$).
 % In future work, we will explore the effects of a dynamic sampling dilation.
 % This dilation factor could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
