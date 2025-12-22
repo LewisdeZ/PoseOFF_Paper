@@ -243,16 +243,16 @@ The output of the PoseOFF embedding is a vector of shape:
 \[ (T, M, V, C) \]
 
 % Dilation examples
-\begin{figure}[ht]
+\begin{figure}[b]
   \centering
   \includegraphics[width=0.8\linewidth]{figures/Dilation/Dilations.png}
-  \caption{\label{fig:dilations}Example of a $5\times5$ window of flow field sampling with dilation 1 (left) and dilation 3 (right). The grid represents the vector field of optical flow. The blue cell in the centre is the optical flow vector aligning with the pixel coordinates of the human pose keypoint.}
+  \caption{\label{fig:dilations}Example of a $5\times5$ window of flow field sampling with dilation 1 (left) and dilation 3 (right). The grid represents the vector field of optical flow. The blue cell in the center is the optical flow vector aligning with the pixel coordinates of the human pose keypoint.}
 \end{figure}
 
 % PoseOFF Network diagram!
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.7\linewidth]{figures/poseOFF_network_diagram/PoseOFF_network_diagram.png}
+  \includegraphics[width=0.6\linewidth]{figures/poseOFF_network_diagram/PoseOFF_network_diagram.png}
   \caption{\label{fig:embedding_network_diagram}The embedding layer that learns the windows of optical flow, and concatenates these learned features with the original pose features (x,y,z positions).}
 \end{figure}
 
@@ -261,7 +261,7 @@ PoseOFF sampling provides a considerably more data efficient method of embedding
 ~\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
 \begin{center}
   \begin{table}\centering
-    \caption{\label{table:datasize_comparison}Approximate data size of different forms of data for video $1920\times1080$ pixel resolution video containing two bodies and 100 frames. We assign 25 pose keypoints per body. PoseOFF embeddings are sampled with a window size $N=5$. For simplicity, we assume all values are stored as float32 (4 bytes) per value.}
+    \caption{\label{table:datasize_comparison}Approximate data size of different forms of data (stored as float32, 4 bytes) for video $1920\times1080$ pixel resolution video containing two bodies and 100 frames. We assign 25 pose keypoints per body. PoseOFF embeddings are sampled with window size $N=5$. }
     \begin{tabular}{|c|c|c|}
       \hline
       Data type & Number of Samples & Data size \\
