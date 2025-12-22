@@ -18,14 +18,9 @@ This is retrospective recognition, where the full action is observed, and the ac
 Prediction of an action classification label before the action has fully unfolded, using only partial observations.
 
 
-* Find citations:
-- VR/AR applications for human action anticipation
-- In particular, the role of early visual motion cues are well understood to offer predictive cues during human movement or action [CITE].
-
-
-* TODO code/graphs:
+* TODO
 - Test the inference speed between PoseOFF embedded models and base
-
-* TODO Text:
 - Tidy up references
-- Re-align graphs
+- De-verbose paper sections introduction
+- Set figures apart either above or at the bottom of the text
+- Cut down to six pages!

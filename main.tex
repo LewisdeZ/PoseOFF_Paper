@@ -67,10 +67,10 @@
 
 \begin{abstract}
   % This paper proposes a simple modification that can be made to existing human skeleton action recognition models to improve action classification accuracy and human action prediction capability.
-  This paper proposes a novel method of embedding human early visual motion cues into established human skeleton action recognition models to reduce the number of frames required to classify human actions in videos.
-  % We propose a method of extracting human early visual motion cues by sampling windows of optical flow surrounding skeleton keypoints in image space.
+  This paper proposes a novel method of embedding early visual motion cues into established human skeleton action recognition models to reduce the number of frames required to classify human actions in videos.
+  % We propose a method of extracting early visual motion cues by sampling windows of optical flow surrounding skeleton keypoints in image space.
   % We have titled this Pose-guided Optical Flow Feature methodology, PoseOFF.
-  We achieve this using our Pose-guided Optical Flow Feature sampling method, PoseOFF, which uses spatial windows of optical flow to extract these human early visual motion cues.
+  We achieve this using our Pose-guided Optical Flow Feature sampling method, PoseOFF, which uses spatial windows of optical flow to extract these early visual motion cues.
   PoseOFF samples optical flow from windows anchored at human pose keypoints, thereby embedding visual motion information in the learning process, enabling human action in fewer observed frames.
   We explore the different ways in which this information can be utilised by existing keypoint based human action recognition models.
   % Windows of optical flow sampled surrounding human pose keypoints embed motion information in the learning process and enable the recognition of actions with fewer observed frames.
@@ -91,11 +91,11 @@
 % Why is human early action recognition important?
 Human action prediction is a common task in computer vision that aims to predict actions in video data.
 Where such predictions are required quickly and as part of a human responsive interaction loop, the problem becomes one of action anticipation, in which the aim is to accurately predict actions in as few observed frames as possible.
-Example applications include human-robot teaming~\cite{yu2021MultisensorGestureInteractionSystemHumanrobotCooperation}, AR/VR applications~\cite{xu2025SeeingMyFuturePredictingSituatedInteractionBehaviorVirtualReality}, safety monitoring in video surveillance~\cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, among others.
+Example applications include human-robot teaming~\cite{yu2021MultisensorGestureInteractionSystemHumanrobotCooperation}, AR/VR applications~\cite{xu2025SeeingMyFuturePredictingSituatedInteractionBehaviorVirtualReality}, safety monitoring in video surveillance~\cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, among others where a timely response is critical to the overall system performance.
 The task of human action prediction focuses on the accuracy, speed and frame latency of action classification~\cite{lai2024HumanActionAnticipationSurvey}.
-In such cases, rapid low-latency action anticipation may allow interactive systems to pre-load resources such as pre-loading relevant objects in mixed reality (XR) systems, or pruning and/or priming potential response actions in human-machine interfacing contexts, supporting quicker, more natural interactions.
+In such cases, rapid low-latency action anticipation may allow interactive systems to pre-load resources such as relevant objects in mixed reality (XR) systems, or pruning and/or priming potential response actions in human-machine interfacing contexts, supporting quicker, more natural interactions.
 
-% Human early visual motion cues
+% early visual motion cues
 Anticipatory action prediction is well established in the primate brain.
 In particular, the role of early visual motion cues are well understood to offer predictive and response-priming cues during human movement and action~\cite{hagemann2006TrainingPerceptualSkillOrientingVisualAttention}.
 In human vision, these motion cues are perceived at early stages of visual processing, made available from optical flow - the perceived movement of light patterns projecting onto the eye - to prime other centres of the brain (e.g., the pre-motor cortex)~\cite{meichow2023Eyemovementsopticflowperception}.
@@ -103,7 +103,7 @@ In human vision, these motion cues are perceived at early stages of visual proce
 Human vision research indicates that the human motor system plays a crucial role when observing and predicting other's actions \cite{gredeback2015EyeMovementsActionObservation}.
 In primate brains, kinematic information of human skeletal interest points, typically joints, supports human action prediction, as well as emotional intent understanding.
 % This sentence doesn't really flow on...
-This motivates the consideration of how such kinematic information, as well as human early visual motion cues, can be used to support similar capabilities of visual interpretation of human movements in computer vision scenarios.
+This motivates consideration of how such kinematic information, as well as early visual motion cues, can be used to support similar capabilities of visual interpretation of human movements in computer vision scenarios.
 
 % Human skeleton based action recognition
 Human skeleton keypoints are 2D or 3D locations of major body joints extracted from images or videos, providing a compact and interpretable representation of human pose in each frame.
@@ -114,48 +114,33 @@ As a result, skeleton-only representations encode joint positions and coarse mov
 For actions with similar gross body movements—such as distinguishing a handshake from a punch—keypoint-only models are unlikely to make accurate predictions until most of the action sequence has unfolded.
 In contrast, keypoint-anchored visual motion cues (e.g., wrist acceleration, torso rotation or deformation) may provide early discriminative signals that support faster and more reliable action prediction.
 
-% % Skeleton-approaches BENEFITS
-% Human skeleton keypoints are 2D or 3D locations of major human body joints extracted from images or videos.
-% These skeleton keypoints provide meaningful and succinct information about human actions.
-% % Skeleton-based action recognition has grown as an area of interest in the last two decades.
-% % The growing interest is partially due to the increase in availability of RGB-D sensors, giving rise to more skeleton-based action recognition datasets.
-% % Skeleton keypoints contain  \textit{only} information about the position and movement of humans and ignore noisy background elements.
-% Skeleton keypoints contain \textit{only} information about position and movement of humans.
-
-% % Skeleton-approaches CHALLENGES
-% While this allows action recognition algorithms to learn from data that is free from environmental noise, such as dynamic lighting conditions and background clutter, skeleton-only approaches fail to capture dynamic relationships between keypoints during action performance, and do not cope well with limb occlusion.
-% Dedicated skeleton action recognition datasets often require human actions to be captured from multiple angles using multiple RGB-D sensors to produce reliable skeleton information~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding}.
-% For actions with similar body motions, skeleton-only learning approaches fail to capture contextual features that may differentiate the actions, such as actions like ``put on backpack'' and ``put on jacket''.
 
 % Action anticipation
 Action classification and action anticipation are two separate but related tasks.
-In action classification, sometimes called offline action recognition, is retrospective recognition, where the full action has been completed and observed, and a label (or labels) are assigned.
-Action anticipation is the prediction of an a label (or labels) before the action has fully unfolded, using a partial observation of the full action.
+Action classification, sometimes called offline action recognition, is retrospective recognition, where the full action has been completed and observed, and a label (or labels) are assigned.
+Action anticipation is the prediction of an a label (or labels) before the action has fully unfolded, using a partial observation of the full action~\cite{lai2024HumanActionAnticipationSurvey,chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
 
-We are not the first to consider optical flow for the purpose of action recognition~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows,gammulle2019PredictingFutureJointlyLearntModelActionAnticipation,lai2024HumanActionAnticipationSurvey}.
-While others have considered the role of optical flow, no one, to the best of our knowledge has considered it's use specifically for capturing localised visual motion petterns anchored at skeletal key points.
-Most unique about this work is that we are defining local regions of flow so as to allow prediction models to not just exploit the tracked spatial patterns in each point-anchored flow field, but to learn the relationship with other point anchored patches.
-Not simply predicting trajectories
-Exploit spatial motion patterns present at the onset of actions, which may provide anticipatory benefit.
-% There has been some work that utilises flow for human action prediction [CITE], but a distinct lack of work that has sought to embed local point-anchored optical flow information into action prediction model for the purpose of capturing local motion patterns.
+We are not the first to consider optical flow for the purpose of action recognition~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows,gammulle2019PredictingFutureJointlyLearntModelActionAnticipation,lai2024HumanActionAnticipationSurvey,cai2020JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition}.
+While others have considered the role of optical flow to support action classification, none have considered it's use specifically for capturing localized visual motion patterns anchored at skeletal keypoints for action anticipation.
+Unlike previous approaches, we propose the inclusion of local key keypoint anchored flow regions within skeletal-based action prediction architectures in order to supplement existing keypoint movement tracking with learned features and relationships derived from localized spatial motion patterns.
+In so doing, we aim to exploit such cues at the onset of actions, thereby supporting earlier, more anticipatory action prediction.
 
 
-% % RGB approaches CHALLENGES
-% RGB-only approaches to human action recognition must contend with large amounts of calculations needed to process video data.
-% Complex environments, such as outdoor settings or shifting camera perspectives, present challenges for RGB-only models in capturing robust human action features~\cite{wang2014CrossviewActionModelingLearningRecognition}.
-% RGB-only models designed to perform human early action recognition suffer when distinguishing intra-class differences and inter-class similarities.
 
 % Why optical flow and why PoseOFF?
-To address these challenges, we propose a method of embedding localised spatio-temporal features extracted from keypoint-anchored windows of optical flow in existing skeleton-based action recognition models.
-Our Pose-guided Optical Flow Feature extraction method (PoseOFF) involves the strategic sampling of windows of optical flow surrounding human skeleton keypoints.
-Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
-A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action anticipation.
+% To address these challenges, we propose a method of embedding localised spatio-temporal features extracted from keypoint-anchored windows of optical flow in existing skeleton-based action recognition models.
+% Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
+% A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action anticipation.
+To address these challenged, we introduce our novel Pose-guided Optical Flow Feature extraction method, PoseOFF.
+PoseOFF involves the \textit{targeted} sampling of windows of optical flow surrounding human each skeleton keypoint.
+To explot this sampled visual motion information, we propose the integration of a simple embedding layer into keypoint based prediction models, allowing models to learn additional nuanced information beyond keypoint movement alone, of relevance to the action prediction task.
+We demonstrate the benefit of our approach with three state-of-the-art skeleton-based action recognition models, showing improvement in classification accuracy, and with significantly reduced latency (i.e., improved action anticipation).
 
 % PoseOFF extraction method diagram
 \begin{figure*}[ht]
   \centering
   \includegraphics[width=0.9\linewidth]{figures/PoseOFF_embedding/PoseOFF_extraction.png}
-  \caption{\label{fig:poseoff_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Feautres (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
+  \caption{\label{fig:poseoff_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Features (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
 \end{figure*}
 
 % Contributions
@@ -168,11 +153,11 @@ The main contributions of this work are:
   % Demonstration of increased accuracy
   \item The first demonstration that embedding early visual motion cues at pose-anchored locations can support reduced latency action predictions at comparable accuracy. We show this for three state-of-the-art skeleton-based action recognition models, using three established action classification datasets.
   % Demonstration of increased action anticipation
-  \item Novel insights guiding the practical implementation of our proposed approach within real-time vision processing pipelines to support responsive and robust action anticipation.
+  \item Novel insights guiding the practical implementation of PoseOFF approach within real-time vision processing pipelines to support responsive and robust action anticipation.
 \end{itemize}
 
 % How is this paper structure?
-This paper is structured as follows. \hyperref[sec:related_work]{Section II} presents a short literature review on action classification, anticipation and state-of-the-art skeleton action recognition models, \autoref{sec:method} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \autoref{sec:experiments} compares the baseline human action classification and action anticipation results against those obtained using PoseOFF embedded models, and \autoref{sec:conclusion} concludes the paper and presents opportunities for future research.
+This paper is structured as follows. \hyperref[sec:related_work]{Section II} presents a short literature review on action classification, anticipation and state-of-the-art skeleton action recognition models, \hyperref[sec:method]{Section III} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \hyperref[sec:experiments]{Section IV} compares the baseline human action classification and action anticipation results against those obtained using PoseOFF embedded models, and \hyperref[sec:conclusion]{Section V} concludes the paper and presents opportunities for future research.
 
 
 
@@ -195,7 +180,7 @@ These models are designed to perform human action classification; making a predi
 
 
 % Action anticipation
-To approach the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a future motion prediction module into a skeleton-based action recognition model to predict future skeleton states.
+Addressing the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a future motion prediction module into a skeleton-based action recognition model to predict future skeleton states.
 Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
 
 % Visual motion in action prediction
@@ -223,29 +208,28 @@ While action prediction methods have progressed significantly, and methods invol
 \section{Method}%
 \label{sec:method}
 We propose a novel feature extraction method designed to be easily integrated within existing state of the art skeleton-based action recognition models.
-The feature extraction methodology, PoseOFF, is designed to sample information about early human visual motion cues.
+Our extraction methodology, PoseOFF, is designed to sample information about early visual motion cues.
 
-By embedding these early motion cues as learnable features in skeleton-based action recognition architectures, we aim to show such features can support such state-of-the-art models achieving comparable accuracy with fewer observed frames.
+By embedding early motion cues as learnable features in skeleton-based action recognition architectures, we aim to show such features can support such state-of-the-art models achieving comparable accuracy with fewer observed frames.
 Moreover, we seek to achieve higher action anticipation ability with minimal additional computational overheads, thus retaining the feasibility of the methods applied in real-time settings on standard computing hardware.
 
 \subsection{PoseOFF}%
 \label{subsec:PoseOFF}
 % What is PoseOFF
-Pose-guided Optical Flow Features, PoseOFF, is our proposed feature embedding for anticipatory human action prediction.
 PoseOFF aims to capture localised spatio-temporal cues at the onset of human actions, anchored at each skeleton keypoint, which may be observable from the local deformation of optical flow fields.
-The choice of sampling these areas in videos is well aligned with vision science literature, which has shown that human perception of other's movement is primed by human motion cues in these key areas in order to react and respond in a timely manner.
-Given our targeted application areas require similar capabilities, it is of interest to explore how visual motion cues may be utilised in an artificial vision system.
+% The choice of sampling these areas in videos is well aligned with vision science literature, which has shown that human perception of other's movement is primed by human motion cues in these key areas in order to react and respond in a timely manner.
+% Given our targeted application areas require similar capabilities, it is of interest to explore how visual motion cues may be utilised in an artificial vision system.
 An overview of the data extraction approach is depicted in~\autoref{fig:poseoff_extraction}.
 
 % Two types of data extracted - First, pose
-To obtain PoseOFF features for a video containing a human action, two types of data are extracted from videos; human skeleton keypoints (poses) and optical flow.
+% To obtain PoseOFF features for a video containing a human action, two types of data are extracted from videos; human skeleton keypoints (poses) and optical flow.
 The input to the PoseOFF embedding extraction method is an RGB video of $T$ frames.
 For each frame in the video, $I_t$ with frame number $t\in[1,T]$, we extract up to two human skeletons $M$, consisting of $V$ keypoints.
 Each skeleton keypoint contains $C_{\text{pose}}=3$ channels.
-Depending on the human pose extraction method, these skeleton keypoint channels either represent $(x,y,z)$ coordinates, where the z coordinate is an estimation of the distance that keypoint is from the camera, or $(x,y,\text{conf.})$, where $\text{conf.}$ is a value representing the pose estimation model's detection confidence level.
+Depending on the human pose extraction method, these skeleton keypoint channels either represent $(x,y,z)$ coordinates, where the z coordinate is an estimation of the distance that keypoint is from the camera, or $(x,y,\alpha$, where $\alpha$ is a value representing the pose estimation model's detection confidence level.
 
 % Sample windows of optical flow
-Based on the estimated locations of skeleton keypoints, square windows are samples from the optical flow vector field.
+Based on the estimated locations of skeleton keypoints, square windows are sampled from the optical flow vector field.
 % Flow shapes
 For adjacent frames $I_t$ and $I_{t+1}$ in the RGB video, optical flow is estimated to produce a total of $T-1$ optical flow vector fields, with $(u,v)$ vectors at each pixel location representing an estimation of the motion of the pixel from frame $I_t$ to $I_{t+1}$.
 Centred at every skeleton keypoint $(x_t, y_t)$, we compute and sample $N\times N$ windows of optical flow vectors, producing a window of shape $(N,N,2)$.
@@ -312,8 +296,8 @@ For this reason, the results presented in this paper are models trained and eval
 \subsubsectionmark{Observation Ratio}\label{subsubsec:obs_ratio}
 To test each model's performance for the task of early action recognition, we employ temporal masking to simulate partial observation of the action.
 Temporal masking hides the final frames so the model must perform action classification on only the early part of an input sequence, allowing one to measure how soon it can recognise what action is taking place.
-Input sequences were temporally masked at specific ratios - \textit{observation ratios} - corresponding to proportions of the each model's temporal dimension.
-\autoref{fig:poseoff_extraction} demonstrates a simplified example of a sequence with an observation ratio of 60\%; the model is shown the first 3 frames, and the last 2 frames are masked.
+Input sequences were temporally masked at specific ratios - \textit{observation ratios} - corresponding to a proportion of the total frames accepted by the model as an input.
+\autoref{fig:poseoff_extraction} shows a simplified example of a sequence with an observation ratio of 60\%; the model is shown the first 3 frames, and the last 2 frames are masked.
 % That is, if the model expects an input sequence containing 100 frames, an sequence with an observation ratio of 10\% would only contain the first 10 frames of the original action sequence.
 We used the temporal padding methods outlined in the skeleton-based action recognition papers; last frame duplication~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, replaying action sequence~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and zero padding~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} to pad the partially observed sequences to the frame length for each model's input.
 
@@ -386,7 +370,7 @@ See~\autoref{fig:dilations} an example of dilated window sampling.
 \label{sec:experiments}
 
 \textbf{Evaluation Metrics.}
-For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able predict the correct class label of after observing the full action sequence.
+For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able to predict the correct class label of after observing the full action sequence.
 For the task of action anticipation, both the classification accuracy at each given observation ratio and the Area Under the Curve (AUC) are reported.
 The AUC is a measure of the model's performance across all evaluated observation ratios, and is calculated as:
 
@@ -410,12 +394,12 @@ The action classification results are presented in \autoref{table:classification
 In this table, we have highlighted the best performing model for each dataset and evaluation.
 % The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
 Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
+This increase in action classification accuracy suggests that the PoseOFF embeddings provide more information about the nature of the human motion taking place in the scene.
 
 % These results show a baseline increase in model performance
-The increase in action classification accuracy shown for PoseOFF embedded models in not unsurprising; the PoseOFF embeddings provide more information about the nature of the human motion taking place in the scene.
 The results for the UCF101 dataset, with an average increase in action classification accuracy of 11.22\% across all models, are particularly encouraging.
 This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
-A higher action classification accuracy on this particular dataset reinforces notion that PoseOFF embeddings can provide additional salient information for real-world applications.
+A higher action classification accuracy on this particular dataset reinforces notion that PoseOFF embeddings are likely providing additional salient information for real-world applications.
 
 
 % Observation accuracy graphs
@@ -472,26 +456,23 @@ For all models, PoseOFF features enable the model to predict the action with the
 
 
 % Why is this important?
-The changes to the skeleton action recognition models were confined to the first layers of the network and did not substantially affect the models’ internal operations.
-We believe that the data produced from the PoseOFF extraction method can be easily implemented in any skeleton-based action recognition model to improve the model's action recognition and anticipatory prediction ability.
+The changes required to adapt all three models were minimal and confined to only the first layers of each network.
+This paper has demonstrated that PoseOFF offers an easily implemented enhancement to existing models, with minimal additional overhead.
 
-% Existing skeleton-based action recognition models can be easily modified in order to learn features extracted with PoseOFF.
-% This can improve the model performance for both human action classification and action prediction.
-
-% What do the graphs show us?
-% The action anticipation results are an indication that the embedding of the features extracted with the PoseOFF method are able to anticipate the action happening in the videos more accurately, and with fewer frames
 
 \section{Conclusion}
 \label{sec:conclusion}
-We have demonstrated that the embedding of human early visual motion cues into established skeleton based human action recognition can increase overall action classification accuracy, and reduce number of frames required to achieve a competitive action classification accuracy.
+In this paper, we introduced PoseOFF, a novel feature extraction and embedding framework that integrates \textit{targeted} optical flow sampling around human skeleton keypoints to capture early motion cues for skeleton-based action recognition.
+We have demonstrated that the embedding of early visual motion cues into established skeleton based human action recognition can increase overall action classification accuracy, and reduce number of frames required to achieve a competitive action classification accuracy.
 
 The implementation of PoseOFF into existing skeleton-based action recognition models requires only a minor modification to the model's embedding layer.
-By comparison to a two stream approach, using full optical flow frames as well as skeleton keypoints, PoseOFF presents a more data efficient method of extracting relevant human early visual motion cue information.
+In addition to being easy to implement and reducing latency, it comes with only a modest increase in computational overheads compared to baseline models (i.e., without PoseOFF), thus making it a feasible choice for real-time applications.
+% By comparison to a two stream approach, using full optical flow frames as well as skeleton keypoints, PoseOFF presents a more data efficient method of extracting relevant human early visual motion cue information.
 
 % Future work
-In future work, we look to explore how the accuracy of the optical flow method choice impacts the benefits that PoseOFF provides.
-If a faster, and perhaps less accurate method may be applied with little impact on demonstrated benefits, this would alleviate concerns that optical flow is too computationally expensive for real-time applications.
-Additionally, future work may probe whether certain actions are more easily classified using these PoseOFF, which may offer further insights as to when it is most likely to offer benefits.
+Future work will consider the impact of alternative optical flow methods, in particular the potential use of faster, less accurate flow methods which may offer substantive performance benefits with minimal (if any) accuracy loss.
+% If a faster, and perhaps less accurate method may be applied with little impact on demonstrated benefits, this would alleviate concerns that optical flow is too computationally expensive for real-time applications.
+Additionally, future work will probe whether certain actions are more easily classified using these PoseOFF, which may offer further insights as to when it is most likely to offer benefits.
 
 % In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF101 dataset, there was no dilation ($d=1$).
 % In future work, we will explore the effects of a dynamic sampling dilation.
