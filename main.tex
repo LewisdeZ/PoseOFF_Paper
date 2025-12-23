@@ -49,19 +49,6 @@
 % \textit{name of organization (of Aff.)}\\
 % City, Country \\
 % email address or ORCID}
-% \and
-% \IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-% \textit{name of organization (of Aff.)}\\
-% City, Country \\
-% email address or ORCID}
-% \and
-% \IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-% \IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-% \textit{name of organization (of Aff.)}\\
-% City, Country \\
-% email address or ORCID}
-% }
 
 \maketitle
 
@@ -89,52 +76,37 @@
 
 \section{Introduction}
 % Why is human early action recognition important?
-Human action prediction is a common task in computer vision that aims to predict actions in video data.
-Where such predictions are required quickly and as part of a human responsive interaction loop, the problem becomes one of action anticipation, in which the aim is to accurately predict actions in as few observed frames as possible.
-Example applications include human-robot teaming~\cite{yu2021MultisensorGestureInteractionSystemHumanrobotCooperation}, AR/VR applications~\cite{xu2025SeeingMyFuturePredictingSituatedInteractionBehaviorVirtualReality}, safety monitoring in video surveillance~\cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, among others where a timely response is critical to the overall system performance.
-The task of human action prediction focuses on the accuracy, speed and frame latency of action classification~\cite{lai2024HumanActionAnticipationSurvey}.
-In such cases, rapid low-latency action anticipation may allow interactive systems to pre-load resources such as relevant objects in mixed reality (XR) systems, or pruning and/or priming potential response actions in human-machine interfacing contexts, supporting quicker, more natural interactions.
+Human action prediction is a central problem in computer vision, concerned with identifying actions from video data.
+When predictions must be made rapidly within interactive systems, the task becomes action anticipation, which aims to accurately predict actions from as few observed frames as possible.
+This capability is critical in applications such as human–robot teaming~\cite{yu2021MultisensorGestureInteractionSystemHumanrobotCooperation}, AR/VR~\cite{xu2025SeeingMyFuturePredictingSituatedInteractionBehaviorVirtualReality}, and video surveillance~\cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, where low-latency responses directly affect system performance.
+Accordingly, action anticipation emphasizes prediction accuracy under strict constraints on speed and frame latency, enabling systems to pre-load resources or prime response actions for more natural human–machine interaction~\cite{lai2024HumanActionAnticipationSurvey}.
 
 % early visual motion cues
-Anticipatory action prediction is well established in the primate brain.
-In particular, the role of early visual motion cues are well understood to offer predictive and response-priming cues during human movement and action~\cite{hagemann2006TrainingPerceptualSkillOrientingVisualAttention}.
-In human vision, these motion cues are perceived at early stages of visual processing, made available from optical flow - the perceived movement of light patterns projecting onto the eye - to prime other centres of the brain (e.g., the pre-motor cortex)~\cite{meichow2023Eyemovementsopticflowperception}.
-% The article cited below is really quite good, but I'm struggling to find anything that suggests that motion patters localised around skeleton points of interest...
-Human vision research indicates that the human motor system plays a crucial role when observing and predicting other's actions \cite{gredeback2015EyeMovementsActionObservation}.
-In primate brains, kinematic information of human skeletal interest points, typically joints, supports human action prediction, as well as emotional intent understanding.
-% This sentence doesn't really flow on...
-This motivates consideration of how such kinematic information, as well as early visual motion cues, can be used to support similar capabilities of visual interpretation of human movements in computer vision scenarios.
+Anticipatory action prediction is well established in the primate brain, where early visual motion cues play a key role in predicting and priming responses to observed actions~\cite{hagemann2006TrainingPerceptualSkillOrientingVisualAttention}.
+These cues arise at early stages of visual processing through optical flow, where the perceived motion of light patterns on the retina—and are propagated to higher-level motor regions such as the premotor cortex~\cite{meichow2023Eyemovementsopticflowperception}.
+Neuroscience studies further indicate that kinematic information from skeletal joint motion supports both action prediction and intent understanding\cite{gredeback2015EyeMovementsActionObservation}, motivating the integration of motion and pose cues in computer vision models of human action understanding.
 
 % Human skeleton based action recognition
-Human skeleton keypoints are 2D or 3D locations of major body joints extracted from images or videos, providing a compact and interpretable representation of human pose in each frame.
-However, skeleton keypoints are inherently static descriptors and do not capture the local motion context surrounding each joint.
-Although tracking keypoints across frames yields displacement vectors, this point-based information omits important second-order motion characteristics—such as instantaneous accelerations, rotations, or subtle surface deformations—that are only evident in the surrounding optical flow field.
-As a result, skeleton-only representations encode joint positions and coarse movements but miss the richer local dynamics that are critical for early action understanding.
+Human skeleton keypoints are 2D or 3D locations of major body joints extracted from images or videos that provide a compact and interpretable representation of body pose.
+There keypoints are inherently static and lack local motion context.
+While temporal tracking yields joint displacements, point-based representations fail to capture higher-order motion characteristics, such as acceleration, rotation, and local deformation, that are present in the surrounding optical flow field.
+Consequently, skeleton-only models encode coarse motion patterns but miss fine-grained dynamics that are crucial for early action discrimination.
 
-For actions with similar gross body movements—such as distinguishing a handshake from a punch—keypoint-only models are unlikely to make accurate predictions until most of the action sequence has unfolded.
+% Skeleton action recognition struggles to distinguish similar actions
+This limitation is particularly evident for actions with similar gross body movements, such as distinguishing a handshake from a punch, keypoint-only models are unlikely to make accurate predictions until most of the action sequence has unfolded.
 In contrast, keypoint-anchored visual motion cues (e.g., wrist acceleration, torso rotation or deformation) may provide early discriminative signals that support faster and more reliable action prediction.
 
 
 % Action anticipation
-Action classification and action anticipation are two separate but related tasks.
-Action classification, sometimes called offline action recognition, is retrospective recognition, where the full action has been completed and observed, and a label (or labels) are assigned.
-Action anticipation is the prediction of an a label (or labels) before the action has fully unfolded, using a partial observation of the full action~\cite{lai2024HumanActionAnticipationSurvey,chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
+Action classification and action anticipation are closely related but distinct tasks.
+Action classification (or offline action recognition) assigns labels after observing a complete action sequence, whereas action anticipation predicts labels from partial observations before the action has fully unfolded~\cite{lai2024HumanActionAnticipationSurvey,chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
 
-We are not the first to consider optical flow for the purpose of action recognition~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows,gammulle2019PredictingFutureJointlyLearntModelActionAnticipation,lai2024HumanActionAnticipationSurvey,cai2020JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition}.
-While others have considered the role of optical flow to support action classification, none have considered it's use specifically for capturing localized visual motion patterns anchored at skeletal keypoints for action anticipation.
-Unlike previous approaches, we propose the inclusion of local key keypoint anchored flow regions within skeletal-based action prediction architectures in order to supplement existing keypoint movement tracking with learned features and relationships derived from localized spatial motion patterns.
-In so doing, we aim to exploit such cues at the onset of actions, thereby supporting earlier, more anticipatory action prediction.
+% Others have used optical flow for action recognition
+Optical flow has previously been explored for action recognition~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows,gammulle2019PredictingFutureJointlyLearntModelActionAnticipation,lai2024HumanActionAnticipationSurvey,cai2020JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition}, primarily to support action classification.
+However, prior work has not examined the use of localized, keypoint-anchored optical flow for action anticipation.
+In contrast, we propose incorporating local optical flow regions centred at skeletal keypoints into skeleton-based action prediction architectures, augmenting keypoint trajectories with learned features derived from localized motion patterns.
+By exploiting these cues at action onset, our approach enables earlier and more anticipatory predictions.
 
-
-
-% Why optical flow and why PoseOFF?
-% To address these challenges, we propose a method of embedding localised spatio-temporal features extracted from keypoint-anchored windows of optical flow in existing skeleton-based action recognition models.
-% Optical flow can provide more nuanced information than the simple displacement vectors of skeleton keypoints.
-% A simple embedding layer integrated in three state-of-the-art skeleton-based action recognition algorithms shows an improvement in classification accuracy and action anticipation.
-To address these challenged, we introduce our novel Pose-guided Optical Flow Feature extraction method, PoseOFF.
-PoseOFF involves the \textit{targeted} sampling of windows of optical flow surrounding human each skeleton keypoint.
-To explot this sampled visual motion information, we propose the integration of a simple embedding layer into keypoint based prediction models, allowing models to learn additional nuanced information beyond keypoint movement alone, of relevance to the action prediction task.
-We demonstrate the benefit of our approach with three state-of-the-art skeleton-based action recognition models, showing improvement in classification accuracy, and with significantly reduced latency (i.e., improved action anticipation).
 
 % PoseOFF extraction method diagram
 \begin{figure*}[ht]
@@ -142,6 +114,12 @@ We demonstrate the benefit of our approach with three state-of-the-art skeleton-
   \includegraphics[width=0.9\linewidth]{figures/PoseOFF_embedding/PoseOFF_extraction.png}
   \caption{\label{fig:poseoff_extraction}Extraction method for sampling windows of optical flow surrounding human pose keypoints. From the RGB videos, both human skeleton keypoints (pose) and optical flow are extracted. Windows of optical flow vectors are sampled surrounding each human pose keypoint to generate Pose-guided Optical Flow Features (PoseOFF). This PoseOFF data includes both joint coordinates in (x,y,z) space, as well as 25 (u,v) vectors representing the window of optical flow sampled surrounding each pose keypoint.}
 \end{figure*}
+
+% Why optical flow and why PoseOFF?
+To this end, we introduce \textbf{Pose-guided Optical Flow Features (PoseOFF)}, which involves \textit{targeted} sampling of optical flow windows around each human skeleton keypoint.
+These features are integrated via a lightweight embedding layer within existing keypoint-based models, allowing them to capture nuanced local motion information beyond joint displacement alone.
+We validate PoseOFF on three state-of-the-art skeleton-based action recognition models, demonstrating improved classification accuracy and significantly reduced prediction latency.
+
 
 % Contributions
 The main contributions of this work are:
@@ -157,52 +135,31 @@ The main contributions of this work are:
 \end{itemize}
 
 % How is this paper structure?
-This paper is structured as follows. \hyperref[sec:related_work]{Section II} presents a short literature review on action classification, anticipation and state-of-the-art skeleton action recognition models, \hyperref[sec:method]{Section III} outlines the PoseOFF extraction and embedding pipeline, along with it's practical implementation, \hyperref[sec:experiments]{Section IV} compares the baseline human action classification and action anticipation results against those obtained using PoseOFF embedded models, and \hyperref[sec:conclusion]{Section V} concludes the paper and presents opportunities for future research.
+This paper is structured as follows: \hyperref[sec:related_work]{Section II} presents a literature review on action classification, anticipation and skeleton-based action recognition approaches, \hyperref[sec:method]{Section III} outlines the PoseOFF extraction and embedding pipeline, and it's implementation \hyperref[sec:experiments]{Section IV} compares the human action classification and action anticipation results for baseline and PoseOFF embedded models, and \hyperref[sec:conclusion]{Section V} concludes the paper and presents opportunities for future research.
+
 
 
 
 \section{Related work}%
 \label{sec:related_work}
-  % Important recent methods
-  % ``In this work, we focus specifically on methdos that employ skeleton keypoints''
-  % Visual motion in action prediction
-  % Biological/human vision systems
-  % A couple of recent examples of flow being used for action prediction in artificial systems
-  % Summary remarks: ``While action prediction methods have progressed significantly, and methods involving flow have been previously explored, there is little work exploring more targeted uses of spatial patterns of flow at keypoints to capture anticipatory cues.''
-
 % Important recent methods
-Action classification and anticipation are long standing problems in computer vision, with increasing interest in approaches that can support real-time and online action prediction.
-In this work, we focus specifically on methods that employ skeleton keypoints for these tasks.
-The nature of the 2D or 3D points that represent human skeleton keypoints lends itself well to graph-based learning approaches.
-% Skeleton-action recognition...
-State-of-the-art skeleton-based human action recognition algorithms, such as ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} utilise Graph Convolutional Network (GCN) architecture to learn to classify human actions in spatio-temporal skeleton sequences.
-These models are designed to perform human action classification; making a prediction after viewing the complete action sequence.
-
+Action classification and anticipation are long-standing problems in computer vision, with growing interest in methods that support real-time and online prediction.
+This work focuses on skeleton-based approaches, where 2D or 3D joint keypoints naturally lend themselves to graph-based learning.
+State-of-the-art models such as ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition} and MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition} employ Graph Convolutional Networks (GCNs) to classify actions from spatio-temporal skeleton sequences, but are primarily designed for offline action classification using complete observations.
 
 % Action anticipation
-Addressing the problem of human action anticipation using human skeleton keypoints, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} incorporated a future motion prediction module into a skeleton-based action recognition model to predict future skeleton states.
-Their model, InfoGCN++, was able to classify human actions in skeleton datasets with fewer observed frames than existing skeleton-based action recognition models.
+To address action anticipation with skeleton data, Chi et al.~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition} introduced InfoGCN++, which incorporates future motion prediction to estimate unseen skeleton states, enabling action classification from fewer observed frames.
+Despite such advances, skeleton-based methods largely ignore local visual dynamics present in RGB videos that may provide early discriminative cues.
 
 % Visual motion in action prediction
-Skeleton-based approaches to human action classification and anticipation neglect local dynamics present in RGB videos that may provide discriminative signals about the nature of a human action before it's conclusion.
-The efficacy of visual motion cues for early action prediction is supported by biological vision research.
-% Biological vision examples of fast action prediction
-In many ball-sports, it is nearly impossible for the human eye to accurately track the trajectory of the ball.
-A meta-analysis~\cite{mann2007PerceptualCognitiveExpertiseSportMetaAnalysis} of eye-tracking research in sporting contexts indicates that elite athletes direct their gaze to information-dense areas.
-Football goalkeepers that received perception training on areas of a penalty taker's body to focus on showed an increase performance when anticipating the direction of the penalty taker's shot~\cite{savelsbergh2010Anticipationpenaltykickingdirectioncanbeimproveddirectingattentionperceptuallearning}.
-% In social situations, humans fixate primarily on the torso, and self report that their attention focuses on hands, elbows and feet~\cite{ennisEyetracktiveMeasuringattentionbodypartswhenjudginghumanmotions}.
+Evidence from biological vision supports the importance of visual motion cues for anticipation.
+In sports contexts, where tracking objects such as balls is difficult, elite athletes focus on information-dense body regions~\cite{mann2007PerceptualCognitiveExpertiseSportMetaAnalysis}.
+Eye-tracking studies show that perception training targeting specific body cues improves anticipatory performance, such as predicting shot direction in football penalty scenarios~\cite{savelsbergh2010Anticipationpenaltykickingdirectioncanbeimproveddirectingattentionperceptuallearning}.
 
 % Flow for human action recognition and action anticipation
-This motion information can be extracted and learned through optical flow.
-Cai et al.~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} proposed a two-stream architecture for hockey action recognition that utilised both optical flow and human poses.
-The inclusion of an optical flow stream increased hockey action classification accuracy by 10\%, demonstrating the complementary features present in optical flow and human pose.
-Gammulle et al.~\cite{gammulle2019PredictingFutureJointlyLearntModelActionAnticipation} approached the human action anticipation problem using a Generative Adversarial Network (GAN) to simultaneously anticipate future actions and synthesise future scene embeddings.
-This approach exhibited traits analogous to human neurological behavior in synthesising the future, and demonstrated that their model was better able to classify human actions with fewer frames.
-
-% Papers containing flow as learnable features, possibly showing how it can enhance action prediction ability...
-
-% No work using targeted uses of spatial patterns of flow @ keypoints
-While action prediction methods have progressed significantly, and methods involving flow have been previously explored, there is little work exploring more targeted uses of spatial patterns of flow anchored at human skeleton keypoints to capture anticipatory cues~\cite{lai2024HumanActionAnticipationSurvey}.
+In computer vision, such motion information can be captured via optical flow.
+Prior work has demonstrated the complementary nature of pose and flow, including two-stream architectures that improve action classification accuracy~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows} and generative approaches that synthesise future representations for action anticipation~\cite{gammulle2019PredictingFutureJointlyLearntModelActionAnticipation}.
+Despite these advances, little work has explored targeted, keypoint-anchored optical flow to capture localized anticipatory motion cues in skeleton-based action prediction~\cite{lai2024HumanActionAnticipationSurvey}.
 
 
 \section{Method}%
@@ -250,10 +207,10 @@ The output of the PoseOFF embedding is a vector of shape:
 \end{figure}
 
 % PoseOFF Network diagram!
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.6\linewidth]{figures/poseOFF_network_diagram/PoseOFF_network_diagram.png}
-  \caption{\label{fig:embedding_network_diagram}The embedding layer that learns the windows of optical flow, and concatenates these learned features with the original pose features (x,y,z positions).}
+  \caption{\label{fig:embedding_network_diagram}PoseOFF embedding layer diagram - convolutional layers (Conv) learn from optical flow vector windows, then concatenate these embeddings with the original pose features (x,y,z positions).}
 \end{figure}
 
 % Data efficiency of PoseOFF
@@ -286,7 +243,7 @@ The output of these layers was concatenated with the original skeleton keypoints
 A diagram of the PoseOFF embedding layer added to each model is presented in \autoref{fig:embedding_network_diagram}.
 
 % Which models were tested?
-The models tested using this methodology were InfoGCN++~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}. The models were trained using the hyperparametes defined by the models' authors, with settings as close to those provided in the respective papers.
+The models evaluated were InfoGCN++~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, trained using hyperparametes specified by the original authors and settings as close to those reported in the respective papers.
 
 
 % Trained on joint only stream
@@ -305,9 +262,9 @@ We used the temporal padding methods outlined in the skeleton-based action recog
 \subsection{Implementation}
 \label{subsec:implementation}
 % What algorithms did we use to calculate optical flow?
-All models were implemented in Python using the PyTorch learning framework~\cite{paszkePyTorchImperativeStyleHighPerformanceDeepLearningLibrary}, using the code provided by their authors.
+All models were implemented in Python with the PyTorch learning framework~\cite{paszkePyTorchImperativeStyleHighPerformanceDeepLearningLibrary}, with the code provided by the authors.
 Optical flow was extracted using the PyTorch implementation of the RAFT algorithm~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
-The RAFT algorithm was selected on the basis that it provides high accuracy optical flow estimation, and the model and weights come packaged with the PyTorch library for ease of implementation.
+RAFT was chosen due to its high optical flow estimation accuracy and the availability of pretrained model weights within the PyTorch ecosystem.
 For the UCF-101 dataset, which contains only RGB data, human pose keypoints were extracted using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
 % Hyperparameter management?
@@ -322,28 +279,6 @@ Both the base model and PoseOFF embedded model were trained with identical hyper
 \label{subsec:datasets}
 The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis},NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
 
-% Classification accuracy table
-\begin{center}
-  \begin{table*}[ht!]\centering
-    \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF101 datasets - joint stream only. The train/test splits (evaluations) for each dataset are presented in separate columns under each datasets heading.}
-    \resizebox{.8\textwidth}{!}{
-    \begin{tabular}{ll|ll|ll|lll|}
-      \cline{3-9}
-      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF101} \\ \cline{3-9}
-      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
-
-      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
-
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 61.39\% & 62.02\% & 63.45\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{68.84\%} & \textbf{69.88\%} & \textbf{66.36\%} \\ \hline
-
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.37\% & 47.96\% & 46.86\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{58.27\%} & \textbf{60.13\%} & \textbf{58.61\%} \\ \hline
-    \end{tabular}
-    }
-  \end{table*}
-\end{center}
 % About the NTU dataset
 The NTU RGB+D 60 and NTU RGB+D 120 datasets were captured using three Microsoft Kinect v2 sensors and provide ground-truth 3D human skeleton data.
 Each sample includes RGB videos, depth sequences, infrared frames, and 3D coordinates of 25 body joints.
@@ -393,8 +328,32 @@ This test simulates an offline action recognition scenario.
 The action classification results are presented in \autoref{table:classification_accuracy}.
 In this table, we have highlighted the best performing model for each dataset and evaluation.
 % The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
-Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
+Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification accuracy of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
 This increase in action classification accuracy suggests that the PoseOFF embeddings provide more information about the nature of the human motion taking place in the scene.
+
+
+% Classification accuracy table
+% \begin{center}
+  \begin{table*}[t]\centering
+    \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF101 datasets - joint stream only. Evaluations for each dataset are presented in separate columns under each datasets heading.}
+    \resizebox{.8\textwidth}{!}{
+    \begin{tabular}{ll|ll|ll|lll|}
+      \cline{3-9}
+      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF101} \\ \cline{3-9}
+      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 61.39\% & 62.02\% & 63.45\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{68.84\%} & \textbf{69.88\%} & \textbf{66.36\%} \\ \hline
+
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.37\% & 47.96\% & 46.86\% \\ \cline{2-2}
+      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{58.27\%} & \textbf{60.13\%} & \textbf{58.61\%} \\ \hline
+    \end{tabular}
+    }
+  \end{table*}
+% \end{center}
 
 % These results show a baseline increase in model performance
 The results for the UCF101 dataset, with an average increase in action classification accuracy of 11.22\% across all models, are particularly encouraging.
@@ -405,7 +364,7 @@ A higher action classification accuracy on this particular dataset reinforces no
 % Observation accuracy graphs
 \begin{figure*}[]
   \centering
-  \includegraphics[width=1\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
+  \includegraphics[width=0.9\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
   \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
@@ -414,13 +373,6 @@ A higher action classification accuracy on this particular dataset reinforces no
   \includegraphics[width=1\linewidth]{figures/Results/UCF101-2_obs_ratios.png}
   \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 dataset, evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
-
-% % The UCF101 dataset's results
-% he UCF101 dataset show the highest average increase in classification accuracy across all models and all evaluations.
-% This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
-% The poses extracted using YOLO-POSE Large are generally less accurate or precise than those included in the NTU RGB+D datasets~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}.
-% The significant increase in classification accuracy provided by PoseOFF embeddings for this dataset highlights the versatility of this feature embedding for real-world contexts.
-
 
 \subsection{Action Anticipation}%
 \label{subsec:exp_action_anticipation}
