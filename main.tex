@@ -3,7 +3,7 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 %Template version as of 6/27/2024
 
-% \usepackage{cite}
+\usepackage{dblfloatfix}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
@@ -11,20 +11,10 @@
 \usepackage{xcolor}
 \usepackage{array}
 \usepackage{multirow}
-\usepackage[
-  backend=biber,
-  style=numeric,
-  url=false,
-  doi=false,
-  isbn=false,
-  eprint=false,
-]{biblatex}
-\addbibresource{../refs.bib}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
-% Zotero citation key:
-%     auth.lower+year+title
+% % Zotero citation key:
+% %     auth.lower+year+title
 \usepackage{hyperref}
+
 \begin{document}
 
 \title{Learning Early Visual Motion Cues From Pose-Anchored Optical Flow For Human Action Anticipation
@@ -99,7 +89,8 @@ In contrast, keypoint-anchored visual motion cues (e.g., wrist acceleration, tor
 
 % Action anticipation
 Action classification and action anticipation are closely related but distinct tasks.
-Action classification (or offline action recognition) assigns labels after observing a complete action sequence, whereas action anticipation predicts labels from partial observations before the action has fully unfolded~\cite{lai2024HumanActionAnticipationSurvey,chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
+Action classification (also referred to as offline action recognition) assigns an action label after observing the complete action sequence, and therefore benefits from the full temporal context.
+In contract, action anticipation aims to predict the action label from partial observations before the action has fully unfolded, requiring models to reason under temporal uncertainty and incomplete information~\cite{lai2024HumanActionAnticipationSurvey,chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
 
 % Others have used optical flow for action recognition
 Optical flow has previously been explored for action recognition~\cite{cai2019TemporalHockeyActionRecognitionPoseOpticalFlows,gammulle2019PredictingFutureJointlyLearntModelActionAnticipation,lai2024HumanActionAnticipationSurvey,cai2020JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition}, primarily to support action classification.
@@ -183,20 +174,21 @@ An overview of the data extraction approach is depicted in~\autoref{fig:poseoff_
 The input to the PoseOFF embedding extraction method is an RGB video of $T$ frames.
 For each frame in the video, $I_t$ with frame number $t\in[1,T]$, we extract up to two human skeletons $M$, consisting of $V$ keypoints.
 Each skeleton keypoint contains $C_{\text{pose}}=3$ channels.
-Depending on the human pose extraction method, these skeleton keypoint channels either represent $(x,y,z)$ coordinates, where the z coordinate is an estimation of the distance that keypoint is from the camera, or $(x,y,\alpha$, where $\alpha$ is a value representing the pose estimation model's detection confidence level.
+Depending on the human pose extraction method, these skeleton keypoint channels either represent $(x,y,z)$ coordinates, where the z coordinate is an estimation of the distance that keypoint is from the camera, or $(x,y,\alpha)$, where $\alpha$ is a value representing the pose estimation model's detection confidence level.
 
 % Sample windows of optical flow
-Based on the estimated locations of skeleton keypoints, square windows are sampled from the optical flow vector field.
+% Based on the estimated locations of skeleton keypoints, square windows are sampled from the optical flow vector field.
 % Flow shapes
-For adjacent frames $I_t$ and $I_{t+1}$ in the RGB video, optical flow is estimated to produce a total of $T-1$ optical flow vector fields, with $(u,v)$ vectors at each pixel location representing an estimation of the motion of the pixel from frame $I_t$ to $I_{t+1}$.
-Centred at every skeleton keypoint $(x_t, y_t)$, we compute and sample $N\times N$ windows of optical flow vectors, producing a window of shape $(N,N,2)$.
-Optical flow vectors may be sampled at a pre-set dilation, where the dilation factor indicates the stride length in image space between adjacent vectors in the $N\times N$ grid.
-Vectors are sampled at regular intervals set by a dilation factor to increase the receptive field.
-Examples of dilated window sampling are presented in~\autoref{fig:dilations}.
+For adjacent frames $I_t$ and $I_{t+1}$ in the RGB video, optical flow is estimated, yielding $T-1$ optical flow vector fields, with $(u,v)$ vectors at each pixel location representing an estimation of the motion of the pixel from frame $I_t$ to $I_{t+1}$.
+Centred at every skeleton keypoint $(x_t, y_t)$, an $N\times N$ window of optical flow vectors is sampled, producing an optical flow window of shape $(N,N,2)$.
+Optical flow window sampling may be performed with a fixed dilation factor to increase the effective receptive field by spacing vectors uniformly across image space, as illustrated in~\autoref{fig:dilations}
+% Optical flow vectors may be sampled at a pre-set dilation, where the dilation factor indicates the stride length in image space between adjacent vectors in the $N\times N$ grid.
+% Vectors are sampled at regular intervals set by a dilation factor to increase the receptive field.
+% Examples of dilated window sampling are presented in~\autoref{fig:dilations}.
 
 Each optical flow feature window is flattened to produce $C_{\text{flow}}=2N^2$ channels.
 These channels are appended to skeleton keypoint channels to produce a total of $C=C_{\text{pose}}+C_{\text{flow}}=2N^2+3$ channels for each skeleton keypoint.
-The output of the PoseOFF embedding is a vector of shape:
+The output of the PoseOFF extraction is a vector of shape:
 \[ (T, M, V, C) \]
 
 % Dilation examples
@@ -213,23 +205,6 @@ The output of the PoseOFF embedding is a vector of shape:
   \caption{\label{fig:embedding_network_diagram}PoseOFF embedding layer diagram - convolutional layers (Conv) learn from optical flow vector windows, then concatenate these embeddings with the original pose features (x,y,z positions).}
 \end{figure}
 
-% Data efficiency of PoseOFF
-PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information than training a neural network to learn from the entire flow field.
-~\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
-\begin{center}
-  \begin{table}\centering
-    \caption{\label{table:datasize_comparison}Approximate data size of different forms of data (stored as float32, 4 bytes) for video $1920\times1080$ pixel resolution video containing two bodies and 100 frames. We assign 25 pose keypoints per body. PoseOFF embeddings are sampled with window size $N=5$. }
-    \begin{tabular}{|c|c|c|}
-      \hline
-      Data type & Number of Samples & Data size \\
-      \hline
-      Pose only & 60,000 & 60kB \\
-      PoseOFF & 1,060,000 & 1060kB \\
-      Pose with full flow & 1,658,880,000 & 1.66GB \\
-      \hline
-    \end{tabular}
-  \end{table}
-\end{center}
 
 
 
@@ -265,7 +240,7 @@ We used the temporal padding methods outlined in the skeleton-based action recog
 All models were implemented in Python with the PyTorch learning framework~\cite{paszkePyTorchImperativeStyleHighPerformanceDeepLearningLibrary}, with the code provided by the authors.
 Optical flow was extracted using the PyTorch implementation of the RAFT algorithm~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
 RAFT was chosen due to its high optical flow estimation accuracy and the availability of pretrained model weights within the PyTorch ecosystem.
-For the UCF-101 dataset, which contains only RGB data, human pose keypoints were extracted using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
+For the UCF101 dataset, which contains only RGB data, human pose keypoints were extracted using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss}.
 
 % Hyperparameter management?
 The hyperparameters were chosen to match those defined by the model's authors for the NTU RGB+D 60 and NTU RGB+D 120 datasets.
@@ -281,16 +256,16 @@ The models were trained and evaluated on three different datsets; the NTU RGB+D 
 
 % About the NTU dataset
 The NTU RGB+D 60 and NTU RGB+D 120 datasets were captured using three Microsoft Kinect v2 sensors and provide ground-truth 3D human skeleton data.
-Each sample includes RGB videos, depth sequences, infrared frames, and 3D coordinates of 25 body joints.
-The authors define standard train/test splits for each dataset, ensuring fair and consistent evaluation across methods.
-Samples are annotated with one of 60 or 120 action classes, respectively.
-Due to their widespread use in skeleton-based action recognition research ~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition, duan2022PYSKLGoodPracticesSkeletonActionRecognition, liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, these datasets were selected to establish baseline performance and to evaluate the impact of incorporating PoseOFF embeddings.
+Each sample contains RGB videos, depth and infrared sequences, and 3D coordinates of 25 body joints.
+Standard train/test splits defined by the authors ensure fair and consistent evaluation.
+Samples are annotated with 60 and 120 action classes, respectively.
+Owing to their widespread use in skeleton-based action recognition research ~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition, duan2022PYSKLGoodPracticesSkeletonActionRecognition, liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, these datasets were selected to establish baseline performance and to evaluate the impact of incorporating PoseOFF embeddings.
 
 % About the UCF101 dataset
-The UCF-101 dataset consists of unconstrained, real-world RGB videos depicting human actions.
+The UCF101 dataset consists of unconstrained, real-world RGB videos depicting human actions.
 Skeleton keypoints and optical flow data were estimated using the methods described in Sec.~\ref{subsec:implementation}.
 The dataset includes three standard train/test splits.
-UCF-101 was chosen to assess performance under more challenging, ``in-the-wild'' conditions, in contrast to the controlled capture settings of the NTU RGB+D datasets.
+UCF101 was chosen to assess performance under more challenging, ``in-the-wild'' conditions, in contrast to the controlled capture settings of the NTU RGB+D datasets.
 
 % Dilation factors between datasets
 The RGB video data of the NTU RGB+D datasets has a resolution of $1920\times1080$ pixels, whereas the UCF101 dataset has a resolution of $320\times240$ pixels.
@@ -305,111 +280,157 @@ See~\autoref{fig:dilations} an example of dilated window sampling.
 \label{sec:experiments}
 
 \textbf{Evaluation Metrics.}
-For the task of action classification, model performance was measured using the classification accuracy; that is, the percentage of samples that the models were able to predict the correct class label of after observing the full action sequence.
-For the task of action anticipation, both the classification accuracy at each given observation ratio and the Area Under the Curve (AUC) are reported.
-The AUC is a measure of the model's performance across all evaluated observation ratios, and is calculated as:
+For action classification, performance is measured using classification accuracy, defined as the percentage of samples for which the correct class label is predicted after observing the full action sequence.
+For action anticipation, we report classification accuracy at each observation ratio as well as the Area Under the Curve (AUC). The AUC summarizes performance across all evaluated observation ratios and is computed as:
 
 \[ \text{AUC}=\frac{\sum{\text{Acc}}_{\text{obs}}}{\text{N}_{\text{obs}}}\]
-where $\text{Acc}_{\text{obs}}$ is the accuracy at a given observation ratio, and $\text{N}_{\text{obs}}$ is the number of evaluated observation ratios.
+where $\text{Acc}_{\text{obs}}$ denotes the accuracy at a given observation ratio, and $\text{N}_{\text{obs}}$ is the number of evaluated observation ratios.
 
 
 \subsection{Action Classification}%
 \label{subsec:exp_action_classification}
 % % How the results were obtained
-To test the models' ability to perform action classification, all models - both the base model and a version of the model with the additional PoseOFF embedding layer, shown in~\autoref{fig:embedding_network_diagram} - were trained and tested on full sequences.
-In the full sequence evaluation, no temporal masking was applied to the input sequence.
-This test simulates an offline action recognition scenario.
+To evaluate action classification performance, both the base models and their PoseOFF-augmented variants (~\autoref{fig:embedding_network_diagram}) were trained and tested on full input sequences.
+No temporal masking was applied, simulating an offline action recognition setting.
 % The PoseOFF data was learned using a simple CNN layer added to each model's embedding layer.
 % The flow windows for the NTU-RGB+D and NTU-RGB+D120 models were extracted using dilation 3.
 % The flow windows for the UCF101 dataset were extracted using dilation 1.
 
 
 % Discussion of results table...
-The action classification results are presented in \autoref{table:classification_accuracy}.
-In this table, we have highlighted the best performing model for each dataset and evaluation.
-% The models trained with the additional PoseOFF embeddings produce a higher classification accuracy across all models and all datasets.
-Across all models, those trained with the additional PoseOFF embeddings showed an average increase in classification accuracy of 2.14\%, 6.84\% and 11.22\% for the NTU RGB+D 60, NTU RGB+D 120 and UCF101 datasets respectively.
-This increase in action classification accuracy suggests that the PoseOFF embeddings provide more information about the nature of the human motion taking place in the scene.
+The classification results are reported in~\autoref{table:classification_accuracy}, with the best-performing model for each dataset and evaluation highlighted.
+Across all architectures, incorporating PoseOFF embeddings yields average accuracy improvements of 2.14\%, 6.84\%, and 11.22\% on NTU RGB+D 60, NTU RGB+D 120, and UCF101, respectively.
+These gains indicate that PoseOFF embeddings capture informative cues about underlying human motion.
 
 
 % Classification accuracy table
 % \begin{center}
-  \begin{table*}[t]\centering
-    \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF101 datasets - joint stream only. Evaluations for each dataset are presented in separate columns under each datasets heading.}
-    \resizebox{.8\textwidth}{!}{
-    \begin{tabular}{ll|ll|ll|lll|}
-      \cline{3-9}
-      &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF101} \\ \cline{3-9}
-      &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
+\begin{table*}[t]\centering
+  \caption{\label{table:classification_accuracy}Classification accuracy for all models trained and tested on the NTU-RGB+D (NTU), NTU-RGB+D120 (NTU120) and UCF101 datasets - joint stream only. Evaluations for each dataset are presented in separate columns under each datasets heading.}
+  \resizebox{.8\textwidth}{!}{
+  \begin{tabular}{ll|ll|ll|lll|}
+    \cline{3-9}
+    &  & \multicolumn{2}{l|}{NTU} & \multicolumn{2}{l|}{NTU120} & \multicolumn{3}{l|}{UCF101} \\ \cline{3-9}
+    &  & \multicolumn{1}{l|}{CS} & CV & \multicolumn{1}{l|}{CSub} & CSet & \multicolumn{1}{l|}{1} & \multicolumn{1}{l|}{2} & 3 \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base & 83.52\% & 91.38\% & 75.92\% & 77.61\% & 59.21\% & 57.82\% & 58.90\% \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.89\%} & \textbf{93.68\%} & \textbf{82.70\%} & \textbf{83.70\%} & \textbf{62.81\%} & \textbf{62.54\%} & \textbf{62.84\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 61.39\% & 62.02\% & 63.45\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{68.84\%} & \textbf{69.88\%} & \textbf{66.36\%} \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}} & Base & 87.40\% & 93.43\% & 76.24\% & 78.75\% & 61.39\% & 62.02\% & 63.45\% \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{89.95\%} & \textbf{94.12\%} & \textbf{83.22\%} & \textbf{85.49\%} & \textbf{68.84\%} & \textbf{69.88\%} & \textbf{66.36\%} \\ \hline
 
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.37\% & 47.96\% & 46.86\% \\ \cline{2-2}
-      \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{58.27\%} & \textbf{60.13\%} & \textbf{58.61\%} \\ \hline
-    \end{tabular}
-    }
-  \end{table*}
+    \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}} & Base & 84.78\% & 90.85\% & 76.54\% & 76.40\% & 47.37\% & 47.96\% & 46.86\% \\ \cline{2-2}
+    \multicolumn{1}{|l|}{} & \textbf{PoseOFF} & \textbf{88.88\%} & \textbf{93.70\%} & \textbf{82.36\%} & \textbf{85.00\%} & \textbf{58.27\%} & \textbf{60.13\%} & \textbf{58.61\%} \\ \hline
+  \end{tabular}
+  }
+\end{table*}
 % \end{center}
 
-% These results show a baseline increase in model performance
-The results for the UCF101 dataset, with an average increase in action classification accuracy of 11.22\% across all models, are particularly encouraging.
-This dataset is RGB only, containing human actions from videos ``in the wild''; no depth data or skeleton poses accompany the dataset.
-A higher action classification accuracy on this particular dataset reinforces notion that PoseOFF embeddings are likely providing additional salient information for real-world applications.
-
-
 % Observation accuracy graphs
-\begin{figure*}[]
+\begin{figure*}[b]
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
-  \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+  \includegraphics[width=0.9\linewidth]{figures/Results/Combined_obs_ratios.png}
+  \caption{\label{fig:res_obs_ratio}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
-\begin{figure*}[]
-  \centering
-  \includegraphics[width=1\linewidth]{figures/Results/UCF101-2_obs_ratios.png}
-  \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 dataset, evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
-\end{figure*}
+% These results show a baseline increase in model performance
+The improvements on UCF101 are particularly notable, with an average accuracy increase of 11.22\%.
+As UCF101 consists of RGB-only videos captured “in the wild,” without depth or skeleton annotations, this result suggests that PoseOFF embeddings provide salient motion information well suited to real-world scenarios.
+
+
+% \begin{figure*}[]
+%   \centering
+%   \includegraphics[width=0.9\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
+%   \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+% \end{figure*}
+
+% \begin{figure*}[]
+%   \centering
+%   \includegraphics[width=1\linewidth]{figures/Results/UCF101-2_obs_ratios.png}
+%   \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 dataset, evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
+% \end{figure*}
 
 \subsection{Action Anticipation}%
 \label{subsec:exp_action_anticipation}
 % How we tested action anticipation
-To test whether the early visual motion cues extracted though PoseOFF facilitate earlier prediction of actions at a similar accuracy level to baseline models, temporal masking was used to simulate partial observation of the action (i.e. viewing an action currently taking place).
-The MS-G3D and ST-GCN++ models were trained using 100\% observation ratio and tested by viewing each video sequence at increments of 10\% observation ratios.
-% To test the effectiveness of the learnable features present in PoseOFF data, we evaluated each model at different observation ratios of the input sequence.
-% The models evaluated were trained on 100\% observation ratio and were evaluated at 10\% observation ratio intervals.
-The InfoGCN++ model has temporal masking built in to the model and produces an action class prediction for every frame of the input sequence (64 frame input), so the observation ratio interval evaluations were not necessary for this model~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
-These experiments were conducted using the Cross Subject (CS) evaluation of the NTU RGB+D 60 dataset, and the second evaluation defined by the authors of the UCF101 dataset.
-The action anticipation results are presented in \autoref{fig:res_obs_ratio_ntu} and~\autoref{fig:res_obs_ratio_ucf}.
+To assess whether early visual motion cues extracted via PoseOFF enable earlier action prediction at comparable accuracy to baseline models, temporal masking was used to simulate partial observation of ongoing actions.
+The MS-G3D and ST-GCN++ models were trained using full sequences (100\% observation ratio) and evaluated at 10\% observation ratio increments.
 
-
+InfoGCN++ incorporates temporal masking natively and produces frame-level predictions over a fixed 64-frame input, making interval-based evaluation unnecessary\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
+Action anticipation results are shown in~\autopageref{fig:res_obs_ratio}, using the Cross-Subject (CS) evaluation protocol on NTU RGB+D 60 (top) and the second evaluation protocol defined for UCF101 (bottom).
 
 
 % How do we interpret these graphs?
 The results are the average performance of the model's as they ``see'' more of each action sequence.
-In \autoref{fig:res_obs_ratio_ntu} and \autoref{fig:res_obs_ratio_ucf}, each point along the blue and orange curves corresponds to the action classification accuracy (y-axis) of the baseline and PoseOFF-embedded models, respectively, for a given observation ratio (x-axis).
+In \autoref{fig:res_obs_ratio}, each point along the blue and orange curves corresponds to the action classification accuracy (y-axis) of the baseline and PoseOFF-embedded models, respectively, for a given observation ratio (x-axis).
 The gray dotted lines in these graphs indicates the highest performance of the base model, in order to compare it's performance with the PoseOFF embedded versions of the models.
 The x-value at which the gray and blue lines intersect denotes the observation ratio at which the PoseOFF embedded model achieves the same accuracy as the base model with full observation.
 % The observation ratio (x-value) of the point which the gray and blue lines intersect corresponds with the amount of the sequence that the PoseOFF embedded model needs in order to achieve the same action classification accuracy at the base model at 100\% observation ratio.
 
-
 % NTU dataset results
-The action anticipation results on the NTU RGB+D 60 dataset, shown in~\autoref{fig:res_obs_ratio_ntu}, show that all models are able to predict the action taking place with fewer frames.
+The action anticipation results on the NTU RGB+D 60 dataset, shown in the first row of~\autoref{fig:res_obs_ratio}, show that all models are able to predict the action taking place with fewer frames.
 For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80\% of the entire action sequence to achieve the same performance as the base model at 100\% observation ratio.
 % At lower observation ratios, the ST-GCN++ base model is able to predict the action more accurately than the PoseOFF embedded model.
 For InfoGCN++, which was specifically designed for the task of action anticipation, the PoseOFF embedded model needs to only see half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
 
 % UCF action anticipation results
-The action anticipation results on the UCF101 dataset, shown in~\autoref{fig:res_obs_ratio_ucf}, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence.
+The action anticipation results on the UCF101 dataset, shown in~\autoref{fig:res_obs_ratio}, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence.
 For all models, PoseOFF features enable the model to predict the action with the same accuracy as the base model after only seeing half of the full sequence.
 
 
+\subsection{Performance and Implementation Considerations}%
+\label{subsec:inference_time}
+
+% Data efficiency of PoseOFF
+PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information than training a neural network to learn from the entire flow field.
+~\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
+
+% \begin{center}
+  \begin{table}\centering
+    \caption{\label{table:datasize_comparison}Approximate data size comparison for video $1920\times1080$ video containing two bodies and 100 frames. We assign 25 pose keypoints per body. PoseOFF embeddings are sampled with window size $N=5$. Data stored as float32, 4 bytes.}
+    \begin{tabular}{|c|c|c|}
+      \hline
+      Data type & Number of Samples & Data size \\
+      \hline
+      Pose only & 60,000 & 60kB \\
+      PoseOFF & 1,060,000 & 1060kB \\
+      Pose with full flow & 1,658,880,000 & 1.66GB \\
+      \hline
+    \end{tabular}
+  \end{table}
+% \end{center}
+
+% \begin{center}
+  \begin{table}\centering
+    \caption{\label{table:model_size_inference}Number of trainable model parameters and inference time comparison for base models and PoseOFF embedded models.}
+    \begin{tabular}{ll|c|c|}
+      \cline{3-4}
+      &         & Model Parameters & Inference Time (ms) \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base    & 613747 & 1.32 \\
+      \multicolumn{1}{|l|}{}                           & PoseOFF & 620448 & 1.33 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}}    & Base    & 2194476 & 4.40 \\
+      \multicolumn{1}{|l|}{}                           & PoseOFF & 2204420 & 4.45 \\ \hline
+      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}}  & Base    & 516454 & 0.302 \\
+      \multicolumn{1}{|l|}{}                           & PoseOFF & 537648 & 0.350 \\
+      \hline
+    \end{tabular}
+  \end{table}
+% \end{center}
+
+
 % Why is this important?
-The changes required to adapt all three models were minimal and confined to only the first layers of each network.
-This paper has demonstrated that PoseOFF offers an easily implemented enhancement to existing models, with minimal additional overhead.
+The changes required to adapt all three models were minimal and confined to only the first layers of each network through the PoseOFF embedding layer depicted in~\autoref{fig:embedding_network_diagram}.
+This embedding layer introduces a comparatively small amount of additional trainable parameters, and some computational overhead.
+A comparison of the number of trainable model parameters and a measurement of the asynchronous computation time for the base models and their PoseOFF embedded counterparts are presented in~\autoref{table:model_size_inference}.
+A higher number of trainable parameters generally corresponds to longer training times.
+Inference time was calculated by measuring the average time each model took to compute and predict a class label for 1000 random samples.
+
+% Model size and inference table explainer
+The resuls presented in~\autoref{table:model_size_inference} highlight the relatively minor impact in terms of model size (number of model parameters) and inference speed.
+The introduction of the PoseOFF embedding layer increased model size by an average of 1.88\% by when compared to the number of trainable parameters of the base model
+Inference speed increased by an average of 0.03ms or 5.77\% with respect to the base model.
+The smallest model, ST-GCN++ saw the greatest increase in both the number of model parameters and inference time.
+Given the speed at which the base models already operate, this increase is negligible.
 
 
 \section{Conclusion}
@@ -431,6 +452,7 @@ Additionally, future work will probe whether certain actions are more easily cla
 % This dilation factor could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
 
 
-\printbibliography
+\bibliographystyle{IEEEtran}  % using the .bst they gave
+\bibliography{../refs}
 
 \end{document}
