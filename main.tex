@@ -361,21 +361,19 @@ Action anticipation results are shown in~\autopageref{fig:res_obs_ratio}, using 
 
 
 % How do we interpret these graphs?
-The results are the average performance of the model's as they ``see'' more of each action sequence.
-In \autoref{fig:res_obs_ratio}, each point along the blue and orange curves corresponds to the action classification accuracy (y-axis) of the baseline and PoseOFF-embedded models, respectively, for a given observation ratio (x-axis).
-The gray dotted lines in these graphs indicates the highest performance of the base model, in order to compare it's performance with the PoseOFF embedded versions of the models.
-The x-value at which the gray and blue lines intersect denotes the observation ratio at which the PoseOFF embedded model achieves the same accuracy as the base model with full observation.
-% The observation ratio (x-value) of the point which the gray and blue lines intersect corresponds with the amount of the sequence that the PoseOFF embedded model needs in order to achieve the same action classification accuracy at the base model at 100\% observation ratio.
+\autoref{fig:res_obs_ratio} reports average performance as models observe increasing portions of each sequence.
+Each point on the blue and orange curves represents the classification accuracy of the baseline and PoseOFF-augmented models, respectively, at a given observation ratio.
+The gray dotted line indicates the baseline model’s peak performance under full observation, allowing direct comparison with PoseOFF-embedded variants.
+The intersection between the gray and blue curves denotes the observation ratio at which the PoseOFF-embedded model matches the baseline’s full-sequence accuracy.
 
 % NTU dataset results
-The action anticipation results on the NTU RGB+D 60 dataset, shown in the first row of~\autoref{fig:res_obs_ratio}, show that all models are able to predict the action taking place with fewer frames.
-For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80\% of the entire action sequence to achieve the same performance as the base model at 100\% observation ratio.
-% At lower observation ratios, the ST-GCN++ base model is able to predict the action more accurately than the PoseOFF embedded model.
-For InfoGCN++, which was specifically designed for the task of action anticipation, the PoseOFF embedded model needs to only see half of the input sequence to achieve the same performance as the base model at 100\% observation ratio.
+On NTU RGB+D 60 (first row of~\autoref{fig:res_obs_ratio}), all models achieve comparable accuracy with fewer observed frames when augmented with PoseOFF.
+For ST-GCN++ and MS-G3D, the PoseOFF variants require only 80\% of the sequence to match baseline performance at full observation.
+For InfoGCN++, which is explicitly designed for action anticipation, the PoseOFF-embedded model achieves equivalent performance after observing only 50\% of the input sequence.
 
 % UCF action anticipation results
-The action anticipation results on the UCF101 dataset, shown in~\autoref{fig:res_obs_ratio}, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence.
-For all models, PoseOFF features enable the model to predict the action with the same accuracy as the base model after only seeing half of the full sequence.
+Similar trends are observed on UCF101 (Figure 4), where PoseOFF-augmented models consistently require fewer frames to reach baseline accuracy.
+Across all models, PoseOFF enables matching full-sequence baseline performance after observing only half of the action sequence.
 
 
 \subsection{Performance and Implementation Considerations}%
@@ -383,54 +381,55 @@ For all models, PoseOFF features enable the model to predict the action with the
 
 % Data efficiency of PoseOFF
 PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information than training a neural network to learn from the entire flow field.
-~\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
-
-% \begin{center}
-  \begin{table}\centering
-    \caption{\label{table:datasize_comparison}Approximate data size comparison for video $1920\times1080$ video containing two bodies and 100 frames. We assign 25 pose keypoints per body. PoseOFF embeddings are sampled with window size $N=5$. Data stored as float32, 4 bytes.}
-    \begin{tabular}{|c|c|c|}
-      \hline
-      Data type & Number of Samples & Data size \\
-      \hline
-      Pose only & 60,000 & 60kB \\
-      PoseOFF & 1,060,000 & 1060kB \\
-      Pose with full flow & 1,658,880,000 & 1.66GB \\
-      \hline
-    \end{tabular}
-  \end{table}
-% \end{center}
-
-% \begin{center}
-  \begin{table}\centering
-    \caption{\label{table:model_size_inference}Number of trainable model parameters and inference time comparison for base models and PoseOFF embedded models.}
-    \begin{tabular}{ll|c|c|}
-      \cline{3-4}
-      &         & Model Parameters & Inference Time (ms) \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base    & 613747 & 1.32 \\
-      \multicolumn{1}{|l|}{}                           & PoseOFF & 620448 & 1.33 \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}}    & Base    & 2194476 & 4.40 \\
-      \multicolumn{1}{|l|}{}                           & PoseOFF & 2204420 & 4.45 \\ \hline
-      \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}}  & Base    & 516454 & 0.302 \\
-      \multicolumn{1}{|l|}{}                           & PoseOFF & 537648 & 0.350 \\
-      \hline
-    \end{tabular}
-  \end{table}
-% \end{center}
+~\autoref{table:datasize_comparison} provides a comparison of data sizes required for pose only, full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of $1920\times1080$ pixels.
+The table also reports estimated extraction times using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss} and PyTorch RAFT~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}, as defined in~\hyperref[subsec:implementation]{Section III}.
+% This table also provides an estimate of the time it takes to extract this data from the video using the YOLO-POSE Large model~\cite{maji2022YOLOPoseEnhancingYOLOMultiPersonPoseEstimationUsingObjectKeypointSimilarityLoss} and PyTorch RAFT~\cite{teed2020RAFTRecurrentAllPairsFieldTransformsOpticalFlow}.
+% There were the models used for extraction on the UCF101 dataset (see~\hyperref[subsec:implementation]{Section III}).
+PoseOFF inference time was computed as the sum of the pose inference time and a proportional component of the optical flow estimation time, weighted by the fraction of optical flow vectors sampled by PoseOFF.
 
 
 % Why is this important?
 The changes required to adapt all three models were minimal and confined to only the first layers of each network through the PoseOFF embedding layer depicted in~\autoref{fig:embedding_network_diagram}.
 This embedding layer introduces a comparatively small amount of additional trainable parameters, and some computational overhead.
 A comparison of the number of trainable model parameters and a measurement of the asynchronous computation time for the base models and their PoseOFF embedded counterparts are presented in~\autoref{table:model_size_inference}.
-A higher number of trainable parameters generally corresponds to longer training times.
-Inference time was calculated by measuring the average time each model took to compute and predict a class label for 1000 random samples.
+A higher number of trainable parameters generally (but not always) corresponds to longer training times.
+Inference time was calculated by measuring the average time each model took to compute and predict a class label the NTU RGB+D 60 dataset - Cross Subject evaluation.
+
+\begin{table}\centering
+  \caption{\label{table:datasize_comparison}Approximate data size and inference speed comparison for a $1920\times1080$ pixel video containing two bodies and 100 frames, with 25 pose keypoints per body. PoseOFF embeddings are sampled with window size $N=5$.}
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+    Data type  & Data Size & Inference Speed \\
+    \hline
+    Pose only & 60kB & 713 ms (140 fps) \\
+    PoseOFF &  1060kB & 720 ms (138 fps) \\
+    Full flow & 1.66GB & 10.8 s (9 fps) \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\begin{table}\centering
+  \caption{\label{table:model_size_inference}Number of trainable model parameters and inference time comparison for base models and PoseOFF embedded models.}
+  \begin{tabular}{ll|c|c|}
+    \cline{3-4}
+    &         & Model Parameters & Inference Speed \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{InfoGCN++}} & Base    & 613747 & 12.15 ms (82 fps) \\
+    \multicolumn{1}{|l|}{}                           & PoseOFF & 620448 & 17.44 ms (57 fps) \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{MS-G3D}}    & Base    & 2194476 & 13.13 ms (76 fps) \\
+    \multicolumn{1}{|l|}{}                           & PoseOFF & 2204420 & 22.48 ms (44 fps) \\ \hline
+    \multicolumn{1}{|l|}{\multirow{2}{*}{ST-GCN++}}  & Base    & 516454 & 4.43 ms (226 fps) \\
+    \multicolumn{1}{|l|}{}                           & PoseOFF & 537648 & 4.20 ms (238 fps) \\
+    \hline
+  \end{tabular}
+\end{table}
 
 % Model size and inference table explainer
 The resuls presented in~\autoref{table:model_size_inference} highlight the relatively minor impact in terms of model size (number of model parameters) and inference speed.
-The introduction of the PoseOFF embedding layer increased model size by an average of 1.88\% by when compared to the number of trainable parameters of the base model
-Inference speed increased by an average of 0.03ms or 5.77\% with respect to the base model.
-The smallest model, ST-GCN++ saw the greatest increase in both the number of model parameters and inference time.
-Given the speed at which the base models already operate, this increase is negligible.
+The introduction of the PoseOFF embedding layer increased model size by an average of 1.88\% of additional trainable parameters.
+Inference speed increased by 5.3 ms and 9.35 ms for the InfoGCN++ and MS-G3D models respectively.
+Surprisingly, the PoseOFF embedded model performed action inference 0.23 ms faster than the base model.
+This difference could be due to a number of factors, but is outside of the scope of this research.
+
 
 
 \section{Conclusion}
