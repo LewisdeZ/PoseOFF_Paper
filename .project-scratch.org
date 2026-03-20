@@ -1,62 +1,163 @@
 #+TITLE: Project Scratch
+#+DESCRIPTION: Scratch buffer for projectile project
 
-* Paper focus
-- PoseOFF is:
-  - Easy to implement
-  - Lightweight
-  - Improves action classification accuracy
-  - Improves early action recognition accuracy
-- Importantly, a way to embed human early visual motion cues to allow the model to predict actions with fewer frames!
-- Defining local regions of flow so as to allow prediction models to both the movement of keypoints, as well as the relationship with other point-anchored patches.
+* DOOM EMACS KEYBINDS
+| Keybind | Action                 |
+|---------+------------------------|
+| C-c [   | Insert citation        |
+| C-c )   | Insert reference       |
+| SPC m ; | Open table of consents |
 
-* Core ideas
-- PoseOFF as an extraction method can provide comparable accuracy with fewer observed frames
-- Higher action anticipation ability with minimal additional computational overheads
-** Action classification
-This is retrospective recognition, where the full action is observed, and the action has already occured or is complete.
-** Action anticipation
-Prediction of an action classification label before the action has fully unfolded, using only partial observations.
+* How to use - the TODO scanner
+To use the TODO scanner, you can either press =C-c C-C= first in the codeblock under [[#config][Config]] to set up the todo scanning, then run the [[#scanner][TODO Scanner]]. The items will show up under the [[#todo_items][TODO Items]] heading. Haven't figured out how to stop the scanner from scanning this file...
+Alternatively, you can just run =M-x org-babel-execute-buffer= (=C-c C-v b=) and all of the codeblocks will run, having your items appear under the [[#todo_items][TODO Items]] heading.
 
+* Config
+  :PROPERTIES:
+  :CUSTOM_ID: config
+  :VISIBILITY: folded
+  :END:
 
-* TODO
-- Test the inference speed between PoseOFF embedded models and base
-- Tidy up references
-- De-verbose paper sections introduction
-- Set figures apart either above or at the bottom of the text
-- Cut down to six pages!
+  #+NAME: todo-config
+  #+BEGIN_SRC emacs-lisp :results silent
+  ;; Configure which file extensions to search
+  (setq project-todo-extensions
+        '(".py" ".js" ".ts" ".jsx" ".tsx"
+          ".rb" ".go" ".rs" ".java" ".c" ".cpp" ".h"
+          ".sh" ".bash" ".zsh"
+          ".css" ".scss" ".html"
+          ".el" ".clj" ".ex" ".exs"
+          ".md" ".org" ".tex"))
 
+  ;; Configure directories to exclude
+  (setq project-todo-exclude-dirs
+        '(".git" "node_modules" ".venv" "venv" "__pycache__"
+          "dist" "build" ".next" "target" "vendor"))
 
+  ;; Set project root (defaults to the directory of this org file)
+  (setq project-todo-root (file-name-directory (buffer-file-name)))
+  #+END_SRC
 
-# Action Classification
-To evaluate action classification performance, both the base models and their PoseOFF-augmented variants (Figure 3) were trained and tested on full input sequences
-No temporal masking was applied, simulating an offline action recognition setting.
+* 📌 TODO Items
+:PROPERTIES:
+:CUSTOM_ID: todo_items
+:END:
+** Pending
 
-The classification results are reported in Table I, with the best-performing model for each dataset and evaluation highlighted.
-Across all architectures, incorporating PoseOFF embeddings yields average accuracy improvements of 2.14%, 6.84%, and 11.22% on NTU RGB+D 60, NTU RGB+D 120, and UCF101, respectively.
-These gains indicate that PoseOFF embeddings capture informative cues about underlying human motion.
+* 🔎 TODO Scanner
+  :PROPERTIES:
+  :CUSTOM_ID: scanner
+  :VISIBILITY: folded
+  :END:
 
-The improvements on UCF101 are particularly notable, with an average accuracy increase of 11.22%.
-As UCF101 consists of RGB-only videos captured “in the wild,” without depth or skeleton annotations, this result suggests that PoseOFF embeddings provide salient motion information well suited to real-world scenarios.
+  Run this block to scan the project and regenerate the *Pending* section above.
+  Use =C-c C-c= with point inside the block.
 
-# Action Anticipation
-To assess whether early visual motion cues extracted via PoseOFF enable earlier action prediction at comparable accuracy to baseline models, temporal masking was used to simulate partial observation of ongoing actions.
-The MS-G3D and ST-GCN++ models were trained using full sequences (100% observation ratio) and evaluated at 10% observation ratio increments.
-InfoGCN++ incorporates temporal masking natively and produces frame-level predictions over a fixed 64-frame input, making interval-based evaluation unnecessary [8].
-Action anticipation results are shown in Figure 4, using the Cross-Subject (CS) evaluation protocol on NTU RGB+D 60 (top) and the second evaluation protocol defined for UCF101 (bottom).
+  #+NAME: scan-todos
+  #+BEGIN_SRC emacs-lisp :results none
+  (require 'cl-lib)
 
-Figure 4 reports average performance as models observe increasing portions of each sequence.
-Each point on the blue and orange curves represents the classification accuracy of the baseline and PoseOFF-augmented models, respectively, at a given observation ratio.
-The gray dotted line indicates the baseline model’s peak performance under full observation, allowing direct comparison with PoseOFF-embedded variants.
-The intersection between the gray and blue curves denotes the observation ratio at which the PoseOFF-embedded model matches the baseline’s full-sequence accuracy.
+  ;; ── helpers ────────────────────────────────────────────────────────────────
 
-The results are the average performance of the model’s as they “see” more of each action sequence. In Figure 4, each point along the blue and orange curves corresponds to the action classification accuracy (y-axis) of the baseline and PoseOFF-embedded models, respectively, for a given observation ratio (x-axis). The gray dotted lines in these graphs indicates the highest performance of the base model, in order to compare it’s performance with the PoseOFF embedded versions of the models. The x-value at which the gray and blue lines intersect denotes the observation ratio at which the PoseOFF embedded model achieves the same accuracy as the base model with full observation.
+  (defun project-todo--excluded-p (path exclude-dirs)
+    "Return t if PATH contains any excluded directory segment."
+    (cl-some (lambda (dir)
+               (string-match-p (regexp-quote (concat "/" dir "/")) path))
+             exclude-dirs))
 
-The action anticipation results on the NTU RGB+D 60 dataset, shown in the first row of Figure 4, show that all models are able to predict the action taking place with fewer frames. For the ST-GCN++ and MS-G3D models, the PoseOFF embedded version of the model only needs to observe 80% of the entire action sequence to achieve the same performance as the base model at 100% observation ratio. For InfoGCN++, which was specifically designed for the task of action anticipation, the PoseOFF embedded model needs to only see half of the input sequence to achieve the same performance as the base model at 100% observation ratio.
-The action anticipation results on the UCF101 dataset, shown in Figure 4, show again that PoseOFF embedded models require fewer frames to achieve the same action classification accuracy as the base model with a full observation of the sequence. For all models, PoseOFF features enable the model to predict the action with the same accuracy as the base model after only seeing half of the full sequence.
+  (defun project-todo--valid-extension-p (file extensions)
+    "Return t if FILE has one of the allowed EXTENSIONS."
+    (cl-some (lambda (ext) (string-suffix-p ext file)) extensions))
 
-# Performance and Implementation Considerations
-PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information than training a neural network to learn from the entire flow field. Table II provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of 1920 × 1080 pixels.
-The changes required to adapt all three models were minimal and confined to only the first layers of each network through the PoseOFF embedding layer depicted in Figure 3. This embedding layer introduces a comparatively small amount of additional trainable parameters, and some computational overhead. A comparison of the number of trainable model parameters and a measurement of the asynchronous computation time for the base models and their PoseOFF embedded counterparts are presented in Table III. A higher number of trainable parameters generally corresponds to longer training times. Inference time was calculated by measuring the average time each model took to compute and predict a class label for 1000 random samples.
-The results presented in Table III highlight the relatively minor impact in terms of model size (number of model parameters) and inference speed. The introduction of the PoseOFF embedding layer increased model size by an average of 1.88% by when compared to the number of trainable parameters of the base model Inference speed increased by an average of 0.03ms or 5.77% with respect to the base model. The smallest model, ST-GCN++ saw the greatest increase in both the number of model parameters and inference time. Given the speed at which the base models already operate, this increase is negligible.
+  (defun project-todo--collect-files (root extensions exclude-dirs)
+    "Return a list of files under ROOT matching EXTENSIONS, skipping EXCLUDE-DIRS."
+    (let ((files '()))
+      (dolist (f (directory-files-recursively root "." nil))
+        (let ((norm (concat "/" (file-relative-name f root))))
+          (when (and (project-todo--valid-extension-p f extensions)
+                     (not (project-todo--excluded-p norm exclude-dirs)))
+            (push f files))))
+      (nreverse files)))
 
-PoseOFF sampling provides a considerably more data efficient method of embedding optical flow information than training a neural network to learn from the entire flow field. Table II provides a comparison of data sizes required for pose only, pose with full optical flow, and PoseOFF for a single video containing 100 frames at a resolution of 1920 × 1080 pixels. This table also provides an estimate of the time it takes to extract this data from the video using the YOLO-POSE Large model [18] and PyTorch RAFT [17]. PoseOFF inference time was computed as the sum of the pose inference time and a proportional component of the optical flow estimation time, weighted by the fraction of optical flow vectors sampled by PoseOFF.
+  (defun project-todo--scan-file (file root)
+    "Return a list of (rel-path line-number comment-text) for every TODO: in FILE."
+    (let ((results '())
+          (rel (file-relative-name file root)))
+      (with-temp-buffer
+        (insert-file-contents file)
+        (goto-char (point-min))
+        (while (re-search-forward "TODO:[[:space:]]*\\(.*\\)" nil t)
+          (push (list rel
+                      (line-number-at-pos)
+                      (string-trim (match-string 1)))
+                results)))
+      (nreverse results)))
+
+  (defun project-todo--build-content (all-todos)
+    "Build the replacement string for the Pending section body."
+    (if (null all-todos)
+        "   /No TODO comments found in the project./\n"
+      (let ((lines (list (format "   /Last scanned: %s — %d TODO(s) across %d file(s)/\n"
+                                 (format-time-string "%Y-%m-%d %H:%M")
+                                 (apply #'+ (mapcar (lambda (g) (length (cdr g))) all-todos))
+                                 (length all-todos)))))
+        (dolist (group (nreverse all-todos))
+          (let* ((file (car group))
+                 (hits (cdr group)))
+            (push (format "\n*** ~%s~\n" file) lines)
+            (dolist (hit hits)
+              (cl-destructuring-bind (rel line text) hit
+                (push (format "\n    - [ ] Line %d: %s\n          [[file:%s::%d][→ jump to source]]\n"
+                              line
+                              (if (string-empty-p text) "/no description/" text)
+                              rel
+                              line)
+                      lines)))))
+        (apply #'concat (nreverse lines)))))
+
+  ;; ── main ───────────────────────────────────────────────────────────────────
+
+  (let* ((org-buf (current-buffer))
+         (root    (or (bound-and-true-p project-todo-root)
+                      (file-name-directory (buffer-file-name))))
+         (exts    (or (bound-and-true-p project-todo-extensions)
+                      '(".py" ".js" ".ts" ".jsx" ".tsx"
+                        ".rb" ".go" ".rs" ".java" ".c" ".cpp" ".h"
+                        ".sh" ".bash" ".zsh" ".css" ".scss" ".html"
+                        ".el" ".clj" ".ex" ".exs" ".md" ".org"
+                        ".tex")))
+         (excl    (or (bound-and-true-p project-todo-exclude-dirs)
+                      '(".git" "node_modules" ".venv" "venv" "__pycache__"
+                        "dist" "build" ".next" "target" "vendor")))
+         (files   (project-todo--collect-files root exts excl))
+         (all-todos '()))
+
+    ;; Collect all TODOs
+    (dolist (file files)
+      (let ((hits (project-todo--scan-file file root)))
+        (when hits
+          (push (cons file hits) all-todos))))
+
+    ;; ── Rewrite the ** Pending section in-buffer ───────────────────────────
+    (with-current-buffer org-buf
+      (save-excursion
+        (goto-char (point-min))
+        ;; Find the "** Pending" heading
+        (when (re-search-forward "^\\*\\* Pending$" nil t)
+          (let ((heading-end (point)))
+            ;; Skip past any :PROPERTIES: drawer immediately after the heading
+            (forward-line 1)
+            (when (looking-at "[[:space:]]*:PROPERTIES:")
+              (re-search-forward ":END:" nil t)
+              (forward-line 1))
+            (let ((content-start (point)))
+              ;; Find where this section ends: next same-or-higher heading, or EOF
+              (let ((content-end
+                     (save-excursion
+                       (if (re-search-forward "^\\*\\{1,2\\} " nil t)
+                           (line-beginning-position)
+                         (point-max)))))
+                ;; Replace the section body
+                (delete-region content-start content-end)
+                (insert "\n" (project-todo--build-content all-todos) "\n"))))))))
+  #+END_SRC
