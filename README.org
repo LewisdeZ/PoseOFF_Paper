@@ -23,7 +23,9 @@ Prediction of an action classification label before the action has fully unfolde
 You may need access to the refs.bib file to compile the LaTeX file. Let me know if you do, it's a very discorganised bib...
 
 * Per-Class Accuracy Graphs
-I've put all the graphs that I created for per-class accuracy improvement under =figures/Per_class_accuracy=. To get those results, I concatenated the action classes predicted for each model on the test split of the given dataset together, calculated the confusion matrix and obtained the per-class accuracy graphs from this.
+I've put all the graphs that I created for per-class accuracy improvement under =figures/Per_class_accuracy=. There are also some text files (=figures/Per_class_accuracy/ALL_MODELS-*.txt=) that have some more information about exactly how many classes were improved, and by how much.
+
+To get those results, I concatenated the action classes predicted for each model on the test split of the given dataset together, calculated the confusion matrix and obtained the per-class accuracy graphs from this.
 e.g. (This is done separately for the Base and PoseOFF models)
 #+begin_src python
 # Arrays are of length ~16,000 for NTU60 (length of test split)
