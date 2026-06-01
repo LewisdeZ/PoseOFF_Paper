@@ -1,6 +1,5 @@
-#+TITLE: README
+#+TITLE: PoseOFF Ro-MAN2026
 #+DESCRIPTION: README file for the PoseOFF paper
-
 
 * Paper focus
 - PoseOFF is:
