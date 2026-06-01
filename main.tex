@@ -45,7 +45,6 @@
 \end{abstract}
 
 
-
 \section{Introduction}
 Effective human-robot interaction (HRI) relies on a robot’s ability to interpret human behaviour as it unfolds, rather than after it has completed. In collaborative environments, robots must anticipate human actions to coordinate movements, avoid interference, and ensure safety in shared workspaces \cite{lasota2017SurveyMethodsSafeHumanRobotInteraction,villani2018SurveyhumanrobotcollaborationindustrialsettingsSafetyintuitiveinterfacesapplications}. In assistive and social contexts, early recognition of user intent enables timely support and more natural interaction, supporting proactive assistance and fluid turn-taking. Across these domains, the ability to infer human intent from partial observations is central to responsive and human-aware robotic systems.
 
@@ -54,10 +53,10 @@ Despite significant progress in human action recognition, early action anticipat
 Conversely, dense motion representations such as optical flow capture rich spatiotemporal information and have been widely used to improve action recognition performance \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition}. More recent work has explored transformer-based architectures for action anticipation, achieving strong performance through large-scale spatiotemporal modelling \cite{girdhar2021AnticipativeVideoTransformer}. However, these approaches often come with increased computational cost, making them less suitable for low-latency perception pipelines required in interactive robotic systems.
 
 \begin{figure}[t]
-        \centering
-        \includegraphics[width=0.8\linewidth]{figures/Class_examples/Class_examples_PoseOFF-SMALL.png}
-        \caption{PoseOFF captures localised motion patterns (e.g., rotation, divergence) around key joints that are not represented in skeletal pose alone.}
-        \label{fig:classexamples_small}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/Class_examples/Class_examples_PoseOFF-SMALL.png}
+    \caption{PoseOFF captures localised motion patterns (e.g., rotation, divergence) around key joints that are not represented in skeletal pose alone.}
+    \label{fig:classexamples_small}
 \end{figure}
 
 This trade-off between efficiency and motion fidelity presents a key challenge for deploying action anticipation methods in HRI settings. A promising direction is to focus on local, body-centred motion cues that retain informative dynamics while avoiding the cost of full-frame processing. By anchoring motion representations to human pose keypoints, it is possible to capture the most relevant movement patterns associated with human actions, while maintaining a compact and interpretable representation. Such approaches align well with the requirements of HRI systems, where perception modules must operate efficiently and provide timely insights into human behaviour.
@@ -74,11 +73,11 @@ We evaluate PoseOFF across multiple benchmark datasets and backbone models for a
 
 In summary, this paper makes the following contributions:
 \begin{itemize}
-\item We propose PoseOFF, a novel pose-conditioned motion representation that anchors optical flow to human joints, introducing a structured, body-aligned alternative to dense or parallel motion representations.
+    \item We propose PoseOFF, a novel pose-conditioned motion representation that anchors optical flow to human joints, introducing a structured, body-aligned alternative to dense or parallel motion representations.
 
-\item We show that this representation enables earlier and more discriminative action anticipation, achieving comparable accuracy with reduced observation.
+    \item We show that this representation enables earlier and more discriminative action anticipation, achieving comparable accuracy with reduced observation.
 
-\item We demonstrate the value of targeted, low-latency motion representations for HRI, supporting earlier and more responsive human–robot interaction.
+    \item We demonstrate the value of targeted, low-latency motion representations for HRI, supporting earlier and more responsive human–robot interaction.
 \end{itemize}
 % How is this paper structure?
 This paper is structured as follows: Section~\ref{sec:related_work} reviews related work. Section~\ref{sec:method} presents the PoseOFF representation. Section~\ref{sec:experiments} reports experimental results, including action anticipation, per-class analysis, and performance considerations. Section~\ref{sec:discussion_conclusion} concludes with discussion and future directions.

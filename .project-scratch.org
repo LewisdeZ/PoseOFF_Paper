@@ -1,163 +1,192 @@
-#+TITLE: Project Scratch
-#+DESCRIPTION: Scratch buffer for projectile project
+#+title: PoseOFF ROMAN 2026
 
-* DOOM EMACS KEYBINDS
-| Keybind | Action                 |
-|---------+------------------------|
-| C-c [   | Insert citation        |
-| C-c )   | Insert reference       |
-| SPC m ; | Open table of consents |
+* Document outline
+** [[file:main.tex::Introduction][1 Introduction]]
+** [[file:main.tex::\section{Related work}][2 Related work]]
+*** [[file:main.tex::\subsection{Human Action][2.1 Human Action Anticipation for Interactive Systems]]
+*** [[file:main.tex::\subsection{Skeleton-based][2.2 Skeleton-based Human Action Recognition]]
+*** [[file:main.tex::\subsection{Motion-based][2.3 Motion-based and Multimodal Approaches]]
+** [[file:main.tex::\section{Method}][3 Method]]
+*** [[file:main.tex::\subsection{PoseOFF Rep][3.1 PoseOFF Representation]]
+*** [[file:main.tex::\subsection{Skeleton-based Action Recognition Models}][3.2 Skeleton-based Action Recognition Models]]
+*** [[file:main.tex::\subsection{Implementation][3.3 Implementation]]
+*** [[file:main.tex::\subsection{Datasets}][3.4 Datasets]]
+** [[file:main.tex::\section{Experiments}][4 Experiments]]
+*** [[file:main.tex::\subsection{Evaluation Metrics}][4.1 Evaluation Metrics]]
+*** [[file:main.tex::\subsection{Action Classification}][4.2 Action Classification]]
+*** [[file:main.tex::\subsection{Action Anticipation}][4.3 Action Anticipation]]
+*** [[file:main.tex::\subsection{Per-Class Performance Analysis}][4.4 Per-Class Performance Analysis]]
+*** [[file:main.tex::\subsection{Performance and Implementation][4.5 Performance and Implementation Considerations]]
+** [[file:main.tex::\section{Discussion and Conclusion}][5 Discussion and Conclusion]]
+* Comments
+** Review 648
+- Show clearer position of novelty relative to existing pose-motion fusion methods
+- Evaluation could be strengthened by including  stronger baselines
+- Deeper analysis of failure cases and robustness (e.g. to pose noise or global motion scenarios)
+** Review 649
+- Further clarify the difference between PoseOFF and existing joint-centred or pose-guided motion representations
+- Provide more discussion as to why results show greater improvement for UCF101
+- Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
+- Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
+- Minor grammatical issues
 
-* How to use - the TODO scanner
-To use the TODO scanner, you can either press =C-c C-C= first in the codeblock under [[#config][Config]] to set up the todo scanning, then run the [[#scanner][TODO Scanner]]. The items will show up under the [[#todo_items][TODO Items]] heading. Haven't figured out how to stop the scanner from scanning this file...
-Alternatively, you can just run =M-x org-babel-execute-buffer= (=C-c C-v b=) and all of the codeblocks will run, having your items appear under the [[#todo_items][TODO Items]] heading.
+* Keybinds
+** Navigation
+*** ] ] - org-next-visible-heading
+Next heading
+*** [ [ - org-previous-visible-heading
+Previous heading
+*** ] h - org-forward-heading-same-level
+Next heading same level
+*** [ h - org-backward-heading-same-level
+Previous heading same level
+*** g h - org-up-element
+Move to upper (heading) element
+*** z u - outline-up-heading
+Backward to higher level heading
+*** C-c C-j - org-goto
+Jump to different place without changing the current outline visibility
+** Visualising
+*** z c - +org/close-fold
+Folds current heading
+*** z M - +org/close-all-folds
+Folds all visual headings
+** Correcting
+*** ] s - +spell/next-error
+Next ispell error
+*** [ s - +spell/previous-error
+Previous ispell error
+** Table-of-contents
+*** SPC m ; - reftex-toc
+Open reftex table of contents for the entire document
+*** TAB - reftex-toc-goto-line
+Go to document location in other window, TOC window stays
+*** f - reftex-toc-toggle-follow
+Toggle follow (other LaTeX doc window follows with context)
+*** r l - reftex-toc-rename-label
+Rename the currently selected label in *toc* buffer
+*** g O - reftex-toc-view-line
+View document location in other window
+*** J - reftex-toc-jump
+Jump to specified section (e.g. '3 J' jumps to section 3)
+*** < / > - reftex-toc-demote/promote
+Demote or promote section or sections within selected region at point
+* Searcher
+Change ~search_string~ value to search for a particular string.
+        e.g. ~search_string="flowpose"~
+Change ~excluded_dirs~ to exclude particular directories from grep search.
+        e.g. ~excluded_dirs=(":!./logs/*" ":!./org/*")~
+#+begin_src bash :results output
+## ----------------------
+search_string="format"
+excluded_dirs=(
+    ":!./build/*"
+    ":!./out/*"
+    ":!./*.aux"
+    ":!./*.log"
+    ":!./*.toc"
+    ":!./*.bbl"
+    ":!./*.blg"
+    ":!./*.fls"
+    ":!./*.fdb_latexmk"
+    ":!./*.synctex.gz"
+    ":!./*.pdf"
+    ":!./*.png"
+    ":!./*.drawio"
+    ":!./*.eps"
+    ":!./.project-scratch.org"
+)
+## ----------------------
 
-* Config
-  :PROPERTIES:
-  :CUSTOM_ID: config
-  :VISIBILITY: folded
-  :END:
+# Search for the file names
+git grep -l $search_string -- ${excluded_dirs[@]}
+# Provide a file count
+echo -e "\nThere are $(git grep -l $search_string -- ${excluded_dirs[@]} | wc -l) files containing '${search_string}'"
+#+end_src
 
-  #+NAME: todo-config
-  #+BEGIN_SRC emacs-lisp :results silent
-  ;; Configure which file extensions to search
-  (setq project-todo-extensions
-        '(".py" ".js" ".ts" ".jsx" ".tsx"
-          ".rb" ".go" ".rs" ".java" ".c" ".cpp" ".h"
-          ".sh" ".bash" ".zsh"
-          ".css" ".scss" ".html"
-          ".el" ".clj" ".ex" ".exs"
-          ".md" ".org" ".tex"))
+#+RESULTS:
+: IEEEbib.bst
+: IEEEtran.cls
+: README.org
+: ieeeconf.cls
+: main.tex
+:
+: There are 5 files containing 'format'
 
-  ;; Configure directories to exclude
-  (setq project-todo-exclude-dirs
-        '(".git" "node_modules" ".venv" "venv" "__pycache__"
-          "dist" "build" ".next" "target" "vendor"))
+* Test bed
+#+begin_src python :results output
+print("Hello world!")
+#+end_src
 
-  ;; Set project root (defaults to the directory of this org file)
-  (setq project-todo-root (file-name-directory (buffer-file-name)))
-  #+END_SRC
+#+RESULTS:
+: Hello world!
+* Setup
+Run the following codeblock to create a symlink to refs.bib when setting up this repo on a new machine.
+**Replace the path below with your local =.bib= file location**
+#+begin_src sh
+## --------------------------
+BIB_PATH="/THE/PATH/TO/refs.bib"
+## --------------------------
+ln -sf "$BIB_PATH" "$(dirname $0)/refs.bib"
+echo "Symlink created → refs.bib"
+#+end_src
 
-* 📌 TODO Items
-:PROPERTIES:
-:CUSTOM_ID: todo_items
-:END:
-** Pending
+#+RESULTS:
+: Symlink created → refs.bib
 
-* 🔎 TODO Scanner
-  :PROPERTIES:
-  :CUSTOM_ID: scanner
-  :VISIBILITY: folded
-  :END:
+* TODOs
+** Manual
+*** General
+- [ ] Ensure you run [[*Setup][Setup]] to copy the refs.bib!
+*** Section 2
+- [ ] Complete section 2
+- [ ] First item on the list!
+** Scanner
+Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
+#+NAME: scan-todos
+#+BEGIN_SRC emacs-lisp :results none
+(require 'cl-lib)
+(let* ((root (file-name-directory (buffer-file-name)))
+       (extensions '(".py" ".js" ".ts" ".jsx" ".tsx"
+                     ".rb" ".go" ".rs" ".java" ".c" ".cpp" ".h"
+                     ".sh" ".bash" ".zsh" ".css" ".scss" ".html"
+                     ".el" ".clj" ".ex" ".exs" ".md" ".org" ".tex"))
+       (exclude-dirs '(".git" "node_modules" ".venv" "venv" "__pycache__"
+                       "dist" "build" ".next" "target" "vendor"))
+       (output ""))
+  (dolist (file (directory-files-recursively root "."))
+    (let ((rel (file-relative-name file root)))
+      (when (and (cl-some (lambda (e) (string-suffix-p e file)) extensions)
+                 (not (cl-some (lambda (d) (string-match-p (regexp-quote (concat "/" d "/")) (concat "/" rel))) exclude-dirs)))
+        (with-temp-buffer
+          (insert-file-contents file)
+          (goto-char (point-min))
+          (let (found)
+            (while (re-search-forward "TODO:[[:space:]]*\\(.*\\)" nil t)
+              (unless found
+                (setq output (concat output (format "*** ~%s~\n" rel)))
+                (setq found t))
+              (setq output (concat output
+                                   (format "    - Line %d: %s [[file:%s::%d][→]]\n"
+                                           (line-number-at-pos)
+                                           (string-trim (match-string 1))
+                                           rel
+                                           (line-number-at-pos))))))))))
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^\\*\\* Items$" nil t)
+      (forward-line 1)
+      (let ((start (point))
+            (end (save-excursion
+                   (if (re-search-forward "^\\*\\* " nil t)
+                       (line-beginning-position)
+                     (point-max)))))
+        (delete-region start end)
+        (insert "\n" (if (string-empty-p output) "   /No TODOs found./\n" output) "\n")))))
+#+END_SRC
+** Items
 
-  Run this block to scan the project and regenerate the *Pending* section above.
-  Use =C-c C-c= with point inside the block.
-
-  #+NAME: scan-todos
-  #+BEGIN_SRC emacs-lisp :results none
-  (require 'cl-lib)
-
-  ;; ── helpers ────────────────────────────────────────────────────────────────
-
-  (defun project-todo--excluded-p (path exclude-dirs)
-    "Return t if PATH contains any excluded directory segment."
-    (cl-some (lambda (dir)
-               (string-match-p (regexp-quote (concat "/" dir "/")) path))
-             exclude-dirs))
-
-  (defun project-todo--valid-extension-p (file extensions)
-    "Return t if FILE has one of the allowed EXTENSIONS."
-    (cl-some (lambda (ext) (string-suffix-p ext file)) extensions))
-
-  (defun project-todo--collect-files (root extensions exclude-dirs)
-    "Return a list of files under ROOT matching EXTENSIONS, skipping EXCLUDE-DIRS."
-    (let ((files '()))
-      (dolist (f (directory-files-recursively root "." nil))
-        (let ((norm (concat "/" (file-relative-name f root))))
-          (when (and (project-todo--valid-extension-p f extensions)
-                     (not (project-todo--excluded-p norm exclude-dirs)))
-            (push f files))))
-      (nreverse files)))
-
-  (defun project-todo--scan-file (file root)
-    "Return a list of (rel-path line-number comment-text) for every TODO: in FILE."
-    (let ((results '())
-          (rel (file-relative-name file root)))
-      (with-temp-buffer
-        (insert-file-contents file)
-        (goto-char (point-min))
-        (while (re-search-forward "TODO:[[:space:]]*\\(.*\\)" nil t)
-          (push (list rel
-                      (line-number-at-pos)
-                      (string-trim (match-string 1)))
-                results)))
-      (nreverse results)))
-
-  (defun project-todo--build-content (all-todos)
-    "Build the replacement string for the Pending section body."
-    (if (null all-todos)
-        "   /No TODO comments found in the project./\n"
-      (let ((lines (list (format "   /Last scanned: %s — %d TODO(s) across %d file(s)/\n"
-                                 (format-time-string "%Y-%m-%d %H:%M")
-                                 (apply #'+ (mapcar (lambda (g) (length (cdr g))) all-todos))
-                                 (length all-todos)))))
-        (dolist (group (nreverse all-todos))
-          (let* ((file (car group))
-                 (hits (cdr group)))
-            (push (format "\n*** ~%s~\n" file) lines)
-            (dolist (hit hits)
-              (cl-destructuring-bind (rel line text) hit
-                (push (format "\n    - [ ] Line %d: %s\n          [[file:%s::%d][→ jump to source]]\n"
-                              line
-                              (if (string-empty-p text) "/no description/" text)
-                              rel
-                              line)
-                      lines)))))
-        (apply #'concat (nreverse lines)))))
-
-  ;; ── main ───────────────────────────────────────────────────────────────────
-
-  (let* ((org-buf (current-buffer))
-         (root    (or (bound-and-true-p project-todo-root)
-                      (file-name-directory (buffer-file-name))))
-         (exts    (or (bound-and-true-p project-todo-extensions)
-                      '(".py" ".js" ".ts" ".jsx" ".tsx"
-                        ".rb" ".go" ".rs" ".java" ".c" ".cpp" ".h"
-                        ".sh" ".bash" ".zsh" ".css" ".scss" ".html"
-                        ".el" ".clj" ".ex" ".exs" ".md" ".org"
-                        ".tex")))
-         (excl    (or (bound-and-true-p project-todo-exclude-dirs)
-                      '(".git" "node_modules" ".venv" "venv" "__pycache__"
-                        "dist" "build" ".next" "target" "vendor")))
-         (files   (project-todo--collect-files root exts excl))
-         (all-todos '()))
-
-    ;; Collect all TODOs
-    (dolist (file files)
-      (let ((hits (project-todo--scan-file file root)))
-        (when hits
-          (push (cons file hits) all-todos))))
-
-    ;; ── Rewrite the ** Pending section in-buffer ───────────────────────────
-    (with-current-buffer org-buf
-      (save-excursion
-        (goto-char (point-min))
-        ;; Find the "** Pending" heading
-        (when (re-search-forward "^\\*\\* Pending$" nil t)
-          (let ((heading-end (point)))
-            ;; Skip past any :PROPERTIES: drawer immediately after the heading
-            (forward-line 1)
-            (when (looking-at "[[:space:]]*:PROPERTIES:")
-              (re-search-forward ":END:" nil t)
-              (forward-line 1))
-            (let ((content-start (point)))
-              ;; Find where this section ends: next same-or-higher heading, or EOF
-              (let ((content-end
-                     (save-excursion
-                       (if (re-search-forward "^\\*\\{1,2\\} " nil t)
-                           (line-beginning-position)
-                         (point-max)))))
-                ;; Replace the section body
-                (delete-region content-start content-end)
-                (insert "\n" (project-todo--build-content all-todos) "\n"))))))))
-  #+END_SRC
+*** ~.project-scratch.org~
+    - Line 165: [[:space:]]*\\(.*\\)" nil t) [[file:.project-scratch.org::165][→]]
+*** ~main.tex~
+    - Line 49: Scan this section :) [[file:main.tex::49][→]]
