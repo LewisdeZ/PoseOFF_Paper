@@ -99,7 +99,7 @@ PoseOFF representation construction. From an input RGB video, human pose keypoin
 
 Human action anticipation aims to recognise actions from partial observations, enabling early inference of human intent. This capability is particularly important in interactive robot systems, where timely interpretation of human behaviour supports safe collaboration and responsive interaction \cite{dragan2013Legibilitypredictabilityrobotmotion,lasota2017SurveyMethodsSafeHumanRobotInteraction}.
 
-Early approaches relied on probabilistic models and handcrafted features \cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, while later work introduced recurrent architectures to encourage prediction from partial sequences \cite{aliakbarian2017EncouragingLSTMsAnticipateActionsVeryEarly}. More recently, transformer-based models such as AVT \cite{girdhar2021AnticipativeVideoTransformer} have demonstrated strong performance by modelling long-range temporal dependencies, with multimodal approaches further incorporating complementary cues \cite{kong2022HumanActionRecognitionPredictionSurveyc}. However, these methods typically rely on dense spatiotemporal representations and large models, limiting their suitability for real-time deployment in interactive robotic systems.
+Early approaches relied on probabilistic models and handcrafted features \cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, while later work introduced recurrent architectures to encourage prediction from partial sequences \cite{aliakbarian2017EncouragingLSTMsAnticipateActionsVeryEarly}. More recently, transformer-based models such as AVT \cite{girdhar2021AnticipativeVideoTransformer} have demonstrated strong performance by modelling long-range temporal dependencies, with multimodal approaches further incorporating complementary cues \cite{kong2022HumanActionRecognitionPredictionSurvey}. However, these methods typically rely on dense spatiotemporal representations and large models, limiting their suitability for real-time deployment in interactive robotic systems.
 
 \subsection{Skeleton-based Human Action Recognition}
 
@@ -111,7 +111,7 @@ This limitation becomes particularly significant in early action anticipation, w
 
 \subsection{Motion-based and Multimodal Approaches}
 
-Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition,cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurveyc}.
+Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition,cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurvey}.
 
 However, these approaches typically model motion as a dense, global signal, leading to substantial computational cost and redundancy. While multimodal fusion improves performance, it does not explicitly structure motion representations around human kinematics. As a result, motion information is often encoded in a manner that is both computationally expensive and weakly aligned with human body dynamics, limiting its effectiveness for efficient and early action understanding.
 
@@ -306,7 +306,7 @@ No temporal masking was applied, simulating an offline action recognition settin
 % Observation accuracy graphs
 \begin{figure*}
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/Results/Combined_obs_ratios.png}
+  \includegraphics[width=0.95\linewidth]{figures/Action_anticipation/Combined_obs_ratios-BIG.png}
   \caption{\label{fig:res_obs_ratio}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
