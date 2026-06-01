@@ -1,0 +1,57 @@
+Reviewer 2 of ROMAN 2026 submission 362
+
+Comments to the author
+======================
+
+The paper proposes PoseOFF, a pose-anchored optical flow
+representation for low-latency human action anticipation in
+human-robot teaming. The main idea is to extract local
+optical flow features around human joints and combine them
+with skeleton-based representations. The paper is well
+motivated, and the proposed method is clearly positioned
+between efficient skeleton-based methods and
+computationally expensive dense optical-flow-based
+approaches. The experimental results on NTU RGB+D 60, NTU
+RGB+D 120, and UCF101 show consistent improvements over the
+baseline models, especially under partial observation
+settings. Overall, I find the paper interesting and
+relevant to the conference. I have the following comments
+for the authors to consider.
+
+1. The motivation of the proposed PoseOFF representation is
+generally clear. However, the authors may further clarify
+the difference between PoseOFF and existing joint-centered
+or pose-guided motion representations. This would help
+readers better understand the novelty of the proposed
+method beyond simply combining pose and optical flow.
+
+2. The experimental results are promising, especially the
+improvements in early action anticipation. Nevertheless, it
+would be helpful to provide more discussion on why the
+gains are larger on UCF101 than on the NTU datasets. Since
+UCF101 contains more unconstrained videos and estimated
+poses, further explanation would strengthen the
+interpretation of the results.
+
+3. The paper reports the computational cost and inference
+time of PoseOFF, which is useful. However, it would be
+beneficial to clarify whether the reported inference time
+includes optical flow estimation or only the model
+inference after feature extraction. Since optical flow
+computation can be expensive in practice, this distinction
+is important for evaluating real-time applicability.
+
+4. The quality of several figures is rather low. In
+particular, the curves, legends, and small text in some
+figures are difficult to read, and some visual examples are
+almost unclear in the current version. The authors should
+improve the resolution, enlarge the fonts, and ensure that
+all figures remain readable after being compressed into the
+conference format.
+
+5. Some minor writing and formatting issues should be
+corrected. For example, there appear to be a few
+typographical errors and awkward expressions in the text,
+such as “datsets” and some broken or unclear sentences. A
+careful proofreading would improve the overall presentation
+quality.

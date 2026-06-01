@@ -1,0 +1,29 @@
+Comments to author (Associate Editor)
+=====================================
+
+Based on the two reviewers' comments, both reviewers
+recognize the novelty and technical contributions of the
+paper. They also provide specific suggestions for
+improvement, including additional numerical comparative
+experiments, clarification of theoretical assumptions, and
+supplementary simulation details.
+
+Overall, I believe that the core contributions of the paper
+are solid and that the requested revisions are manageable.
+After the authors carefully address all the reviewers'
+comments and implement the required changes, the paper will
+meet the acceptance standards of the conference.
+
+Therefore, my recommendation is: Conditional acceptance,
+provided that the authors revise the manuscript as
+requested.
+
+
+----------------------------------------
+Comments on Video:
+
+[None found]
+Comments to author (Editor)
+================================
+
+[None found]
