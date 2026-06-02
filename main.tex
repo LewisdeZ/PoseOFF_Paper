@@ -46,22 +46,22 @@
 
 
 \section{Introduction}
-Effective human-robot interaction (HRI) relies on a robot’s ability to interpret human behaviour as it unfolds, rather than after it has completed. In collaborative environments, robots must anticipate human actions to coordinate movements, avoid interference, and ensure safety in shared workspaces \cite{lasota2017survey,villani2018survey}. In assistive and social contexts, early recognition of user intent enables timely support and more natural interaction, supporting proactive assistance and fluid turn-taking. Across these domains, the ability to infer human intent from partial observations is central to responsive and human-aware robotic systems.
+Effective human-robot interaction (HRI) relies on a robot’s ability to interpret human behaviour as it unfolds, rather than after it has completed. In collaborative environments, robots must anticipate human actions to coordinate movements, avoid interference, and ensure safety in shared workspaces \cite{lasota2017SurveyMethodsSafeHumanRobotInteraction,villani2018SurveyhumanrobotcollaborationindustrialsettingsSafetyintuitiveinterfacesapplications}. In assistive and social contexts, early recognition of user intent enables timely support and more natural interaction, supporting proactive assistance and fluid turn-taking. Across these domains, the ability to infer human intent from partial observations is central to responsive and human-aware robotic systems.
 
-Despite significant progress in human action recognition, early action anticipation remains a challenging problem. Many approaches rely on skeletal representations derived from pose estimation, which provide a compact and semantically meaningful description of human body configuration \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition,shi2018TwoStreamAdaptiveGraphConvolutionalNetworksSkeletonBasedActionRecognition}. These representations are well suited to real-time systems due to their efficiency and robustness to background variation. However, skeleton-based methods inherently discard fine-grained motion information, limiting their ability to distinguish between actions with similar pose configurations but different movement dynamics, particularly in the early stages of an action.
+Despite significant progress in human action recognition, early action anticipation remains a challenging problem. Many approaches rely on skeletal representations derived from pose estimation, which provide a compact and semantically meaningful description of human body configuration \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition,shi2019SkeletonBasedActionRecognitionDirectedGraphNeuralNetworks}. These representations are well suited to real-time systems due to their efficiency and robustness to background variation. However, skeleton-based methods inherently discard fine-grained motion information, limiting their ability to distinguish between actions with similar pose configurations but different movement dynamics, particularly in the early stages of an action.
 
-Conversely, dense motion representations such as optical flow capture rich spatiotemporal information and have been widely used to improve action recognition performance \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016convolutional}. More recent work has explored transformer-based architectures for action anticipation, achieving strong performance through large-scale spatiotemporal modelling \cite{girdhar2021AnticipativeVideoTransformer} . However, these approaches often come with increased computational cost, making them less suitable for low-latency perception pipelines required in interactive robotic systems.
+Conversely, dense motion representations such as optical flow capture rich spatiotemporal information and have been widely used to improve action recognition performance \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition}. More recent work has explored transformer-based architectures for action anticipation, achieving strong performance through large-scale spatiotemporal modelling \cite{girdhar2021AnticipativeVideoTransformer}. However, these approaches often come with increased computational cost, making them less suitable for low-latency perception pipelines required in interactive robotic systems.
 
 \begin{figure}[t]
-        \centering
-        \includegraphics[width=0.8\linewidth]{figures/Class_examples/Class_examples_PoseOFF-SMALL.png}
-        \caption{PoseOFF captures localised motion patterns (e.g., rotation, divergence) around key joints that are not represented in skeletal pose alone.}
-        \label{fig:classexamples_small}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/Class_examples/Class_examples_PoseOFF-SMALL.png}
+    \caption{PoseOFF captures localised motion patterns (e.g., rotation, divergence) around key joints that are not represented in skeletal pose alone.}
+    \label{fig:classexamples_small}
 \end{figure}
 
 This trade-off between efficiency and motion fidelity presents a key challenge for deploying action anticipation methods in HRI settings. A promising direction is to focus on local, body-centred motion cues that retain informative dynamics while avoiding the cost of full-frame processing. By anchoring motion representations to human pose keypoints, it is possible to capture the most relevant movement patterns associated with human actions, while maintaining a compact and interpretable representation. Such approaches align well with the requirements of HRI systems, where perception modules must operate efficiently and provide timely insights into human behaviour.
 
-In HRI settings, earlier recognition is often more valuable than marginal gains in full-sequence classification accuracy because it directly affects response timing, coordination quality, and safety margins. Prior work in HRI has shown that the timing and predictability of robot responses play a critical role in interaction fluency and human trust \cite{dragan2013legibility}. A method that can reliably infer human actions from partial observations—even with slightly lower peak accuracy—may therefore be more useful in practice than one that performs best only after the action has fully unfolded.
+In HRI settings, earlier recognition is often more valuable than marginal gains in full-sequence classification accuracy because it directly affects response timing, coordination quality, and safety margins. Prior work in HRI has shown that the timing and predictability of robot responses play a critical role in interaction fluency and human trust \cite{dragan2013Legibilitypredictabilityrobotmotion}. A method that can reliably infer human actions from partial observations—even with slightly lower peak accuracy—may therefore be more useful in practice than one that performs best only after the action has fully unfolded.
 
 While prior work has explored combining pose and motion information, these approaches typically rely on either parallel processing streams or global motion representations, without explicitly structuring motion features around human kinematics. As a result, motion information is often treated as a dense signal rather than a behaviourally grounded representation aligned with the human body. This limits both interpretability and efficiency, particularly in early action anticipation where informative motion cues are localised and temporally sparse.
 
@@ -73,11 +73,11 @@ We evaluate PoseOFF across multiple benchmark datasets and backbone models for a
 
 In summary, this paper makes the following contributions:
 \begin{itemize}
-\item We propose PoseOFF, a novel pose-conditioned motion representation that anchors optical flow to human joints, introducing a structured, body-aligned alternative to dense or parallel motion representations.
+    \item We propose PoseOFF, a novel pose-conditioned motion representation that anchors optical flow to human joints, introducing a structured, body-aligned alternative to dense or parallel motion representations.
 
-\item We show that this representation enables earlier and more discriminative action anticipation, achieving comparable accuracy with reduced observation.
+    \item We show that this representation enables earlier and more discriminative action anticipation, achieving comparable accuracy with reduced observation.
 
-\item We demonstrate the value of targeted, low-latency motion representations for HRI, supporting earlier and more responsive human–robot interaction.
+    \item We demonstrate the value of targeted, low-latency motion representations for HRI, supporting earlier and more responsive human–robot interaction.
 \end{itemize}
 % How is this paper structure?
 This paper is structured as follows: Section~\ref{sec:related_work} reviews related work. Section~\ref{sec:method} presents the PoseOFF representation. Section~\ref{sec:experiments} reports experimental results, including action anticipation, per-class analysis, and performance considerations. Section~\ref{sec:discussion_conclusion} concludes with discussion and future directions.
@@ -97,13 +97,13 @@ PoseOFF representation construction. From an input RGB video, human pose keypoin
 
 \subsection{Human Action Anticipation for Interactive Systems}
 
-Human action anticipation aims to recognise actions from partial observations, enabling early inference of human intent. This capability is particularly important in interactive robot systems, where timely interpretation of human behaviour supports safe collaboration and responsive interaction \cite{dragan2013legibility,lasota2017survey}.
+Human action anticipation aims to recognise actions from partial observations, enabling early inference of human intent. This capability is particularly important in interactive robot systems, where timely interpretation of human behaviour supports safe collaboration and responsive interaction \cite{dragan2013Legibilitypredictabilityrobotmotion,lasota2017SurveyMethodsSafeHumanRobotInteraction}.
 
-Early approaches relied on probabilistic models and handcrafted features \cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, while later work introduced recurrent architectures to encourage prediction from partial sequences \cite{aliakbarian2017EncouragingLSTMsAnticipateActionsVeryEarly}. More recently, transformer-based models such as AVT \cite{girdhar2021AnticipativeVideoTransformer} have demonstrated strong performance by modelling long-range temporal dependencies, with multimodal approaches further incorporating complementary cues \cite{kong2023multimodal}. However, these methods typically rely on dense spatiotemporal representations and large models, limiting their suitability for real-time deployment in interactive robotic systems.
+Early approaches relied on probabilistic models and handcrafted features \cite{ryoo2011HumanactivitypredictionEarlyrecognitionongoingactivitiesstreamingvideos}, while later work introduced recurrent architectures to encourage prediction from partial sequences \cite{aliakbarian2017EncouragingLSTMsAnticipateActionsVeryEarly}. More recently, transformer-based models such as AVT \cite{girdhar2021AnticipativeVideoTransformer} have demonstrated strong performance by modelling long-range temporal dependencies, with multimodal approaches further incorporating complementary cues \cite{kong2022HumanActionRecognitionPredictionSurvey}. However, these methods typically rely on dense spatiotemporal representations and large models, limiting their suitability for real-time deployment in interactive robotic systems.
 
 \subsection{Skeleton-based Human Action Recognition}
 
-Skeleton-based representations provide a compact and semantically meaningful description of human motion through joint trajectories, and are widely used due to their efficiency and robustness to background variation \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition,shi2018TwoStreamAdaptiveGraphConvolutionalNetworksSkeletonBasedActionRecognition}. Graph-based approaches such as ST-GCN \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition} model spatial and temporal relationships between joints, while extensions such as 2s-AGCN \cite{shi2018TwoStreamAdaptiveGraphConvolutionalNetworksSkeletonBasedActionRecognition} introduce adaptive graph structures and motion streams to improve representation capacity. More recent methods, including PoseC3D \cite{zhang2022posec3d}, explore alternative formulations using spatiotemporal convolutions over pose sequences.
+Skeleton-based representations provide a compact and semantically meaningful description of human motion through joint trajectories, and are widely used due to their efficiency and robustness to background variation \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition,shi2019SkeletonBasedActionRecognitionDirectedGraphNeuralNetworks}. Graph-based approaches such as ST-GCN \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition} model spatial and temporal relationships between joints, while extensions such as 2s-AGCN \cite{shi2019SkeletonBasedActionRecognitionDirectedGraphNeuralNetworks} introduce adaptive graph structures and motion streams to improve representation capacity. More recent methods, including PoseC3D \cite{duan2022RevisitingSkeletonbasedActionRecognition}, explore alternative formulations using spatiotemporal convolutions over pose sequences.
 
 These approaches achieve strong performance while maintaining relatively low computational cost, making them well suited to real-time and embedded systems, including many human-robot interaction scenarios. However, skeleton-based representations abstract away fine-grained motion information present in the underlying visual signal. While joint trajectories capture coarse movement patterns, they do not explicitly encode local motion dynamics such as subtle limb movements, object interactions, or inter-frame motion cues.
 
@@ -111,11 +111,11 @@ This limitation becomes particularly significant in early action anticipation, w
 
 \subsection{Motion-based and Multimodal Approaches}
 
-Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016convolutional, cai2020JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and more recent video models \cite{tong2022videomae,feichtenhofer2022vitvideo} demonstrate the importance of motion cues for action understanding. Multimodal approaches further combine pose, appearance, and context to improve performance \cite{kong2023multimodal}.
+Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition,cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurvey}.
 
 However, these approaches typically model motion as a dense, global signal, leading to substantial computational cost and redundancy. While multimodal fusion improves performance, it does not explicitly structure motion representations around human kinematics. As a result, motion information is often encoded in a manner that is both computationally expensive and weakly aligned with human body dynamics, limiting its effectiveness for efficient and early action understanding.
 
-Across these approaches, a consistent trade-off emerges. Skeleton-based methods are efficient but lack fine-grained motion cues, while motion-based and multimodal methods capture richer dynamics at significantly higher computational cost. In interactive robotic systems, where perception must be both timely and resource-efficient, this trade-off becomes critical \cite{dragan2013legibility,villani2018survey}.
+Across these approaches, a consistent trade-off emerges. Skeleton-based methods are efficient but lack fine-grained motion cues, while motion-based and multimodal methods capture richer dynamics at significantly higher computational cost. In interactive robotic systems, where perception must be both timely and resource-efficient, this trade-off becomes critical \cite{dragan2013Legibilitypredictabilityrobotmotion,villani2018SurveyhumanrobotcollaborationindustrialsettingsSafetyintuitiveinterfacesapplications}.
 
 However, existing approaches largely rely on either sparse structural representations or dense global motion, with limited attention to how motion can be represented in a targeted and efficient manner. This leaves a gap in methods that capture informative motion cues aligned with human body structure, particularly for early action understanding.
 
@@ -163,7 +163,7 @@ where motion features are explicitly aligned with  joint locations, yielding a s
 % PoseOFF Network diagram!
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.6\linewidth]{figures/poseOFF_network_diagram/PoseOFF_network_diagram.png}
+  \includegraphics[width=0.6\linewidth]{figures/PoseOFF_network_diagram/PoseOFF_network_diagram.png}
   \caption{\label{fig:embedding_network_diagram}PoseOFF embedding layer diagram - convolutional layers (Conv) learn from optical flow vector windows, then concatenate these embeddings with the original pose features (x,y,z positions).}
 \end{figure}
 
@@ -180,7 +180,7 @@ The output of these layers was concatenated with the original skeleton keypoints
 A diagram of the PoseOFF embedding layer added to each model is presented in \autoref{fig:embedding_network_diagram}.
 
 % Which models were tested?
-The models evaluated were InfoGCN++~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, trained using hyperparametes specified by the original authors and settings as close to those reported in the respective papers.
+The models evaluated were InfoGCN++~\cite{chi2025InfoGCNLearningRepresentationPredictingFutureOnlineSkeletonBasedActionRecognition}, MS-G3D~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and ST-GCN++~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}, trained using hyperparametes specified by the original authors and settings as close to those reported in the respective papers.
 
 
 % Trained on joint only stream
@@ -188,7 +188,7 @@ The PoseOFF extraction method utilises human skeleton \textit{joints} as locatio
 For this reason, the results presented in this paper are models trained and evaluated using the \textit{skeleton joint stream only}.
 
 \subsubsectionmark{Observation Ratio}\label{subsubsec:obs_ratio}
-To evaluate early action recognition, we employ temporal masking to simulate partial observation of input sequences. Specifically, only the initial portion of each sequence is provided to the model, requiring classification based on incomplete action execution. Sequences are masked according to predefined \textit{observation ratios}, which specify the proportion of frames retained as input. \autoref{fig:poseoff_extraction} illustrates an example with a 60\% observation ratio, where only the first part of the sequence is visible to the model. Partially observed sequences are padded to the required input length using the strategies defined in the original works: last frame duplication~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}, sequence replay~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and zero padding~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}.
+To evaluate early action recognition, we employ temporal masking to simulate partial observation of input sequences. Specifically, only the initial portion of each sequence is provided to the model, requiring classification based on incomplete action execution. Sequences are masked according to predefined \textit{observation ratios}, which specify the proportion of frames retained as input. \autoref{fig:poseoff_extraction} illustrates an example with a 60\% observation ratio, where only the first part of the sequence is visible to the model. Partially observed sequences are padded to the required input length using the strategies defined in the original works: last frame duplication~\cite{chi2025InfoGCNLearningRepresentationPredictingFutureOnlineSkeletonBasedActionRecognition}, sequence replay~\cite{liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, and zero padding~\cite{duan2022PYSKLGoodPracticesSkeletonActionRecognition}.
 
 \subsection{Implementation}
 \label{subsec:implementation}
@@ -211,7 +211,7 @@ The NTU RGB+D 60 and NTU RGB+D 120 datasets were captured using three Microsoft 
 Each sample contains RGB videos, depth and infrared sequences, and 3D coordinates of 25 body joints.
 Standard train/test splits defined by the authors ensure fair and consistent evaluation.
 Samples are annotated with 60 and 120 action classes, respectively.
-Owing to their widespread use in skeleton-based action recognition research ~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition, duan2022PYSKLGoodPracticesSkeletonActionRecognition, liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, these datasets were selected to establish baseline performance and to evaluate the impact of incorporating PoseOFF embeddings.
+Owing to their widespread use in skeleton-based action recognition research ~\cite{chi2025InfoGCNLearningRepresentationPredictingFutureOnlineSkeletonBasedActionRecognition, duan2022PYSKLGoodPracticesSkeletonActionRecognition, liu2020DisentanglingUnifyingGraphConvolutionsSkeletonBasedActionRecognition}, these datasets were selected to establish baseline performance and to evaluate the impact of incorporating PoseOFF embeddings.
 
 % About the UCF101 dataset
 The UCF101 dataset consists of unconstrained, real-world videos depicting human actions.
@@ -306,7 +306,7 @@ No temporal masking was applied, simulating an offline action recognition settin
 % Observation accuracy graphs
 \begin{figure*}
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/Results/Combined_obs_ratios.png}
+  \includegraphics[width=0.95\linewidth]{figures/Action_anticipation/Combined_obs_ratios-BIG.png}
   \caption{\label{fig:res_obs_ratio}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
@@ -333,7 +333,7 @@ As UCF101 consists of RGB-only videos captured “in the wild,” without depth 
 \subsection{Action Anticipation}%
 \label{subsec:exp_action_anticipation}
 
-To evaluate whether PoseOFF enables earlier action prediction, temporal masking was used to simulate partial observation of ongoing actions. MS-G3D and ST-GCN++ were trained on full sequences (100\% observation) and evaluated at 10\% observation ratio increments. InfoGCN++ natively performs frame-level prediction over a fixed 64-frame input, and is therefore evaluated directly without interval-based masking~\cite{chi2023InfoGCNLearningRepresentationPredictingFutureOnlineHumanSkeletonbasedActionRecognition}.
+To evaluate whether PoseOFF enables earlier action prediction, temporal masking was used to simulate partial observation of ongoing actions. MS-G3D and ST-GCN++ were trained on full sequences (100\% observation) and evaluated at 10\% observation ratio increments. InfoGCN++ natively performs frame-level prediction over a fixed 64-frame input, and is therefore evaluated directly without interval-based masking~\cite{chi2025InfoGCNLearningRepresentationPredictingFutureOnlineSkeletonBasedActionRecognition}.
 
 Results are shown in Fig.~\ref{fig:res_obs_ratio} for NTU RGB+D 60 (Cross-Subject) and UCF101. Performance is reported as classification accuracy at increasing observation ratios, with the baseline full-sequence accuracy indicated for reference. The point at which PoseOFF matches this baseline indicates how early equivalent recognition performance is achieved.
 
@@ -456,13 +456,13 @@ Full flow  & 1.66\,GB & 10.8\,s  & 9 \\
 \section{Discussion and Conclusion}
 \label{sec:discussion_conclusion}
 
-The results demonstrate that incorporating localised motion cues through PoseOFF consistently improves early action recognition, particularly under partial observation. By conditioning motion extraction on pose, PoseOFF captures fine-grained dynamics—such as limb acceleration and object interaction—that are not represented in skeletal configurations alone, while avoiding the overhead of dense optical flow. This positions PoseOFF as an efficient middle ground between lightweight pose-based methods \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition, shi2018TwoStreamAdaptiveGraphConvolutionalNetworksSkeletonBasedActionRecognition} and computationally intensive motion-based approaches \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos, feichtenhofer2016convolutional}.
+The results demonstrate that incorporating localised motion cues through PoseOFF consistently improves early action recognition, particularly under partial observation. By conditioning motion extraction on pose, PoseOFF captures fine-grained dynamics—such as limb acceleration and object interaction—that are not represented in skeletal configurations alone, while avoiding the overhead of dense optical flow. This positions PoseOFF as an efficient middle ground between lightweight pose-based methods \cite{yan2018SpatialTemporalGraphConvolutionalNetworksSkeletonBasedActionRecognition, shi2019SkeletonBasedActionRecognitionDirectedGraphNeuralNetworks} and computationally intensive motion-based approaches \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos, feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition}.
 
 Per-class analysis shows that these gains are most pronounced for actions characterised by subtle, localised motion, including hand-object interactions and self-directed activities, where pose trajectories alone are insufficient for early discrimination. In contrast, actions dominated by large-scale global motion exhibit smaller or more variable improvements, suggesting that such dynamics are already well captured by skeletal representations.
 
 From a systems perspective, PoseOFF provides a lightweight mechanism for enhancing existing skeleton-based models with targeted motion cues, requiring minimal architectural modification and modest computational overhead. This makes it well suited to low-latency and resource-constrained settings.
 
-These properties are particularly relevant in human-robot interaction scenarios, where early and reliable interpretation of human intent directly impacts responsiveness, coordination, and safety \cite{dragan2013legibility, lasota2017survey}. By enabling comparable performance with fewer observed frames, PoseOFF supports earlier prediction of human actions, facilitating more anticipatory behaviours such as motion priming, adaptive planning, and proactive safety responses.
+These properties are particularly relevant in human-robot interaction scenarios, where early and reliable interpretation of human intent directly impacts responsiveness, coordination, and safety \cite{dragan2013Legibilitypredictabilityrobotmotion, lasota2017SurveyMethodsSafeHumanRobotInteraction}. By enabling comparable performance with fewer observed frames, PoseOFF supports earlier prediction of human actions, facilitating more anticipatory behaviours such as motion priming, adaptive planning, and proactive safety responses.
 
 PoseOFF relies on the quality of pose estimation and local motion extraction, and may be less effective under severe occlusion or highly dynamic global motion. Future work will explore more efficient motion estimation strategies and real-time deployment to evaluate system-level performance in embodied interaction settings.
 

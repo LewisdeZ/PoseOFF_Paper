@@ -1,0 +1,19 @@
+Reviewer 1 of ROMAN 2026 submission 362
+
+Comments to the author
+======================
+
+The paper presents a clear and practical method for
+incorporating motion cues into skeleton-based action
+anticipation. The idea of sampling optical flow around
+keypoints is intuitive, and the improvements in early
+prediction performance are consistent and meaningful. The
+paper is also well structured and easy to follow.
+
+That said, the contribution appears incremental, and it
+would benefit from clearer positioning of novelty relative
+to existing pose-motion fusion methods. Additionally, the
+evaluation could be strengthened by including stronger
+baselines and deeper analysis of failure cases and
+robustness (e.g., to pose noise or global motion
+scenarios).
