@@ -111,13 +111,18 @@ This limitation becomes particularly significant in early action anticipation, w
 
 \subsection{Motion-based and Multimodal Approaches}
 
-Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition,cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurvey}.
+Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurvey}.
 
 However, these approaches typically model motion as a dense, global signal, leading to substantial computational cost and redundancy. While multimodal fusion improves performance, it does not explicitly structure motion representations around human kinematics. As a result, motion information is often encoded in a manner that is both computationally expensive and weakly aligned with human body dynamics, limiting its effectiveness for efficient and early action understanding.
 
 Across these approaches, a consistent trade-off emerges. Skeleton-based methods are efficient but lack fine-grained motion cues, while motion-based and multimodal methods capture richer dynamics at significantly higher computational cost. In interactive robotic systems, where perception must be both timely and resource-efficient, this trade-off becomes critical \cite{dragan2013Legibilitypredictabilityrobotmotion,villani2018SurveyhumanrobotcollaborationindustrialsettingsSafetyintuitiveinterfacesapplications}.
 
+% TODO: Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations
+% E.g. JOLO-GCN, H-MoRe
+Joint-centred motion representations, such as JOLO-GCN \cite{cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} or H-MoRe \cite{huang2025HMoReLearningHumancentricMotionRepresentationActionAnalysis} have demonstrated that visual motion surrounding human body keypoints provides useful learnable information. With custom built neural network architecture, they were able to achieve state-of-the-art action classification results on human skeleton action recognition datasets.
+
 However, existing approaches largely rely on either sparse structural representations or dense global motion, with limited attention to how motion can be represented in a targeted and efficient manner. This leaves a gap in methods that capture informative motion cues aligned with human body structure, particularly for early action understanding.
+
 
 \section{Method}
 \label{sec:method}
@@ -204,7 +209,7 @@ Training configurations were aligned with those reported in the original model i
 
 \subsection{Datasets}
 \label{subsec:datasets}
-The models were trained and evaluated on three different datsets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}, NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
+The models were trained and evaluated on three different datasets; the NTU RGB+D 60 dataset~\cite{shahroudy2016NTURGB+DLargeScaleDataset3DHumanActivityAnalysis}, NTU RGB+D 120 dataset~\cite{liu2020NTURGB+D120LargeScaleBenchmark3DHumanActivityUnderstanding} and the UCF101 dataset~\cite{soomro2012UCF101dataset101humanactionsclassesvideoswild}.
 
 % About the NTU dataset
 The NTU RGB+D 60 and NTU RGB+D 120 datasets were captured using three Microsoft Kinect v2 sensors and provide ground-truth 3D human skeleton data.
@@ -306,7 +311,7 @@ No temporal masking was applied, simulating an offline action recognition settin
 % Observation accuracy graphs
 \begin{figure*}
   \centering
-  \includegraphics[width=0.95\linewidth]{figures/Action_anticipation/Combined_obs_ratios-BIG.png}
+  \includegraphics[width=0.95\linewidth]{figures/Action_anticipation/Combined_obs_ratios.png}
   \caption{\label{fig:res_obs_ratio}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
 \end{figure*}
 
@@ -370,7 +375,7 @@ To analyse where PoseOFF provides the greatest benefit, we compute per-class rec
 
     \begin{subfigure}[t]{\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{figures/Per_class_accuracy/STANDARD_bars-ucf101-default.png}
+        \includegraphics[width=\linewidth]{figures/Per_class_accuracy/STANDARD_bars-ucf101-custom.png}
         \caption{UCF101}
         \label{fig:perclass_ucf101}
     \end{subfigure}
@@ -412,7 +417,7 @@ Importantly, the modifications required to incorporate PoseOFF are limited to th
 
 \begin{table}[t]
 \centering
-\caption{Data size and inference speed comparison for pose-only, PoseOFF, and full optical flow representations.}
+\caption{Data size and inference speed comparison for pose-only, PoseOFF, and full optical flow representations.\protect\footnotemark}
 \label{table:datasize_comparison}
 \begin{tabular}{lccc}
 \toprule
@@ -424,6 +429,8 @@ Full flow  & 1.66\,GB & 10.8\,s  & 9 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\footnotetext{PoseOFF inference time is calculated as a proportion of optical flow vectors sampled, with the mandatory computation costs of pose calculations.}
 
 \begin{table}[t]
 \centering

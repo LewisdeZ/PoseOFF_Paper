@@ -21,7 +21,7 @@
 * Comments
 ** Review 648
 - Show clearer position of novelty relative to existing pose-motion fusion methods
-- Evaluation could be strengthened by including  stronger baselines
+- Evaluation could be strengthened by including stronger baselines
 - Deeper analysis of failure cases and robustness (e.g. to pose noise or global motion scenarios)
 ** Review 649
 - Further clarify the difference between PoseOFF and existing joint-centred or pose-guided motion representations
@@ -29,6 +29,9 @@
 - Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
 - Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
 - Minor grammatical issues
+** My responses
+_RE: How PoseOFF differs from existing joint-centred motion scenarios:_ PoseOFF is designed to be a complementary motion representation to skeleton-keypoints. Other joint-centred motion representations, e.g. JOLO-GCN or H-MoRe, capture dense windows of optical flow that are learned in parallel with the skeleton representations. PoseOFF focuses on integrating these motion representations with existing skeleton-based action recognition models, allowing them to more rapidly anticipate human actions.
+_RE: Deeper analysis of failure cases and robustness:_ There are some examples highlighted
 
 * Keybinds
 ** Navigation
@@ -125,7 +128,7 @@ Run the following codeblock to create a symlink to refs.bib when setting up this
 **Replace the path below with your local =.bib= file location**
 #+begin_src sh
 ## --------------------------
-BIB_PATH="/THE/PATH/TO/refs.bib"
+BIB_PATH="../refs.bib"
 ## --------------------------
 ln -sf "$BIB_PATH" "$(dirname $0)/refs.bib"
 echo "Symlink created → refs.bib"
@@ -134,13 +137,21 @@ echo "Symlink created → refs.bib"
 #+RESULTS:
 : Symlink created → refs.bib
 
+* Refs Export
+For publication, you may need to include a =.bib= file. You likely don't want ALL of the references included in there, so by running the codeblock below, it will override the symlink created in the [[Setup][setup]] above with *only* the references used in the latex file.
+*NOTE:* This function parses the =.aux= file of the main latex file, so make sure to compile the LaTeX document before running the below codeblock!
+*NOTE:* If a file called =refs.bib= already exists, it will create a save of the previous =refs.bib=, by apending the date and time to the end of the filename like: =refs.bib-save-2026.06.02:12.03.37=.
+#+begin_src sh :results silent
+# --------------------
+main_filename="main"
+# --------------------
+bibexport -o refs.bib "${main_filename}.aux"
+#+end_src
+
 * TODOs
 ** Manual
 *** General
 - [ ] Ensure you run [[*Setup][Setup]] to copy the refs.bib!
-*** Section 2
-- [ ] Complete section 2
-- [ ] First item on the list!
 ** Scanner
 Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
 #+NAME: scan-todos
@@ -187,6 +198,6 @@ Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
 ** Items
 
 *** ~.project-scratch.org~
-    - Line 165: [[:space:]]*\\(.*\\)" nil t) [[file:.project-scratch.org::165][→]]
+    - Line 173: [[:space:]]*\\(.*\\)" nil t) [[file:.project-scratch.org::173][→]]
 *** ~main.tex~
-    - Line 49: Scan this section :) [[file:main.tex::49][→]]
+    - Line 122: Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations [[file:main.tex::122][→]]
