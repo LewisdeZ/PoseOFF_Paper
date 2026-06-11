@@ -456,11 +456,7 @@ These properties are particularly relevant in human-robot interaction scenarios,
 
 PoseOFF relies on the quality of pose estimation and local motion extraction, and may be less effective under severe occlusion or highly dynamic global motion. Future work will explore more efficient motion estimation strategies and real-time deployment to evaluate system-level performance in embodied interaction settings.
 
-% In this work, PoseOFF was extracted with a fixed optical flow window sampling dilation. For the NTU-RGB+D and NTU-RGB+D 120 datasets, this flow sampling dilation was fixed to 3 pixels ($d=3$), and for the UCF101 dataset, there was no dilation ($d=1$).
-% In future work, we will explore the effects of a dynamic sampling dilation.
-% This dilation factor could vary with quantities such as the apparent size of the human skeleton with respect to the frame size, or a skeleton keypoint's distance from the camera.
-
 \bibliographystyle{IEEEtran}  % using the .bst they gave
-\bibliography{../refs}
+\bibliography{refs}
 
 \end{document}

@@ -139,13 +139,17 @@ echo "Symlink created → refs.bib"
 
 * Refs Export
 For publication, you may need to include a =.bib= file. You likely don't want ALL of the references included in there, so by running the codeblock below, it will override the symlink created in the [[Setup][setup]] above with *only* the references used in the latex file.
-*NOTE:* This function parses the =.aux= file of the main latex file, so make sure to compile the LaTeX document before running the below codeblock!
-*NOTE:* If a file called =refs.bib= already exists, it will create a save of the previous =refs.bib=, by apending the date and time to the end of the filename like: =refs.bib-save-2026.06.02:12.03.37=.
+*NOTES:*
+- This function parses the =.aux= file of the main latex file, so make sure to compile the LaTeX _AND_ BibTeX on the document before running the below codeblock!
+- This deletes the current refs.bib in the current directory.
 #+begin_src sh :results silent
 # --------------------
 main_filename="main"
 # --------------------
 bibexport -o refs.bib "${main_filename}.aux"
+
+# Remove the previous refs.bib-save-*
+rm refs.bib-save-*
 #+end_src
 
 * TODOs
