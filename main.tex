@@ -110,19 +110,15 @@ These approaches achieve strong performance while maintaining relatively low com
 This limitation becomes particularly significant in early action anticipation, where partial observations may not yet exhibit distinctive pose configurations. In such cases, informative motion cues may be present even when pose alone is ambiguous, suggesting that augmenting skeleton-based representations with additional motion information is important for improving early prediction performance.
 
 \subsection{Motion-based and Multimodal Approaches}
+Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding \cite{kong2022HumanActionRecognitionPredictionSurvey}. However, these approaches typically model motion as a dense, global signal, leading to substantial computational cost and redundancy. While multimodal fusion improves recognition performance, it does not explicitly structure motion representations around human kinematics. As a result, motion information is often encoded in a manner that is both computationally expensive and weakly aligned with human body dynamics, limiting its effectiveness for efficient and temporally early action understanding.
 
-Motion-based representations, particularly those based on optical flow, capture dynamic information that complements pose and appearance features. Two-stream architectures \cite{simonyan2014TwoStreamConvolutionalNetworksActionRecognitionVideos,feichtenhofer2016ConvolutionalTwoStreamNetworkFusionVideoActionRecognition} and more recent video models \cite{tong2022VideoMAEMaskedAutoencodersareDataEfficientLearnersSelfSupervisedVideoPreTraining} demonstrate the importance of motion cues for action understanding performance \cite{kong2022HumanActionRecognitionPredictionSurvey}.
-
-However, these approaches typically model motion as a dense, global signal, leading to substantial computational cost and redundancy. While multimodal fusion improves performance, it does not explicitly structure motion representations around human kinematics. As a result, motion information is often encoded in a manner that is both computationally expensive and weakly aligned with human body dynamics, limiting its effectiveness for efficient and early action understanding.
+% TODO: Review 649 - Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations
+% E.g. JOLO-GCN, H-MoRe
+Joint-centred motion representations, such as JOLO-GCN \cite{cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} and H-MoRe \cite{huang2025HMoReLearningHumancentricMotionRepresentationActionAnalysis}, have demonstrated that visual motion surrounding human body keypoints provides useful learnable information. Critically, however, these methods treat joint-centred motion as a separate, complementary input stream to skeleton keypoints rather than integrating motion features within the skeleton-based learning process itself. Moreover, both JOLO-GCN and H-MoRe are designed and evaluated specifically for action recognition, and have not been extended to action anticipation, where predictions must be made from partial, early observations of an unfolding action.
 
 Across these approaches, a consistent trade-off emerges. Skeleton-based methods are efficient but lack fine-grained motion cues, while motion-based and multimodal methods capture richer dynamics at significantly higher computational cost. In interactive robotic systems, where perception must be both timely and resource-efficient, this trade-off becomes critical \cite{dragan2013Legibilitypredictabilityrobotmotion,villani2018SurveyhumanrobotcollaborationindustrialsettingsSafetyintuitiveinterfacesapplications}.
 
-% TODO: Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations
-% E.g. JOLO-GCN, H-MoRe
-Joint-centred motion representations, such as JOLO-GCN \cite{cai2021JOLOGCNMiningJointCenteredLightWeightInformationSkeletonBasedActionRecognition} or H-MoRe \cite{huang2025HMoReLearningHumancentricMotionRepresentationActionAnalysis} have demonstrated that visual motion surrounding human body keypoints provides useful learnable information. With custom built neural network architecture, they were able to achieve state-of-the-art action classification results on human skeleton action recognition datasets.
-
-However, existing approaches largely rely on either sparse structural representations or dense global motion, with limited attention to how motion can be represented in a targeted and efficient manner. This leaves a gap in methods that capture informative motion cues aligned with human body structure, particularly for early action understanding.
-
+This reveals a clear gap in the literature. No existing work has sought to integrate joint-centred motion features directly within the skeleton-based action recognition framework and apply this to the task of action anticipation. Such integration would allow motion cues to interact with structural keypoint representations during learning, rather than being processed as a separate parallel signal, potentially yielding representations that are simultaneously more informative, better aligned with human body dynamics, and capable of supporting earlier and more accurate action predictions.
 
 \section{Method}
 \label{sec:method}
@@ -254,9 +250,6 @@ No temporal masking was applied, simulating an offline action recognition settin
 % The flow windows for the UCF101 dataset were extracted using dilation 1.
 
 
-
-
-
 % Classification accuracy table
 % \begin{center}
 \begin{table*}[t]
@@ -320,20 +313,10 @@ No temporal masking was applied, simulating an offline action recognition settin
 Classification results are reported in~\autoref{table:classification_accuracy}, with the best-performing model for each dataset and evaluation highlighted.
 Across all architectures, incorporating PoseOFF embeddings yields average accuracy improvements of 2.14\%, 6.84\%, and 11.22\% on NTU RGB+D 60, NTU RGB+D 120, and UCF101, respectively.
 These gains suggest that PoseOFF embeddings capture informative cues about underlying human motion. The improvements on UCF101 are particularly notable, with an average accuracy increase of 11.22\%.
+% TODO: Review 649 - Provide more discussion as to why results show greater improvement for UCF101
 As UCF101 consists of RGB-only videos captured “in the wild,” without depth or skeleton annotations, this result suggests that PoseOFF embeddings provide salient motion information well suited to real-world scenarios.
 
 
-% \begin{figure*}[]
-%   \centering
-%   \includegraphics[width=0.9\linewidth]{figures/Results/NTU_RGBD_60-CS_obs_ratios.png}
-%   \caption{\label{fig:res_obs_ratio_ntu}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the NTU RGB+D 60 dataset, Cross Subject evaluation. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
-% \end{figure*}
-
-% \begin{figure*}[]
-%   \centering
-%   \includegraphics[width=1\linewidth]{figures/Results/UCF101-2_obs_ratios.png}
-%   \caption{\label{fig:res_obs_ratio_ucf}Models trained using 100\% observation ratios, evaluated at 10\% observation ratio intervals on the UCF101 dataset, evaluation 2. The Area Under the Curve (AUC) is reported for each model in the sub figure labels.}
-% \end{figure*}
 
 \subsection{Action Anticipation}%
 \label{subsec:exp_action_anticipation}

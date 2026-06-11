@@ -20,17 +20,17 @@
 ** [[file:main.tex::\section{Discussion and Conclusion}][5 Discussion and Conclusion]]
 * Comments
 ** Review 648
-- Show clearer position of novelty relative to existing pose-motion fusion methods
-- Evaluation could be strengthened by including stronger baselines
-- Deeper analysis of failure cases and robustness (e.g. to pose noise or global motion scenarios)
+- [-] Show clearer position of novelty relative to existing pose-motion fusion methods
+- [ ] Evaluation could be strengthened by including stronger baselines
+- [ ] Deeper analysis of failure cases and robustness (e.g. to pose noise or global motion scenarios)
 ** Review 649
-- Further clarify the difference between PoseOFF and existing joint-centred or pose-guided motion representations
-- Provide more discussion as to why results show greater improvement for UCF101
-- Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
-- Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
-- Minor grammatical issues
+- [-] Further clarify the difference between PoseOFF and existing joint-centred or pose-guided motion representations
+- [ ] Provide more discussion as to why results show greater improvement for UCF101
+- [ ] Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
+- [ ] Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
+- [ ] Minor grammatical issues
 ** My responses
-_RE: How PoseOFF differs from existing joint-centred motion scenarios:_ PoseOFF is designed to be a complementary motion representation to skeleton-keypoints. Other joint-centred motion representations, e.g. JOLO-GCN or H-MoRe, capture dense windows of optical flow that are learned in parallel with the skeleton representations. PoseOFF focuses on integrating these motion representations with existing skeleton-based action recognition models, allowing them to more rapidly anticipate human actions.
+_RE: How PoseOFF differs from existing joint-centred motion scenarios:_ PoseOFF is designed to be a complementary motion representation to skeleton-keypoints. Other joint-centred motion representations, e.g. JOLO-GCN or H-MoRe, capture dense windows of optical flow that are learned in parallel with the skeleton representations. PoseOFF focuses on integrating these motion representations with existing skeleton-based action recognition models, allowing them to more rapidly anticipate human actions. (See paragraph 2 under subsection "Motion-based And Multimodal Approaches".)
 _RE: Deeper analysis of failure cases and robustness:_ There are some examples highlighted
 
 * Keybinds
@@ -150,8 +150,8 @@ bibexport -o refs.bib "${main_filename}.aux"
 
 * TODOs
 ** Manual
-*** General
-- [ ] Ensure you run [[*Setup][Setup]] to copy the refs.bib!
+*** Reviewer comments...
+- [ ] Generate figures for PoseOFF examples that show failure cases and robustness (e.g. to pose noise or global motion scenarios)
 ** Scanner
 Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
 #+NAME: scan-todos
