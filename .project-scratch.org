@@ -1,4 +1,5 @@
 #+title: PoseOFF ROMAN 2026
+#+STARTUP: fold
 
 * Document outline
 ** [[file:main.tex::Introduction][1 Introduction]]
@@ -25,13 +26,14 @@
 - [ ] Deeper analysis of failure cases and robustness (e.g. to pose noise or global motion scenarios)
 ** Review 649
 - [-] Further clarify the difference between PoseOFF and existing joint-centred or pose-guided motion representations
-- [ ] Provide more discussion as to why results show greater improvement for UCF101
-- [ ] Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
-- [ ] Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
+- [-] Provide more discussion as to why results show greater improvement for UCF101
+- [-] Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction
+- [-] Increase figure resolution, increase fontsize, ensure figures will remain readable after being compressed into conference format
 - [ ] Minor grammatical issues
 ** My responses
 _RE: How PoseOFF differs from existing joint-centred motion scenarios:_ PoseOFF is designed to be a complementary motion representation to skeleton-keypoints. Other joint-centred motion representations, e.g. JOLO-GCN or H-MoRe, capture dense windows of optical flow that are learned in parallel with the skeleton representations. PoseOFF focuses on integrating these motion representations with existing skeleton-based action recognition models, allowing them to more rapidly anticipate human actions. (See paragraph 2 under subsection "Motion-based And Multimodal Approaches".)
-_RE: Deeper analysis of failure cases and robustness:_ There are some examples highlighted
+_RE: Deeper analysis of failure cases and robustness:_ There are some examples highlighted in Figure 7. This show cases where there is occlusion of limbs, and here neither pose information nor optical flow information are meaningful. In these cases, in line with existing skeleton-based action recognition neural network training, the node information at these graph points is set to zeros.
+_RE: Clarify whether computational cost includes optical flow estimation or only model inference after feature extraction_: I have addressed this in the paragraphs above Tables II and III. The computational costs presented in Table II are *only* for the extraction of the data modalities. The model size and inference speed presented in Table III includes *only* results from pre-computer pose and optical flow.
 
 * Keybinds
 ** Navigation
@@ -186,7 +188,7 @@ Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
                                            (line-number-at-pos)
                                            (string-trim (match-string 1))
                                            rel
-                                           (line-number-at-pos))))))))))
+                                           (line-number-at-pos)))))))))
   (save-excursion
     (goto-char (point-min))
     (when (re-search-forward "^\\*\\* Items$" nil t)
@@ -197,11 +199,12 @@ Run scanner by moving cursor inside codeblock, then executing code =C-c C-c=
                        (line-beginning-position)
                      (point-max)))))
         (delete-region start end)
-        (insert "\n" (if (string-empty-p output) "   /No TODOs found./\n" output) "\n")))))
+        (insert "\n" (if (string-empty-p output) "   /No TODOs found./\n" output) "\n"))))))
 #+END_SRC
 ** Items
 
 *** ~.project-scratch.org~
-    - Line 173: [[:space:]]*\\(.*\\)" nil t) [[file:.project-scratch.org::173][→]]
+    - Line 182: [[:space:]]*\\(.*\\)" nil t) [[file:.project-scratch.org::182][→]]
 *** ~main.tex~
-    - Line 122: Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations [[file:main.tex::122][→]]
+    - Line 120: Review 649 - Stronger clarification here on differences between PoseOFF and existing joint-centred or pose-guided motion representations [[file:main.tex::120][→]]
+    - Line 320: Review 649 - Provide more discussion as to why results show greater improvement for UCF101 [[file:main.tex::320][→]]
