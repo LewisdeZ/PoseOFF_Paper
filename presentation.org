@@ -1,0 +1,26 @@
+#+TITLE: ROMAN2026 presentation
+
+* Key points
+- What are early visual motion cues?
+- How does the human vision system use them?
+- What ways do people extract them?
+
+
+* Motivation
+
+Early human action recognition is important for HRI and HRT.
+        Timing and predictability of robot response play a critical role in interaction fluency.
+Skeleton representations are light and robust to background variation, but lack discriminative power to differentiate similar actions.
+Dense motion representations (optical flow) captures rich motion information, at a computational cost.
+Local, body-centred motion cues can retain informative dynamics with avoiding the cost of full-frame processing.
+
+** How PoseOFF is different
+
+Prior work has explored pose + flow...
+        These rely on either parallel streams or global motion representations.
+        No structuring motion features around human body dynamics.
+
+
+
+* Early Visual Motion Cues
+** What are they?
