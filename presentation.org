@@ -4,6 +4,7 @@
 - What are early visual motion cues?
 - How does the human vision system use them?
 - What ways do people extract them?
+- Other research in the same area...
 
 
 * Motivation
@@ -23,4 +24,17 @@ Prior work has explored pose + flow...
 
 
 * Early Visual Motion Cues
+
 ** What are they?
+
+Movement or motion cues that are detectable through the estimation of optical flow
+
+** Why are they important?
+
+They pertain to specific kinds of movements, such as human behavioural motions
+
+* Previous work
+
+** Joint-centred motion extraction
+
+JOLO-GCN and H-MoRe both treat joint-centred motion as a separate, complementary stream to keypoints
