@@ -1,10 +1,17 @@
 #+TITLE: ROMAN2026 presentation
 
+ - First, think about the structure of the talk itself
+ - Important that I show that I understand what other people have done, and understand where my talk fits
+ - There's no other talks in my block that uses optical flow - explain it!
+ - My approach has the advantage that it can be *easily added to skeleton based approaches*
+ - Follow up with Chris F to get one of his previous RO-MAN talks
+
 * Key points
+
 - What are early visual motion cues?
-- How does the human vision system use them?
-- What ways do people extract them?
-- Other research in the same area...
+  - How does the human vision system use them?
+  - What is optical flow?
+- What research is there on the extration of early visual motion cues?
 
 
 * Motivation
@@ -27,14 +34,16 @@ Prior work has explored pose + flow...
 
 ** What are they?
 
-Movement or motion cues that are detectable through the estimation of optical flow
+Cues that both human and animal vision systems have adapted to detect!
+Vision systems have evolved to detect these as they provide early information about motion within the visual scene.
+        These cues are important as motion - not caused by egomotion - may indicate changing environmental conditions.
 
-** Why are they important?
+** How does the human vision system use them?
 
-They pertain to specific kinds of movements, such as human behavioural motions
+Ego motion, detecting movement in the visual scene.
 
-* Previous work
+** What is optical flow, and how can we estimate it?
 
-** Joint-centred motion extraction
+Estimation of the motion of pixels in temporally adjacent image frames.
 
-JOLO-GCN and H-MoRe both treat joint-centred motion as a separate, complementary stream to keypoints
+** How can we extract early visual motion cues?
