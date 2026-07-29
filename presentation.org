@@ -41,9 +41,39 @@ Vision systems have evolved to detect these as they provide early information ab
 ** How does the human vision system use them?
 
 Ego motion, detecting movement in the visual scene.
+In human contexts, these early visual motion cues often convery information pertaining to action intent and emotional state.
 
 ** What is optical flow, and how can we estimate it?
 
 Estimation of the motion of pixels in temporally adjacent image frames.
+Dense motion representations can capture rich spatiotemporal information which has been shown to improve action recognition performance.
 
 ** How can we extract early visual motion cues?
+
+* Action Recognition with Human Skeleton Keypoints
+
+These are sparse representations of human actions
+Pros:
+- Space efficient
+- Impervious to background noise
+Cons:
+- Lack discriminative features
+- Struggle to differentiate intra-class similarities
+
+* Methods
+
+** The PoseOFF Representation
+
+** Skeleton-based Action Recognition Models
+
+** Implementation
+*** Pytorch
+*** Datasets
+
+* Results
+
+** Action Classification
+
+** Action Anticipation
+
+** Per-Class Performance Analysis
