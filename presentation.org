@@ -17,7 +17,7 @@
 * Motivation
 
 Early human action recognition is important for HRI and HRT.
-        Timing and predictability of robot response play a critical role in interaction fluency.
+    Timing and predictability of robot response play a critical role in interaction fluency.
 Skeleton representations are light and robust to background variation, but lack discriminative power to differentiate similar actions.
 Dense motion representations (optical flow) captures rich motion information, at a computational cost.
 Local, body-centred motion cues can retain informative dynamics with avoiding the cost of full-frame processing.
@@ -25,10 +25,8 @@ Local, body-centred motion cues can retain informative dynamics with avoiding th
 ** How PoseOFF is different
 
 Prior work has explored pose + flow...
-        These rely on either parallel streams or global motion representations.
-        No structuring motion features around human body dynamics.
-
-
+    These rely on either parallel streams or global motion representations.
+    No structuring motion features around human body dynamics.
 
 * Early Visual Motion Cues
 
@@ -41,12 +39,16 @@ Vision systems have evolved to detect these as they provide early information ab
 ** How does the human vision system use them?
 
 Ego motion, detecting movement in the visual scene.
-In human contexts, these early visual motion cues often convery information pertaining to action intent and emotional state.
+In human contexts, these early visual motion cues often convey information pertaining to action intent and emotional state.
 
-** What is optical flow, and how can we estimate it?
+* What is optical flow, and how can we estimate it?
 
-Estimation of the motion of pixels in temporally adjacent image frames.
+Estimation of the motion of pixels between image frames.
 Dense motion representations can capture rich spatiotemporal information which has been shown to improve action recognition performance.
+
+Optical flow can highlight motion patterns;
+divergence, curl and shear of motion fields tell you about the movement and deformation of objects in the environment
+- For example
 
 ** How can we extract early visual motion cues?
 
