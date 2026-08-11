@@ -1,5 +1,7 @@
 #+TITLE: ROMAN2026 presentation
 
+* [[https://docs.google.com/presentation/d/1dB38sBbwjNxu_WONTpMKm5w7h4vHH46CrdlzaBDgoUY/edit?usp=sharing][DRIVE LINK]]
+
  - First, think about the structure of the talk itself
  - Important that I show that I understand what other people have done, and understand where my talk fits
  - There's no other talks in my block that uses optical flow - explain it!
@@ -13,11 +15,28 @@
   - What is optical flow?
 - What research is there on the extration of early visual motion cues?
 
-
 * Motivation
+
+** Human Action Anticipation
+_Why it's important for HRI and HRT_
 
 Early human action recognition is important for HRI and HRT.
     Timing and predictability of robot response play a critical role in interaction fluency.
+
+Especially for highly autonomous systems - vision can be a primary sense modality that dictates how interactions occur.
+
+[[https://inferensys.com/glossary/vision-language-action-models/human-robot-interaction/action-anticipation][See this website for more examples...]]
+In the robotics space, human action anticipation has been shown to be effective for tasks such as:
+- Human collaborative assembly
+- Safe human-aware navigation
+- Assitive robotics in elder care
+- Interactive services and hospitality
+- Surgical robotics and shared control
+- Autonomous vehicle pedestrian interaction
+
+** Current State
+_How do we currently anticipate human actions in video?_
+
 Skeleton representations are light and robust to background variation, but lack discriminative power to differentiate similar actions.
 Dense motion representations (optical flow) captures rich motion information, at a computational cost.
 Local, body-centred motion cues can retain informative dynamics with avoiding the cost of full-frame processing.
@@ -34,12 +53,17 @@ Prior work has explored pose + flow...
 
 Cues that both human and animal vision systems have adapted to detect!
 Vision systems have evolved to detect these as they provide early information about motion within the visual scene.
-        These cues are important as motion - not caused by egomotion - may indicate changing environmental conditions.
+    These cues are important as motion - not caused by egomotion - may indicate changing environmental conditions.
 
 ** How does the human vision system use them?
 
 Ego motion, detecting movement in the visual scene.
 In human contexts, these early visual motion cues often convey information pertaining to action intent and emotional state.
+
+** How can we detect them?
+
+Early visual motion cues are spatially focused (REF).
+Strategic sampling of motion patterns can highlight these early visual motion cues.
 
 * What is optical flow, and how can we estimate it?
 
