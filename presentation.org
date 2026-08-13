@@ -16,12 +16,17 @@
   - DSTG logo
   - Date
   - Conference details
+- [ ] Make it very clear what the aim is
+- [ ] Don't bog too far in the biological inspiration (slide 7)
+        - We are not modelling directly any biological system explicitly
+        - If there's freebies at the conference that is iconic at the conference 
 - [ ] Insert videos for the data types we're using (currently slide 11?)
   - Skeleton pose video
   - Optical flow
 - [ ] Replace dataset example images
 - [ ] Provide a zoom in image of optical flow window/s after explaining PoseOFF
 - [ ] Animate the benefits/drawbacks slide on PoseOFF
+- Classes where it does quite well are subtle movements show greatest improvement from poseoff
 
 
 * Key points
