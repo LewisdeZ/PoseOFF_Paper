@@ -10,24 +10,87 @@
 * Session title: Cognition, intent and embodied AI
 
 * TODOS
+- [ ] Go back to reviewer comments from RO-MAN and ICME and create question - answer slides based on the comments
+** Formatting
 - [ ] Check slide header and footer
   - Slide number
   - Swinburne logo
   - DSTG logo
   - Date
   - Conference details
+- [ ] Remove the top part of the slide
+- [ ] Make the slide numbers bigger
+- [ ] Add my name and something else at footer
+- [ ] Remove the extra stuff at the top of the slides...
+- [ ] Utilise any dead space
+- [ ] Get rid of highlighting altogether - replace with bold text
+- [ ] Export finished presentation as PowerPoint and put on a USB
+
+** Talk contents
+- [ ] Slow down!
 - [ ] Make it very clear what the aim is
   - Comparable or improved action recognition with fewer required frames
 - [ ] Don't get bogged down in the biological inspiration (slide 7)
   - We are not modelling directly any biological system explicitly
   - If there's freebies at the conference that is iconic at the conference
-- [ ] Insert videos for the data types we're using (currently slide 11?)
+- [ ] Classes where it does quite well are subtle movements show greatest improvement from poseoff
+
+** Media generation
+- [ ] Insert videos for the data types we're using (currently slide 6/9/10)
   - Skeleton pose video
-  - Optical flow
-- [ ] Replace dataset example images
+  - Optical flow (RECREATE WITH THRESHOLDING + THICKER ARROWS)
 - [ ] Provide a zoom in image of optical flow window/s after explaining PoseOFF
+- [ ] Replace CNN with OURS in action anticipation graph in slide 14
+
+** Media replacement
+- [ ] Replace dataset example images
 - [ ] Animate the benefits/drawbacks slide on PoseOFF
-- Classes where it does quite well are subtle movements show greatest improvement from poseoff
+
+** Slide-by-slide
+*** Slide 1:
+- "The question we're interested in is how can we get low-cost, low latency human action recognition and the solution I'm going to present to you is called PoseOFF"
+*** Slide 2:
+- I could use the example of the person falling over
+*** Slide 3:
+- We are interested in vision as the sensory medium for enabling human robot interaction, due to low cost of implementation and passive nature as a sensory medium
+- Fonts far too small - remove paper titles and just show the pictures
+  - Show each example one by one
+*** Slide 4:
+- For the early visual motion cue section - the changing image gives a lot of very important and quickly availale information as to what is changing and can very quickly be fed into the anticipation of what is happening
+*** Slide 5:
+- Optical flow is one of the oldest problems in computer vision
+- Put text description above each of vector fields
+- When introducing optical flow:
+  - "we're embedding motion cues spatiall sampled that we will show can indicate earlier what is happening"
+*** Slide 6:
+- Put the videos on a white background
+*** Slide 7:
+- Have each piece show up one by one
+- Keep one consistent video (e.g. person falling over)
+*** Slide 8:
+- For slide 8 when I'm talking about how it's embedded, show a close up of three or so of the frame examples.
+  - "By the third frame, the pose shows that the person could be about to run, but the flow field around the upper body keypoints indicates they are actually falling forward."
+    - "We get more information earlier through these spatiotemporal patches that with pose alone"
+    - "It is a targeted method that is lightweight and application focused, putting it where it needs to be to get the maximum benefit"
+*** Slide 9:
+- Could have the models come up one by one
+- Grouping models by type:
+  - /InfoGCN++/
+    - Anticipation can we make it better?
+  - /MS-G3D/ + /ST-GCN++/
+    - Action recognition, can we get it to reason with fewer frames?
+*** Slide 15 / 16 / 17
+- In the datasets we chose, not all actions are realistic for human robot teaming, but we used them to benchmark our model
+- For the kind of classes we're interested in, the PoseOFF embedded model performs well (if not as good, better)
+- We also looked at class comparison etc.
+*** Slide 18???
+- Extraction time, data size, model complexity
+*** LAST SLIDE
+- Leave key findings up as last slide
+- Add CADR-RAS funding as a logo...
+- Key findings:
+  - "Captures subtle..." Could be more specific
+
 
 
 * Key points
